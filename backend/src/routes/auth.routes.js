@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/auth.controller');
-const { verifyToken, optionalAuth, isAdmin } = require('../middleware/auth.middleware');
+const { verifyToken, isAdmin } = require('../middleware/auth.middleware');
 const { validate } = require('../utils/validation');
 
 // POST /api/v1/auth/register - Request OTP

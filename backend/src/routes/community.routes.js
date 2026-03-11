@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const communityController = require('../controllers/community.controller');
-const { verifyToken, optionalAuth } = require('../middleware/auth.middleware');
+const { verifyToken } = require('../middleware/auth.middleware');
 
 // GET /api/v1/community/groups - Get study groups
 router.get('/groups', verifyToken, communityController.getStudyGroups);

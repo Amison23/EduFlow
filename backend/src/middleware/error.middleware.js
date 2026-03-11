@@ -1,7 +1,7 @@
 /**
  * Centralized error handler
  */
-exports.errorHandler = (err, req, res, next) => {
+exports.errorHandler = (err, req, res, _next) => {
     const statusCode = err.statusCode || 500;
     const message = err.message || 'An unexpected error occurred';
 

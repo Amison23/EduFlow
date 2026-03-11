@@ -18,7 +18,7 @@ class CommunityService {
         if (meError || !me) throw new Error('Learner not found');
 
         // Logic: Same region AND Same language
-        let { data, error } = await supabase
+        let { data } = await supabase
             .from('learners')
             .select('id, region, language')
             .neq('id', learnerId)

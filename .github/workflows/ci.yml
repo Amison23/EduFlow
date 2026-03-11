@@ -10,37 +10,37 @@ jobs:
   backend-lint:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-    - name: Install dependencies
-      run: cd backend && npm install
-    - name: Run lint
-      run: cd backend && npm run lint
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install dependencies
+        run: cd backend && npm install
+      - name: Run lint
+        run: cd backend && npm run lint
 
   dashboard-lint:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-    - name: Install dependencies
-      run: cd dashboard && npm install
-    - name: Run lint
-      run: cd dashboard && npm run lint
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install dependencies
+        run: cd dashboard && npm install
+      - name: Run lint
+        run: cd dashboard && npm run lint
 
   mobile-check:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: subosito/flutter-action@v2
-      with:
-        flutter-version: '3.x'
-    - name: Install dependencies
-      run: cd mobile && flutter pub get
-    - name: Run analyze
-      run: cd mobile && flutter analyze
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.x'
+      - name: Install dependencies
+        run: cd mobile && flutter pub get
+      - name: Run analyze
+        run: cd mobile && flutter analyze
