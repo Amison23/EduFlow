@@ -39,6 +39,7 @@ dependencies:
   # UI
   cupertino_icons: ^1.0.6
   shared_preferences: ^2.5.4
+  flutter_dotenv: ^5.1.0
 
 dev_dependencies:
   flutter_test:
@@ -54,3 +55,5 @@ flutter:
     - assets/images/
     - assets/lesson_packs/
     - ml_models/
+    - .env
+

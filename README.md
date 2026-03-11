@@ -72,6 +72,22 @@ flutter run
 > When running `npm install`, you may see security vulnerability warnings from `npm audit`. **Please ignore these for now.** 
 > Many of these are false positives or related to development-only dependencies. Running `npm audit fix` automatically can silently upgrade packages and break the application's core logic or dashboard routing. Only update dependencies if required by future feature updates.
 
+### 6. Local vs. Deployed Testing (Environments)
+Both the Mobile App and the Dashboard use environment variables to locate the Backend API. You can switch between testing locally or against your live deployment by updating the `.env` files.
+
+#### Mobile App Configuration
+Edit `mobile/.env` and update `API_BASE_URL`:
+- **Local (Android Emulator):** `API_BASE_URL=http://10.0.2.2:5000/api/v1`
+- **Local (iOS Simulator/Web):** `API_BASE_URL=http://localhost:5000/api/v1`
+- **Live Deployment:** `API_BASE_URL=https://<your-render-url>/api/v1`
+*(Run `flutter run` or hot restart after changing the file)*
+
+#### Dashboard Configuration
+Edit `dashboard/.env.local` and update `NEXT_PUBLIC_API_URL`:
+- **Local:** `NEXT_PUBLIC_API_URL=http://localhost:5000/api/v1`
+- **Live Deployment:** Set this environment variable in your Vercel Project Settings to point to your live Render backend URL.
+
+
 ---
 
 ## Documentation Index

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:eduflow/l10n/app_localizations.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
 import 'displacement_context_screen.dart';
@@ -63,7 +63,7 @@ class WelcomeScreen extends StatelessWidget {
                 context,
                 Icons.phone_android,
                 l10n.smsLearning,
-                l10n.smsLearningDesc,
+                l10n.smsLearningDesc(AppConstants.smsShortcode),
               ),
               const SizedBox(height: 16),
               _buildFeatureItem(

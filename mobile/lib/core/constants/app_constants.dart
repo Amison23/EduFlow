@@ -50,6 +50,7 @@ class AppConstants {
   static const String smsStartCode = 'START';
   static const String smsHelpCode = 'HELP';
   static const String smsStopCode = 'STOP';
+  static const String smsShortcode = '33528';
 
   /// Animation durations
   static const Duration animationFast = Duration(milliseconds: 200);

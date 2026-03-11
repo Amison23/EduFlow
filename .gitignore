@@ -41,3 +41,5 @@ Documents/
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts
+
+render.yaml

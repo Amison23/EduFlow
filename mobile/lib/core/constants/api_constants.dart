@@ -1,10 +1,12 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 /// API constants for EduFlow backend
 class ApiConstants {
   ApiConstants._();
 
   /// Base URL for the API
   /// In production, this would be the Render deployed URL
-  static const String baseUrl = 'https://api.eduflow.app/v1';
+  static String get baseUrl => dotenv.env['API_BASE_URL'] ?? 'http://10.0.2.2:5000/api/v1';
 
   /// API endpoints
   static const String auth = '/auth';

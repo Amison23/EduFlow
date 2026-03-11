@@ -14,15 +14,15 @@ services:
       - key: NODE_ENV
         value: "production"
       - key: SUPABASE_URL
-        value: "https://rsqfhalozxhcsltjpbzc.supabase.co"
+        value: "https://your-project.supabase.co"
       - key: SUPABASE_SERVICE_KEY
-        value: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzcWZoYWxvenhoY3NsdGpwYnpjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzIxNjgwOCwiZXhwIjoyMDg4NzkyODA4fQ.vm9QQvMaETAuGv6lf6JHmECYAGXMLJipGvNoNM5slx0"
+        value: "YOUR_SUPABASE_SERVICE_KEY"
       - key: SUPABASE_ANON_KEY
-        value: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzcWZoYWxvenhoY3NsdGpwYnpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyMTY4MDgsImV4cCI6MjA4ODc5MjgwOH0.0YJZBI6P_87pd2VXSwQYQb3k63vK-uauDDl0-91y10A"
+        value: "YOUR_SUPABASE_ANON_KEY"
       - key: JWT_SECRET
-        value: "0ac7d3bb82a7f5394ef648dcdc8b2848cdd1de07fdb7e41cf7b6bc30113c4103"
+        value: "YOUR_JWT_SECRET"
       - key: AFRICA_TALKING_API_KEY
-        value: "atsk_cc6795d6b1a13fef36caf9c78f581a3e3619c68cdf8b1b8b74c74644fb438eadfd260880"
+        value: "YOUR_AFRICA_TALKING_API_KEY"
       - key: AFRICA_TALKING_USERNAME
         value: "sandbox"
       - key: SMS_SHORTCODE
