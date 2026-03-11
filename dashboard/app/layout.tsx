@@ -7,6 +7,7 @@ export const metadata = {
 }
 
 import { ThemeProvider } from '../components/ThemeProvider'
+import { ToastProvider } from '../components/ToastProvider'
 
 export default function RootLayout({
     children,
@@ -17,7 +18,9 @@ export default function RootLayout({
         <html lang="en" suppressHydrationWarning>
             <body>
                 <ThemeProvider attribute="data-theme" defaultTheme="system" enableSystem>
-                    {children}
+                    <ToastProvider>
+                        {children}
+                    </ToastProvider>
                 </ThemeProvider>
             </body>
         </html>
