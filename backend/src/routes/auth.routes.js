@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/auth.controller');
-const { verifyToken, optionalAuth } = require('../middleware/auth.middleware');
+const { verifyToken, optionalAuth, isAdmin } = require('../middleware/auth.middleware');
 const { validate } = require('../utils/validation');
 
 // POST /api/v1/auth/register - Request OTP
@@ -26,7 +26,7 @@ router.put('/profile/:id', verifyToken, validate('updateProfile'), authControlle
 router.post('/logout', verifyToken, authController.logout);
 
 // NGO/Admin: Get all learners
-router.get('/learners', verifyToken, authController.getLearners);
-router.post('/update-profile', verifyToken, authController.updateProfile);
+router.get('/learners', verifyToken, isAdmin, authController.getLearners);
+router.post('/update-profile', verifyToken, isAdmin, authController.updateProfile);
 
 module.exports = router;

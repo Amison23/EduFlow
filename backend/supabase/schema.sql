@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS learners (
     region TEXT,
     displacement TEXT CHECK (displacement IN ('conflict', 'climate', 'other')),
     language TEXT DEFAULT 'en',
+    role TEXT DEFAULT 'learner' CHECK (role IN ('learner', 'admin', 'ngo')),
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );

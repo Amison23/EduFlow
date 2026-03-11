@@ -88,7 +88,11 @@ exports.verifyOtp = async (req, res, next) => {
 
         // Generate JWT (7 days)
         const token = jwt.sign(
-            { learnerId: learner.id, phoneHash },
+            { 
+                learnerId: learner.id, 
+                phoneHash,
+                role: learner.role || 'learner'
+            },
             config.jwtSecret,
             { expiresIn: '7d' }
         );
@@ -151,7 +155,11 @@ exports.refreshToken = async (req, res, next) => {
             .eq('id', rtRecord.id);
 
         const newToken = jwt.sign(
-            { learnerId: rtRecord.learners.id, phoneHash: rtRecord.learners.phone_hash },
+            { 
+                learnerId: rtRecord.learners.id, 
+                phoneHash: rtRecord.learners.phone_hash,
+                role: rtRecord.learners.role || 'learner'
+            },
             config.jwtSecret,
             { expiresIn: '7d' }
         );
