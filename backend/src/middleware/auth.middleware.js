@@ -52,7 +52,7 @@ exports.isAdmin = (req, res, next) => {
         return res.status(401).json({ error: 'Authentication required' });
     }
 
-    if (req.user.role !== 'admin' && req.user.role !== 'ngo') {
+    if (req.user.role !== 'admin' && req.user.role !== 'ngo' && req.user.role !== 'master_admin') {
         return res.status(403).json({ error: 'Access denied: Admin privileges required' });
     }
 

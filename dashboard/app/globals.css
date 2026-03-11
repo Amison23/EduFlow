@@ -9,15 +9,23 @@
     --card: #FFFFFF;
     --foreground: #212121;
     --border: #E0E0E0;
+    --muted: #757575;
+    --success: #43A047;
+    --danger: #e53935;
+    --warning: #F9A825;
 }
 
 [data-theme='dark'] {
     --primary: #64B5F6;
     --secondary: #66BB6A;
-    --background: #121212;
-    --card: #1E1E1E;
-    --foreground: #F5F5F5;
-    --border: #333333;
+    --background: #111827;
+    --card: #1F2937;
+    --foreground: #F3F4F6;
+    --border: #374151;
+    --muted: #9CA3AF;
+    --success: #6FCF97;
+    --danger: #FC8181;
+    --warning: #FBBF24;
 }
 
 * {
@@ -30,13 +38,53 @@ html,
 body {
     max-width: 100vw;
     overflow-x: hidden;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-        Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background: var(--background);
     color: var(--foreground);
+    transition: background-color 0.3s, color 0.3s;
 }
 
 a {
     color: inherit;
     text-decoration: none;
 }
+
+/* Ensure all Tailwind gray/slate text is readable in dark mode */
+[data-theme='dark'] .text-gray-400,
+[data-theme='dark'] .text-gray-500,
+[data-theme='dark'] .text-gray-600,
+[data-theme='dark'] .text-gray-700,
+[data-theme='dark'] .text-gray-800,
+[data-theme='dark'] .text-gray-900,
+[data-theme='dark'] .text-slate-600,
+[data-theme='dark'] .text-slate-700,
+[data-theme='dark'] .text-slate-800 {
+    color: var(--foreground) !important;
+    opacity: 0.7;
+}
+
+[data-theme='dark'] .text-gray-300,
+[data-theme='dark'] .text-slate-300 {
+    color: var(--foreground) !important;
+    opacity: 0.85;
+}
+
+[data-theme='dark'] .bg-white,
+[data-theme='dark'] .bg-gray-50,
+[data-theme='dark'] .bg-gray-100 {
+    background-color: var(--card) !important;
+}
+
+[data-theme='dark'] .border-gray-100,
+[data-theme='dark'] .border-gray-200,
+[data-theme='dark'] .border-gray-300 {
+    border-color: var(--border) !important;
+}
+
+/* Card style utility */
+.dashboard-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    transition: background-color 0.3s, border-color 0.3s;
+}
