@@ -1,0 +1,9 @@
+{
+    "id": "math-level1-01",
+    "pack_id": "math-pack-level1",
+    "sequence": 1,
+    "title": "Introduction to Numbers",
+    "content": "# Introduction to Numbers\n\nWelcome to your first math lesson! In this lesson, we will learn about numbers and how to count.\n\n## What are numbers?\nNumbers are symbols we use to count and measure things. There are different types of numbers:\n\n1. **Counting numbers** (1, 2, 3, 4, 5...)\n2. **Zero** (0) - represents nothing\n3. **Whole numbers** - counting numbers plus zero\n\n## Practice\nLet's count together:\n- 1 one\n- 2 two\n- 3 three\n- 4 four\n- 5 five\n\nTry counting the objects around you!",
+    "audio_url": "https://storage.eduflow.app/audio/math_level1_01.mp3",
+    "duration_mins": 10
+}

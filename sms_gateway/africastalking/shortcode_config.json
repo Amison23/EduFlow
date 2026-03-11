@@ -1,0 +1,30 @@
+{
+    "africastalking": {
+        "apiKey": "${AFRICA_TALKING_API_KEY}",
+        "username": "${AFRICA_TALKING_USERNAME}",
+        "shortcode": "12345",
+        "ussdShortcode": "*384*12345#"
+    },
+    "routing": {
+        "kenya": {
+            "sms": "+254",
+            "ussd": "*384*"
+        },
+        "uganda": {
+            "sms": "+256",
+            "ussd": "*385*"
+        },
+        "tanzania": {
+            "sms": "+255",
+            "ussd": "*386*"
+        },
+        "ethiopia": {
+            "sms": "+251",
+            "ussd": "*387*"
+        }
+    },
+    "webhook": {
+        "inboundUrl": "https://api.eduflow.app/v1/sms/inbound",
+        "deliveryUrl": "https://api.eduflow.app/v1/sms/delivery"
+    }
+}
