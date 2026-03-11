@@ -60,12 +60,14 @@ class AudioService {
 
   /// Get current position
   Future<Duration> getCurrentPosition() async {
-    return _audioPlayer.getCurrentPosition() ?? Duration.zero;
+    final position = await _audioPlayer.getCurrentPosition();
+    return position ?? Duration.zero;
   }
 
   /// Get total duration
   Future<Duration> getDuration() async {
-    return _audioPlayer.getDuration() ?? Duration.zero;
+    final duration = await _audioPlayer.getDuration();
+    return duration ?? Duration.zero;
   }
 
   /// Set volume (0.0 to 1.0)

@@ -14,8 +14,12 @@ class AuthLoading extends AuthState {}
 /// Unauthenticated state
 class AuthUnauthenticated extends AuthState {
   final bool hasSeenWelcome;
+  final bool hasSetDisplacementContext;
 
-  const AuthUnauthenticated({required this.hasSeenWelcome});
+  const AuthUnauthenticated({
+    required this.hasSeenWelcome,
+    required this.hasSetDisplacementContext,
+  });
 }
 
 /// OTP sent, waiting for verification

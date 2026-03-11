@@ -6,11 +6,11 @@ import '../remote/auth_remote.dart';
 
 /// Repository for authentication
 class AuthRepository {
-  final Database _localDatabase;
+  final AppDatabase _localDatabase;
   final AuthRemote _authRemote;
 
   AuthRepository({
-    required Database localDatabase,
+    required AppDatabase localDatabase,
     required AuthRemote authRemote,
   })  : _localDatabase = localDatabase,
         _authRemote = authRemote;

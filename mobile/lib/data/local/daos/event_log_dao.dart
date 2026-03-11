@@ -2,7 +2,7 @@ import '../database.dart';
 
 /// Data Access Object for event logging
 class EventLogDao {
-  final Database _database;
+  final AppDatabase _database;
 
   EventLogDao(this._database);
 

@@ -47,7 +47,7 @@ export default function PacksPage() {
                     ))}
                     {packs.length === 0 && (
                          <div className="col-span-full py-12 text-center text-gray-500 bg-white rounded-xl border border-dashed border-gray-300">
-                         No lesson packs available. Click "Upload New Pack" to get started.
+                         No lesson packs available. Click &quot;Upload New Pack&quot; to get started.
                      </div>
                     )}
                 </div>

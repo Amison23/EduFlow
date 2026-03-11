@@ -2,7 +2,7 @@ import '../database.dart';
 
 /// Data Access Object for progress events
 class ProgressDao {
-  final Database _database;
+  final AppDatabase _database;
 
   ProgressDao(this._database);
 

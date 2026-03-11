@@ -1,14 +1,14 @@
 import 'dart:async';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import '../core/network/connectivity_service.dart';
 import '../data/repositories/progress_repository.dart';
+import '../core/errors/failures.dart';
 
 /// Service for background sync of progress events
 class SyncService {
   final ProgressRepository _progressRepository;
   final ConnectivityService _connectivityService = ConnectivityService();
   
-  StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
+  StreamSubscription<bool>? _connectivitySubscription;
   Timer? _syncTimer;
   bool _isSyncing = false;
 

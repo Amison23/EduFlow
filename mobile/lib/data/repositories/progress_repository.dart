@@ -9,13 +9,13 @@ import '../remote/progress_remote.dart';
 
 /// Repository for progress tracking
 class ProgressRepository {
-  final Database _localDatabase;
+  final AppDatabase _localDatabase;
   final ProgressRemote _progressRemote;
   final ConnectivityService _connectivityService = ConnectivityService();
   final _uuid = const Uuid();
 
   ProgressRepository({
-    required Database localDatabase,
+    required AppDatabase localDatabase,
     required ProgressRemote progressRemote,
   })  : _localDatabase = localDatabase,
         _progressRemote = progressRemote;
@@ -72,7 +72,7 @@ class ProgressRepository {
         'device_ts': e['device_ts'],
       }).toList();
       
-      final response = await _progressRemote.syncProgress(
+      await _progressRemote.syncProgress(
         learnerId: learnerId,
         events: events,
       );

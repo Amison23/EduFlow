@@ -1,8 +1,9 @@
+import 'package:sqflite/sqflite.dart' as sqlite;
 import '../database.dart';
 
 /// Data Access Object for lessons
 class LessonDao {
-  final Database _database;
+  final AppDatabase _database;
 
   LessonDao(this._database);
 
@@ -27,7 +28,7 @@ class LessonDao {
         'audio_path': audioPath,
         'downloaded_at': DateTime.now().millisecondsSinceEpoch,
       },
-      conflictAlgorithm: ConflictAlgorithm.replace,
+      conflictAlgorithm: sqlite.ConflictAlgorithm.replace,
     );
   }
 
@@ -93,31 +94,5 @@ class LessonDao {
   Future<void> clearAll() async {
     final db = await _database.database;
     await db.delete('local_lessons');
-  }
-}
-
-/// Conflict algorithm for database operations
-enum ConflictAlgorithm {
-  rollback,
-  abort,
-  fail,
-  ignore,
-  replace,
-}
-
-extension ConflictAlgorithmExtension on ConflictAlgorithm {
-  int get value {
-    switch (this) {
-      case ConflictAlgorithm.rollback:
-        return 1;
-      case ConflictAlgorithm.abort:
-        return 2;
-      case ConflictAlgorithm.fail:
-        return 3;
-      case ConflictAlgorithm.ignore:
-        return 4;
-      case ConflictAlgorithm.replace:
-        return 5;
-    }
   }
 }

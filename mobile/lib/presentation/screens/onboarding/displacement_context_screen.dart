@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../bloc/auth/auth_bloc.dart';
+import 'phone_auth_screen.dart';
 
 /// Screen for selecting displacement context
 class DisplacementContextScreen extends StatefulWidget {
@@ -90,7 +91,7 @@ class _DisplacementContextScreenState extends State<DisplacementContextScreen> {
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
-              value: _selectedRegion,
+              initialValue: _selectedRegion,
               decoration: const InputDecoration(
                 hintText: 'Select your location',
               ),
@@ -205,6 +206,3 @@ class _DisplacementContextScreenState extends State<DisplacementContextScreen> {
     );
   }
 }
-
-// Import the phone auth screen
-import 'phone_auth_screen.dart';

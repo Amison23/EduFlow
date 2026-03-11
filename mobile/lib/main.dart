@@ -25,8 +25,8 @@ void main() async {
   ]);
   
   // Initialize local database
-  final database = Database();
-  await database.init();
+  final database = AppDatabase();
+  await database.database;
   
   // Initialize API clients
   final authRemote = AuthRemote();

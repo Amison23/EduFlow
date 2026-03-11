@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 class ConnectivityService {
   final Connectivity _connectivity = Connectivity();
   
-  StreamSubscription<List<ConnectivityResult>>? _subscription;
+  StreamSubscription<ConnectivityResult>? _subscription;
   final _connectivityController = StreamController<bool>.broadcast();
   
   /// Stream of connectivity status (true = online, false = offline)
@@ -22,16 +22,18 @@ class ConnectivityService {
 
   void _init() {
     _checkConnectivity();
-    _subscription = _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+    _subscription = _connectivity.onConnectivityChanged.listen((result) {
+      _updateConnectionStatus(result);
+    });
   }
 
   Future<void> _checkConnectivity() async {
-    final results = await _connectivity.checkConnectivity();
-    _updateConnectionStatus(results);
+    final ConnectivityResult result = await _connectivity.checkConnectivity();
+    _updateConnectionStatus(result);
   }
 
-  void _updateConnectionStatus(List<ConnectivityResult> results) {
-    _isOnline = _hasActiveConnection(results);
+  void _updateConnectionStatus(ConnectivityResult result) {
+    _isOnline = _hasActiveConnection(result);
     _connectivityController.add(_isOnline);
     
     if (kDebugMode) {
@@ -39,34 +41,24 @@ class ConnectivityService {
     }
   }
 
-  bool _hasActiveConnection(List<ConnectivityResult> results) {
-    if (results.isEmpty || results.contains(ConnectivityResult.none)) {
-      return false;
-    }
-    
-    // Check for any active connection
-    for (final result in results) {
-      if (result != ConnectivityResult.none) {
-        return true;
-      }
-    }
-    return false;
+  bool _hasActiveConnection(ConnectivityResult result) {
+    return result != ConnectivityResult.none;
   }
 
   /// Check if we have mobile data connection
-  bool hasMobileData(List<ConnectivityResult> results) {
-    return results.contains(ConnectivityResult.mobile);
+  bool hasMobileData(ConnectivityResult result) {
+    return result == ConnectivityResult.mobile;
   }
 
   /// Check if we have wifi connection
-  bool hasWifi(List<ConnectivityResult> results) {
-    return results.contains(ConnectivityResult.wifi);
+  bool hasWifi(ConnectivityResult result) {
+    return result == ConnectivityResult.wifi;
   }
 
   /// Manually trigger a connectivity check
   Future<bool> checkConnectivity() async {
-    final results = await _connectivity.checkConnectivity();
-    _updateConnectionStatus(results);
+    final ConnectivityResult result = await _connectivity.checkConnectivity();
+    _updateConnectionStatus(result);
     return _isOnline;
   }
 

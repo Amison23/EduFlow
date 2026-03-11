@@ -6,34 +6,34 @@ import '../remote/lesson_remote.dart';
 
 /// Repository for lessons
 class LessonRepository {
-  final Database _localDatabase;
+  final AppDatabase _localDatabase;
   final LessonRemote _lessonRemote;
   final ConnectivityService _connectivityService = ConnectivityService();
 
   LessonRepository({
-    required Database localDatabase,
+    required AppDatabase localDatabase,
     required LessonRemote lessonRemote,
   })  : _localDatabase = localDatabase,
         _lessonRemote = lessonRemote;
 
   /// Get available lesson packs (from cache or server)
-  Future<({List<Map<String, dynamic>> packs, Failure? failure})> getLessonPacks() async {
+  Future<({Failure? failure, List<Map<String, dynamic>> packs})> getLessonPacks() async {
     // If online, fetch from server
     if (_connectivityService.isOnline) {
       try {
         final packs = await _lessonRemote.getLessonPacks();
         return (packs: packs, failure: null);
       } catch (e) {
-        return (packs: [], failure: ServerFailure(e.toString()));
+        return (packs: <Map<String, dynamic>>[], failure: ServerFailure(e.toString()));
       }
     }
     
     // Return empty list when offline (packs would be cached)
-    return (packs: [], failure: const NetworkFailure('Offline'));
+    return (packs: <Map<String, dynamic>>[], failure: const NetworkFailure('Offline'));
   }
 
   /// Get lessons for a pack
-  Future<({List<Map<String, dynamic>> lessons, Failure? failure})> getLessonsForPack(String packId) async {
+  Future<({Failure? failure, List<Map<String, dynamic>> lessons})> getLessonsForPack(String packId) async {
     // Check local first
     final lessonDao = LessonDao(_localDatabase);
     final localLessons = await lessonDao.getLessonsForPack(packId);
@@ -61,15 +61,15 @@ class LessonRepository {
         
         return (lessons: lessons, failure: null);
       } catch (e) {
-        return (lessons: [], failure: ServerFailure(e.toString()));
+        return (lessons: <Map<String, dynamic>>[], failure: ServerFailure(e.toString()));
       }
     }
     
-    return (lessons: [], failure: const NetworkFailure('Offline - no cached lessons'));
+    return (lessons: <Map<String, dynamic>>[], failure: const NetworkFailure('Offline - no cached lessons'));
   }
 
   /// Download a lesson pack
-  Future<({bool success, Failure? failure})> downloadPack(
+  Future<({Failure? failure, bool success})> downloadPack(
     String packId, {
     void Function(int, int)? onProgress,
   }) async {
@@ -86,7 +86,7 @@ class LessonRepository {
   }
 
   /// Get a specific lesson
-  Future<({Map<String, dynamic>? lesson, Failure? failure})> getLesson(String lessonId) async {
+  Future<({Failure? failure, Map<String, dynamic>? lesson})> getLesson(String lessonId) async {
     final lessonDao = LessonDao(_localDatabase);
     
     // Check local first
@@ -109,27 +109,27 @@ class LessonRepository {
   }
 
   /// Get quiz questions for a lesson
-  Future<({List<Map<String, dynamic>> questions, Failure? failure})> getQuizQuestions(String lessonId) async {
+  Future<({Failure? failure, List<Map<String, dynamic>> questions})> getQuizQuestions(String lessonId) async {
     if (!_connectivityService.isOnline) {
-      return (questions: [], failure: const NetworkFailure('Offline'));
+      return (questions: <Map<String, dynamic>>[], failure: const NetworkFailure('Offline'));
     }
     
     try {
       final questions = await _lessonRemote.getQuizQuestions(lessonId);
       return (questions: questions, failure: null);
     } catch (e) {
-      return (questions: [], failure: ServerFailure(e.toString()));
+      return (questions: <Map<String, dynamic>>[], failure: ServerFailure(e.toString()));
     }
   }
 
   /// Get adaptive quiz
-  Future<({List<Map<String, dynamic>> questions, Failure? failure})> getAdaptiveQuiz({
+  Future<({Failure? failure, List<Map<String, dynamic>> questions})> getAdaptiveQuiz({
     required String learnerId,
     required String subject,
     int count = 5,
   }) async {
     if (!_connectivityService.isOnline) {
-      return (questions: [], failure: const NetworkFailure('Offline'));
+      return (questions: <Map<String, dynamic>>[], failure: const NetworkFailure('Offline'));
     }
     
     try {
@@ -140,7 +140,7 @@ class LessonRepository {
       );
       return (questions: questions, failure: null);
     } catch (e) {
-      return (questions: [], failure: ServerFailure(e.toString()));
+      return (questions: <Map<String, dynamic>>[], failure: ServerFailure(e.toString()));
     }
   }
 

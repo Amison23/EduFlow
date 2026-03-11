@@ -59,8 +59,7 @@ class LessonBloc extends Bloc<LessonEvent, LessonState> {
       event.packId,
       onProgress: (received, total) {
         if (total > 0) {
-          final progress = received / total;
-          // Could emit updated progress here
+          // Progress can be used here if needed: received / total
         }
       },
     );
@@ -77,7 +76,6 @@ class LessonBloc extends Bloc<LessonEvent, LessonState> {
     Emitter<LessonState> emit,
   ) async {
     emit(LessonLoading());
-    
     final result = await _lessonRepository.getLesson(event.lessonId);
     
     if (result.failure != null) {

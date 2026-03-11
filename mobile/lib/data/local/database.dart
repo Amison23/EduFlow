@@ -1,36 +1,34 @@
-import 'package:sqflite/sqflite.dart';
+import 'package:sqflite/sqflite.dart' as sqlite;
 import 'package:path/path.dart';
 
 /// Local SQLite database for EduFlow
-class Database {
-  static Database? _database;
+class AppDatabase {
+  static sqlite.Database? _database;
   
-  Database();
+  AppDatabase();
 
   /// Get database instance
-  Future<Database> get database async {
+  Future<sqlite.Database> get database async {
     if (_database != null) return _database!;
     _database = await _initDatabase();
     return _database!;
   }
 
   /// Initialize the database
-  Future<Database> init() async {
-    final dbPath = await getDatabasesPath();
+  Future<sqlite.Database> _initDatabase() async {
+    final dbPath = await sqlite.getDatabasesPath();
     final path = join(dbPath, 'eduflow.db');
     
-    _database = await openDatabase(
+    return await sqlite.openDatabase(
       path,
       version: 1,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
-    
-    return _database!;
   }
 
   /// Create database tables
-  Future<void> _onCreate(Database db, int version) async {
+  Future<void> _onCreate(sqlite.Database db, int version) async {
     // Local lesson content
     await db.execute('''
       CREATE TABLE local_lessons (
@@ -79,7 +77,7 @@ class Database {
   }
 
   /// Handle database upgrades
-  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+  Future<void> _onUpgrade(sqlite.Database db, int oldVersion, int newVersion) async {
     // Handle future schema migrations here
   }
 

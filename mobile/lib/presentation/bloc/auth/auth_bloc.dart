@@ -38,7 +38,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         hasSetDisplacementContext: onboardingStatus.hasSetContext,
       ));
     } else {
-      emit(const AuthUnauthenticated(hasSeenWelcome: false));
+      emit(const AuthUnauthenticated(
+        hasSeenWelcome: false,
+        hasSetDisplacementContext: false,
+      ));
     }
   }
 
@@ -121,7 +124,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     await _authRepository.logout();
-    emit(const AuthUnauthenticated(hasSeenWelcome: true));
+    emit(const AuthUnauthenticated(
+      hasSeenWelcome: true,
+      hasSetDisplacementContext: true,
+    ));
   }
 
   Future<void> _onCompleteOnboarding(

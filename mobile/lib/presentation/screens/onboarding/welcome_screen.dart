@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../bloc/auth/auth_bloc.dart';
+import 'displacement_context_screen.dart';
 
 /// Welcome screen - first screen of onboarding
 class WelcomeScreen extends StatelessWidget {
@@ -138,6 +137,3 @@ class WelcomeScreen extends StatelessWidget {
     );
   }
 }
-
-// Import the displacement context screen
-import 'displacement_context_screen.dart';
