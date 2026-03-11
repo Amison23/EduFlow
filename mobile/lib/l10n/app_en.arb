@@ -1,0 +1,58 @@
+{
+  "appName": "EduFlow",
+  "appTagline": "Lifeline Learning for Africa's Displaced",
+  "@appName": {
+    "description": "The name of the application"
+  },
+  "aboutYou": "About You",
+  "whyAreYouDisplaced": "Why are you displaced?",
+  "currentLocation": "Current Location",
+  "selectYourLocation": "Select your location",
+  "preferredLanguage": "Preferred Language",
+  "continueButton": "Continue",
+  "conflictDisplacement": "Conflict/Displacement",
+  "conflictDescription": "I was displaced due to conflict or violence",
+  "climateDisaster": "Climate Disaster",
+  "climateDescription": "I was displaced due to floods, drought, or climate change",
+  "otherReason": "Other",
+  "otherDescription": "Other reason for displacement",
+  "worksOffline": "Works Offline",
+  "worksOfflineDesc": "Download lessons and learn without internet",
+  "smsLearning": "SMS Learning",
+  "smsLearningDesc": "Learn via SMS on any phone",
+  "studyGroups": "Study Groups",
+  "studyGroupsDesc": "Connect with other learners",
+  "getStarted": "Get Started",
+  "phoneLogin": "Phone Login",
+  "enterPhoneNumber": "Enter your phone number",
+  "verificationCodeDesc": "We'll send you a verification code",
+  "phoneNumberLabel": "Phone Number",
+  "phoneNumberHint": "+254712345678",
+  "sendCode": "Send Code",
+  "enterCode": "Enter the code",
+  "sentCodeTo": "We sent a 6-digit code to {phoneNumber}",
+  "@sentCodeTo": {
+    "placeholders": {
+      "phoneNumber": {
+        "type": "String"
+      }
+    }
+  },
+  "verificationCodeLabel": "Verification Code",
+  "verify": "Verify",
+  "resendCode": "Resend Code",
+  "changePhoneNumber": "Change Phone Number",
+  "pleaseEnterPhone": "Please enter a phone number",
+  "pleaseEnterOtp": "Please enter the 6-digit code",
+  "helpAndGuide": "Help & Guide",
+  "howToUseApp": "How to use the app",
+  "gettingStartedTitle": "Getting Started",
+  "gettingStartedDesc": "Learn how to navigate and start your learning journey.",
+  "offlineLearningTitle": "Offline Learning",
+  "offlineLearningDesc": "Save data by downloading lessons to use them anywhere, anytime.",
+  "smsLearningTitle": "SMS Lessons (No Internet)",
+  "smsLearningDesc": "No internet? Use our SMS service by sending keywords to {shortcode}.",
+  "communityTitle": "Study Groups",
+  "communityDesc": "Join or create a group to learn together with your friends.",
+  "gotIt": "Got it!"
+}

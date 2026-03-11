@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
 import 'displacement_context_screen.dart';
@@ -9,6 +10,7 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -42,7 +44,7 @@ class WelcomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                AppConstants.appTagline,
+                l10n.appTagline,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   color: AppTheme.textSecondary,
                 ),
@@ -53,22 +55,22 @@ class WelcomeScreen extends StatelessWidget {
               _buildFeatureItem(
                 context,
                 Icons.offline_bolt,
-                'Works Offline',
-                'Download lessons and learn without internet',
+                l10n.worksOffline,
+                l10n.worksOfflineDesc,
               ),
               const SizedBox(height: 16),
               _buildFeatureItem(
                 context,
                 Icons.phone_android,
-                'SMS Learning',
-                'Learn via SMS on any phone',
+                l10n.smsLearning,
+                l10n.smsLearningDesc,
               ),
               const SizedBox(height: 16),
               _buildFeatureItem(
                 context,
                 Icons.people,
-                'Study Groups',
-                'Connect with other learners',
+                l10n.studyGroups,
+                l10n.studyGroupsDesc,
               ),
               const Spacer(),
               // Get Started button
@@ -83,9 +85,9 @@ class WelcomeScreen extends StatelessWidget {
                       ),
                     );
                   },
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 4),
-                    child: Text('Get Started'),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: Text(l10n.getStarted),
                   ),
                 ),
               ),

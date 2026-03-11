@@ -25,7 +25,7 @@ class LessonBloc extends Bloc<LessonEvent, LessonState> {
   ) async {
     emit(LessonLoading());
     
-    final result = await _lessonRepository.getLessonPacks();
+    final result = await _lessonRepository.getLessonPacks(language: event.language);
     
     if (result.failure != null) {
       emit(LessonError(result.failure!.message));

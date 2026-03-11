@@ -74,5 +74,12 @@ export const api = {
     getAnalytics: () => apiFetch('/analytics/overview'),
     getDetailedAnalytics: () => apiFetch('/analytics/detailed'),
     getLessonPacks: () => apiFetch('/lessons/packs'),
+    getLanguages: () => apiFetch('/languages'),
+    addLanguage: (data: any) => apiFetch('/languages', { method: 'POST', body: JSON.stringify(data) }),
+    updateLanguage: (id: string, data: any) => apiFetch(`/languages/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
     updateProfile: (data: any) => apiFetch('/auth/update-profile', { method: 'POST', body: JSON.stringify(data) }),
+    // Admin Management
+    getAllAdmins: () => apiFetch('/admin/admins'),
+    createAdmin: (data: any) => apiFetch('/admin/admins', { method: 'POST', body: JSON.stringify(data) }),
+    deleteAdmin: (id: string) => apiFetch(`/admin/admins/${id}`, { method: 'DELETE' }),
 };

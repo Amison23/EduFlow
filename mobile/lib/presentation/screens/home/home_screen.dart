@@ -7,6 +7,8 @@ import '../../bloc/sync/sync_cubit.dart';
 import '../../widgets/sync_indicator.dart';
 import '../lessons/pack_list_screen.dart';
 import '../community/study_group_screen.dart';
+import '../help/user_guide_screen.dart';
+import '../../bloc/theme/theme_cubit.dart';
 
 /// Home screen - main dashboard after login
 class HomeScreen extends StatefulWidget {
@@ -22,8 +24,11 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    // Load lesson packs
-    context.read<LessonBloc>().add(LoadLessonPacks());
+    // Load lesson packs in the current language
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final languageCode = Localizations.localeOf(context).languageCode;
+      context.read<LessonBloc>().add(LoadLessonPacks(language: languageCode));
+    });
     // Initialize sync
     context.read<SyncCubit>().init();
   }
@@ -34,6 +39,21 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Text('EduFlow'),
         actions: [
+          IconButton(
+            icon: Icon(
+              context.watch<ThemeCubit>().state == ThemeMode.dark
+                  ? Icons.light_mode
+                  : Icons.dark_mode,
+            ),
+            onPressed: () => context.read<ThemeCubit>().toggleTheme(),
+          ),
+          IconButton(
+            icon: const Icon(Icons.help_outline),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const UserGuideScreen()),
+            ),
+          ),
           const SyncIndicator(),
           IconButton(
             icon: const Icon(Icons.logout),

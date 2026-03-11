@@ -58,3 +58,17 @@ exports.isAdmin = (req, res, next) => {
 
     next();
 };
+/**
+ * Check if user has master_admin role
+ */
+exports.isMasterAdmin = (req, res, next) => {
+    if (!req.user) {
+        return res.status(401).json({ error: 'Authentication required' });
+    }
+
+    if (req.user.role !== 'master_admin') {
+        return res.status(403).json({ error: 'Access denied: Master Admin privileges required' });
+    }
+
+    next();
+};

@@ -31,6 +31,7 @@ class AppTheme {
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
+      brightness: Brightness.light,
       colorScheme: ColorScheme.light(
         primary: primaryColor,
         secondary: secondaryColor,
@@ -62,21 +63,6 @@ class AppTheme {
           ),
         ),
       ),
-      outlinedButtonTheme: OutlinedButtonThemeData(
-        style: OutlinedButton.styleFrom(
-          foregroundColor: primaryColor,
-          side: const BorderSide(color: primaryColor),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-        ),
-      ),
-      textButtonTheme: TextButtonThemeData(
-        style: TextButton.styleFrom(
-          foregroundColor: primaryColor,
-        ),
-      ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: Colors.white,
@@ -84,19 +70,6 @@ class AppTheme {
           borderRadius: BorderRadius.circular(8),
           borderSide: const BorderSide(color: textHint),
         ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: textHint),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: primaryColor, width: 2),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: errorColor),
-        ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: Colors.white,
@@ -104,17 +77,63 @@ class AppTheme {
         unselectedItemColor: textSecondary,
         type: BottomNavigationBarType.fixed,
       ),
-      progressIndicatorTheme: const ProgressIndicatorThemeData(
-        color: primaryColor,
-        linearTrackColor: Color(0xFFE3F2FD),
+    );
+  }
+
+  /// Dark theme configuration (Not too dark - Deep Navy/Charcoal)
+  static ThemeData get darkTheme {
+    const Color darkBg = Color(0xFF121212); // Slightly lighter than pure black
+    const Color darkSurface = Color(0xFF1E1E1E);
+    const Color darkCard = Color(0xFF2C2C2C);
+    const Color darkPrimary = Color(0xFF64B5F6); // Lighter blue for better contrast
+
+    return ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.dark,
+      colorScheme: const ColorScheme.dark(
+        primary: darkPrimary,
+        secondary: secondaryColor,
+        tertiary: accentColor,
+        error: errorColor,
+        surface: darkSurface,
       ),
-      snackBarTheme: SnackBarThemeData(
-        backgroundColor: textPrimary,
-        contentTextStyle: const TextStyle(color: Colors.white),
+      scaffoldBackgroundColor: darkBg,
+      appBarTheme: const AppBarTheme(
+        backgroundColor: darkSurface,
+        foregroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+      ),
+      cardTheme: CardThemeData(
+        color: darkCard,
+        elevation: 4,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(12),
         ),
-        behavior: SnackBarBehavior.floating,
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: darkPrimary,
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: darkSurface,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: Colors.white24),
+        ),
+      ),
+      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+        backgroundColor: darkSurface,
+        selectedItemColor: darkPrimary,
+        unselectedItemColor: Colors.white70,
+        type: BottomNavigationBarType.fixed,
       ),
     );
   }

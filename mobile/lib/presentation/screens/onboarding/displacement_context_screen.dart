@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../bloc/auth/auth_bloc.dart';
@@ -18,26 +19,29 @@ class _DisplacementContextScreenState extends State<DisplacementContextScreen> {
   String? _selectedRegion;
   String? _selectedLanguage;
 
-  final List<Map<String, dynamic>> _displacementOptions = [
-    {
-      'value': AppConstants.displacementConflict,
-      'title': 'Conflict/Displacement',
-      'description': 'I was displaced due to conflict or violence',
-      'icon': Icons.warning_amber,
-    },
-    {
-      'value': AppConstants.displacementClimate,
-      'title': 'Climate Disaster',
-      'description': 'I was displaced due to floods, drought, or climate change',
-      'icon': Icons.cloud,
-    },
-    {
-      'value': AppConstants.displacementOther,
-      'title': 'Other',
-      'description': 'Other reason for displacement',
-      'icon': Icons.help_outline,
-    },
-  ];
+  List<Map<String, dynamic>> _getDisplacementOptions(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return [
+      {
+        'value': AppConstants.displacementConflict,
+        'title': l10n.conflictDisplacement,
+        'description': l10n.conflictDescription,
+        'icon': Icons.warning_amber,
+      },
+      {
+        'value': AppConstants.displacementClimate,
+        'title': l10n.climateDisaster,
+        'description': l10n.climateDescription,
+        'icon': Icons.cloud,
+      },
+      {
+        'value': AppConstants.displacementOther,
+        'title': l10n.otherReason,
+        'description': l10n.otherDescription,
+        'icon': Icons.help_outline,
+      },
+    ];
+  }
 
   final List<String> _regions = [
     'Dadaab, Kenya',
@@ -58,9 +62,12 @@ class _DisplacementContextScreenState extends State<DisplacementContextScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final displacementOptions = _getDisplacementOptions(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('About You'),
+        title: Text(l10n.aboutYou),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
@@ -73,18 +80,18 @@ class _DisplacementContextScreenState extends State<DisplacementContextScreen> {
           children: [
             // Displacement context
             Text(
-              'Why are you displaced?',
+              l10n.whyAreYouDisplaced,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 16),
-            ..._displacementOptions.map((option) => _buildOptionCard(option)),
+            ...displacementOptions.map((option) => _buildOptionCard(option)),
             const SizedBox(height: 24),
 
             // Region
             Text(
-              'Current Location',
+              l10n.currentLocation,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -92,8 +99,8 @@ class _DisplacementContextScreenState extends State<DisplacementContextScreen> {
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
               initialValue: _selectedRegion,
-              decoration: const InputDecoration(
-                hintText: 'Select your location',
+              decoration: InputDecoration(
+                hintText: l10n.selectYourLocation,
               ),
               items: _regions.map((region) => DropdownMenuItem(
                 value: region,
@@ -105,7 +112,7 @@ class _DisplacementContextScreenState extends State<DisplacementContextScreen> {
 
             // Language
             Text(
-              'Preferred Language',
+              l10n.preferredLanguage,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -128,9 +135,9 @@ class _DisplacementContextScreenState extends State<DisplacementContextScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: _selectedContext != null ? _continueToPhoneAuth : null,
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 4),
-                  child: Text('Continue'),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Text(l10n.continueButton),
                 ),
               ),
             ),

@@ -3,7 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'core/constants/app_constants.dart';
 import 'core/theme/app_theme.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'presentation/bloc/auth/auth_bloc.dart';
+import 'presentation/bloc/theme/theme_cubit.dart';
 import 'presentation/screens/home/home_screen.dart';
 import 'presentation/screens/onboarding/welcome_screen.dart';
 import 'presentation/screens/onboarding/displacement_context_screen.dart';
@@ -15,13 +18,35 @@ class EduFlowApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: AppConstants.appName,
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      home: BlocBuilder<AuthBloc, AuthState>(
-        builder: (context, state) {
-          return const AuthNavigator();
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => ThemeCubit()),
+      ],
+      child: BlocBuilder<ThemeCubit, ThemeMode>(
+        builder: (context, themeMode) {
+          return MaterialApp(
+            title: AppConstants.appName,
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            themeMode: themeMode,
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: const [
+              Locale('en'),
+              Locale('sw'),
+              Locale('am'),
+            ],
+            home: BlocBuilder<AuthBloc, AuthState>(
+              builder: (context, state) {
+                return const AuthNavigator();
+              },
+            ),
+          );
         },
       ),
     );

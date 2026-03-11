@@ -36,7 +36,10 @@ class PackListScreen extends StatelessWidget {
                   Text(state.message),
                   const SizedBox(height: 16),
                   ElevatedButton(
-                    onPressed: () => context.read<LessonBloc>().add(LoadLessonPacks()),
+                    onPressed: () {
+                      final languageCode = Localizations.localeOf(context).languageCode;
+                      context.read<LessonBloc>().add(LoadLessonPacks(language: languageCode));
+                    },
                     child: const Text('Retry'),
                   ),
                 ],

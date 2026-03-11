@@ -100,6 +100,33 @@ exports.getAdaptiveQuiz = async (req, res, next) => {
 /**
  * Download lesson pack
  */
+/**
+ * Create a new lesson pack
+ */
+exports.createLessonPack = async (req, res, next) => {
+    try {
+        const { subject, level, language, version, size_mb, storage_path } = req.body;
+        
+        const { data, error } = await supabase
+            .from('lesson_packs')
+            .insert([{
+                subject,
+                level: parseInt(level),
+                language,
+                version: parseInt(version) || 1,
+                size_mb: parseFloat(size_mb) || 0,
+                storage_path
+            }])
+            .select()
+            .single();
+
+        if (error) throw error;
+        res.status(201).json(data);
+    } catch (error) {
+        next(error);
+    }
+};
+
 exports.downloadPack = async (req, res, next) => {
     try {
         const { id } = req.params;

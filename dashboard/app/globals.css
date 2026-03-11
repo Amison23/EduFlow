@@ -2,7 +2,18 @@
     --primary: #1E88E5;
     --secondary: #43A047;
     --background: #F5F5F5;
+    --card: #FFFFFF;
     --foreground: #212121;
+    --border: #E0E0E0;
+}
+
+[data-theme='dark'] {
+    --primary: #64B5F6;
+    --secondary: #66BB6A;
+    --background: #121212;
+    --card: #1E1E1E;
+    --foreground: #F5F5F5;
+    --border: #333333;
 }
 
 * {

@@ -57,6 +57,7 @@ app.use('/api/v1/lessons', lessonsRoutes);
 app.use('/api/v1/progress', progressRoutes);
 app.use('/api/v1/community', communityRoutes);
 app.use('/api/v1/sms', smsRoutes);
+app.use('/api/v1/languages', require('./routes/language.routes'));
 app.use('/api/v1/analytics', require('./routes/analytics.routes'));
 app.use('/api/v1/admin', require('./routes/admin.routes'));
 

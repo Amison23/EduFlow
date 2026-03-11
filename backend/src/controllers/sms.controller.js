@@ -47,9 +47,59 @@ exports.handleInboundSms = async (req, res, next) => {
         } else if (command === "STOP") {
             await supabase.from('sms_sessions').delete().eq('phone_hash', phoneHash);
             response = "EduFlow: Session ended. Thank you for learning with us!";
+        } else if (command.startsWith("MATH") || command.startsWith("ENG") || command.startsWith("SWA")) {
+            // Find appropriate lesson pack
+            const subject = command.startsWith("MATH") ? "math" : (command.startsWith("ENG") ? "english" : "swahili");
+            const level = parseInt(command.replace(/[A-Z]/g, '')) || 1;
+
+            const { data: pack } = await supabase
+                .from('lesson_packs')
+                .select('id, subject, level')
+                .eq('subject', subject)
+                .eq('level', level)
+                .eq('language', session.language || 'en')
+                .single();
+
+            if (pack) {
+                // Get first lesson
+                const { data: lesson } = await supabase
+                    .from('lessons')
+                    .select('id, title, content')
+                    .eq('pack_id', pack.id)
+                    .order('sequence', { ascending: true })
+                    .limit(1)
+                    .single();
+
+                if (lesson) {
+                    await supabase
+                        .from('sms_sessions')
+                        .update({ current_pack: pack.id, current_lesson: lesson.id, question_index: 0 })
+                        .eq('phone_hash', phoneHash);
+                    
+                    response = `EduFlow ${subject.toUpperCase()} L${level}: ${lesson.title}\n${lesson.content}\n\nReply NEXT for the quiz.`;
+                } else {
+                    response = "EduFlow: No lessons found in this pack.";
+                }
+            } else {
+                response = `EduFlow: Could not find ${subject} level ${level}.`;
+            }
+        } else if (command === "NEXT" && session.current_lesson) {
+            // Get quiz question
+            const { data: questions } = await supabase
+                .from('quiz_questions')
+                .select('*')
+                .eq('lesson_id', session.current_lesson)
+                .order('created_at', { ascending: true });
+
+            if (questions && questions.length > session.question_index) {
+                const q = questions[session.question_index];
+                const options = q.options.map((o, i) => `${i+1}. ${o}`).join('\n');
+                response = `EduFlow QUIZ: ${q.question}\n${options}\n\nReply with the option number.`;
+            } else {
+                response = "EduFlow: No more questions. Send HELP for another lesson!";
+            }
         } else {
-            // Placeholder for lesson logic
-            response = `EduFlow: You sent "${command}". We are preparing your lesson pack.`;
+            response = `EduFlow: You sent "${command}". Send HELP to see available commands.`;
         }
 
         // Send response back via SMS service

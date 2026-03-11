@@ -6,10 +6,13 @@ import '../../core/errors/exceptions.dart';
 class LessonRemote {
   final ApiClient _apiClient = ApiClient();
 
-  /// Get all available lesson packs
-  Future<List<Map<String, dynamic>>> getLessonPacks() async {
+  /// Get available lesson packs
+  Future<List<Map<String, dynamic>>> getLessonPacks({String? language}) async {
     try {
-      final response = await _apiClient.get(ApiConstants.lessonPacks);
+      final response = await _apiClient.get(
+        ApiConstants.lessonPacks,
+        queryParameters: language != null ? {'language': language} : null,
+      );
       final data = response.data as Map<String, dynamic>;
       return List<Map<String, dynamic>>.from(data['packs'] ?? []);
     } on AppException {

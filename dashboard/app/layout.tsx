@@ -6,14 +6,20 @@ export const metadata = {
     description: 'NGO Dashboard for managing learner cohorts',
 }
 
+import { ThemeProvider } from '../components/ThemeProvider'
+
 export default function RootLayout({
     children,
 }: {
     children: ReactNode
 }) {
     return (
-        <html lang="en">
-            <body>{children}</body>
+        <html lang="en" suppressHydrationWarning>
+            <body>
+                <ThemeProvider attribute="data-theme" defaultTheme="system" enableSystem>
+                    {children}
+                </ThemeProvider>
+            </body>
         </html>
     )
 }

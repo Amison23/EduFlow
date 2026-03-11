@@ -17,11 +17,11 @@ class LessonRepository {
         _lessonRemote = lessonRemote;
 
   /// Get available lesson packs (from cache or server)
-  Future<({Failure? failure, List<Map<String, dynamic>> packs})> getLessonPacks() async {
+  Future<({Failure? failure, List<Map<String, dynamic>> packs})> getLessonPacks({String? language}) async {
     // If online, fetch from server
     if (_connectivityService.isOnline) {
       try {
-        final packs = await _lessonRemote.getLessonPacks();
+        final packs = await _lessonRemote.getLessonPacks(language: language);
         return (packs: packs, failure: null);
       } catch (e) {
         return (packs: <Map<String, dynamic>>[], failure: ServerFailure(e.toString()));

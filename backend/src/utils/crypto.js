@@ -48,3 +48,17 @@ exports.verifyHmac = (data, signature, secret) => {
         Buffer.from(expectedSignature)
     );
 };
+/**
+ * Hash password using SHA-256 (Simple for demo, should use bcrypt in production)
+ */
+exports.hashPassword = (password) => {
+    return crypto.createHash('sha256').update(password).digest('hex');
+};
+
+/**
+ * Compare password
+ */
+exports.comparePassword = (provided, stored) => {
+    const providedHash = exports.hashPassword(provided);
+    return providedHash === stored;
+};

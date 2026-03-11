@@ -6,7 +6,11 @@ abstract class LessonEvent {
 }
 
 /// Load all lesson packs
-class LoadLessonPacks extends LessonEvent {}
+class LoadLessonPacks extends LessonEvent {
+  final String? language;
+
+  const LoadLessonPacks({this.language});
+}
 
 /// Load lessons for a specific pack
 class LoadLessonsForPack extends LessonEvent {

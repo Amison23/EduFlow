@@ -1,28 +1,28 @@
-'use client';
-
 import Link from 'next/link';
 import { ReactNode, useState } from 'react';
+import Cookies from 'js-cookie';
+import { ThemeToggle } from '../../components/ThemeToggle';
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     return (
-        <div className="min-h-screen bg-gray-50 font-sans">
-            <nav className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+        <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans transition-colors duration-300">
+            <nav className="bg-[var(--card)] shadow-sm border-b border-[var(--border)] sticky top-0 z-50 transition-colors duration-300">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
                         <div className="flex">
                             <div className="flex-shrink-0 flex items-center">
-                                <span className="text-2xl font-black text-blue-600 tracking-tighter">EduFlow</span>
+                                <span className="text-2xl font-black text-[var(--primary)] tracking-tighter">EduFlow</span>
                             </div>
                             {/* Desktop Menu */}
                             <div className="hidden sm:ml-8 sm:flex sm:space-x-8">
-                                <Link href="/dashboard" className="text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 border-blue-500 text-sm font-semibold">Overview</Link>
-                                <Link href="/dashboard/learners" className="text-gray-500 hover:text-gray-700 hover:border-gray-300 inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium transition-colors">Learners</Link>
-                                <Link href="/dashboard/packs" className="text-gray-500 hover:text-gray-700 hover:border-gray-300 inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium transition-colors">Lesson Packs</Link>
-                                <Link href="/dashboard/groups" className="text-gray-500 hover:text-gray-700 hover:border-gray-300 inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium transition-colors">Study Groups</Link>
-                                <Link href="/dashboard/database" className="text-gray-500 hover:text-gray-700 hover:border-gray-300 inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium transition-colors">Database</Link>
-                                <Link href="/dashboard/settings" className="text-gray-500 hover:text-gray-700 hover:border-gray-300 inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium transition-colors">Settings</Link>
+                                <Link href="/dashboard" className="text-[var(--foreground)] inline-flex items-center px-1 pt-1 border-b-2 border-[var(--primary)] text-sm font-semibold">Overview</Link>
+                                <Link href="/dashboard/learners" className="text-[var(--foreground)] opacity-60 hover:opacity-100 inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium transition-colors">Learners</Link>
+                                <Link href="/dashboard/packs" className="text-[var(--foreground)] opacity-60 hover:opacity-100 inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium transition-colors">Lesson Packs</Link>
+                                <Link href="/dashboard/groups" className="text-[var(--foreground)] opacity-60 hover:opacity-100 inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium transition-colors">Study Groups</Link>
+                                <Link href="/dashboard/database" className="text-[var(--foreground)] opacity-60 hover:opacity-100 inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium transition-colors">Database</Link>
+                                <Link href="/dashboard/settings" className="text-[var(--foreground)] opacity-60 hover:opacity-100 inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium transition-colors">Settings</Link>
                             </div>
                         </div>
 
@@ -43,22 +43,47 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                         </div>
 
                         <div className="hidden sm:flex items-center space-x-4">
-                            <span className="text-xs font-bold uppercase tracking-wider text-gray-400 bg-gray-100 py-1 px-3 rounded-md">Demo NGO</span>
-                            <Link href="/" className="text-sm font-medium text-gray-500 hover:text-red-600 transition-colors">Logout</Link>
+                            <ThemeToggle />
+                            <span className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)] opacity-40 bg-[var(--background)] py-1 px-3 rounded-md">Demo NGO</span>
+                            <button 
+                                onClick={() => {
+                                    Cookies.remove('accessToken');
+                                    Cookies.remove('refreshToken');
+                                    localStorage.removeItem('adminUser');
+                                    window.location.href = '/';
+                                }}
+                                className="text-sm font-medium text-[var(--foreground)] opacity-60 hover:text-red-600 transition-colors"
+                            >
+                                Logout
+                            </button>
                         </div>
                     </div>
                 </div>
 
                 {/* Mobile Menu Content */}
                 {isMenuOpen && (
-                    <div className="sm:hidden bg-white border-b border-gray-200 px-2 pt-2 pb-3 space-y-1 shadow-lg animate-in slide-in-from-top duration-200">
-                        <Link href="/dashboard" className="block px-3 py-2 rounded-md text-base font-semibold text-gray-900 bg-gray-50">Overview</Link>
-                        <Link href="/dashboard/learners" className="block px-3 py-2 rounded-md text-base font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-50">Learners</Link>
-                        <Link href="/dashboard/packs" className="block px-3 py-2 rounded-md text-base font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-50">Lesson Packs</Link>
-                        <Link href="/dashboard/groups" className="block px-3 py-2 rounded-md text-base font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-50">Study Groups</Link>
-                        <Link href="/dashboard/database" className="block px-3 py-2 rounded-md text-base font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-50">Database</Link>
-                        <Link href="/dashboard/settings" className="block px-3 py-2 rounded-md text-base font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-50">Settings</Link>
-                        <Link href="/" className="block px-3 py-2 rounded-md text-base font-medium text-red-500 hover:bg-red-50">Logout</Link>
+                    <div className="sm:hidden bg-[var(--card)] border-b border-[var(--border)] px-2 pt-2 pb-3 space-y-1 shadow-lg animate-in slide-in-from-top duration-200">
+                        <div className="flex justify-between items-center px-3 py-2">
+                            <span className="text-sm font-medium">Theme</span>
+                            <ThemeToggle />
+                        </div>
+                        <Link href="/dashboard" className="block px-3 py-2 rounded-md text-base font-semibold text-[var(--foreground)] bg-[var(--background)]">Overview</Link>
+                        <Link href="/dashboard/learners" className="block px-3 py-2 rounded-md text-base font-medium text-[var(--foreground)] opacity-60 hover:opacity-100 hover:bg-[var(--background)]">Learners</Link>
+                        <Link href="/dashboard/packs" className="block px-3 py-2 rounded-md text-base font-medium text-[var(--foreground)] opacity-60 hover:opacity-100 hover:bg-[var(--background)]">Lesson Packs</Link>
+                        <Link href="/dashboard/groups" className="block px-3 py-2 rounded-md text-base font-medium text-[var(--foreground)] opacity-60 hover:opacity-100 hover:bg-[var(--background)]">Study Groups</Link>
+                        <Link href="/dashboard/database" className="block px-3 py-2 rounded-md text-base font-medium text-[var(--foreground)] opacity-60 hover:opacity-100 hover:bg-[var(--background)]">Database</Link>
+                        <Link href="/dashboard/settings" className="block px-3 py-2 rounded-md text-base font-medium text-[var(--foreground)] opacity-60 hover:opacity-100 hover:bg-[var(--background)]">Settings</Link>
+                        <button 
+                            onClick={() => {
+                                Cookies.remove('accessToken');
+                                Cookies.remove('refreshToken');
+                                localStorage.removeItem('adminUser');
+                                window.location.href = '/';
+                            }}
+                            className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-red-500 hover:bg-red-50/10"
+                        >
+                            Logout
+                        </button>
                     </div>
                 )}
             </nav>

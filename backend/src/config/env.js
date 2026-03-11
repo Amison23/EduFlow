@@ -17,7 +17,7 @@ const config = {
 
     // JWT
     jwtSecret: process.env.JWT_SECRET,
-    jwtExpiry: '7d',
+    jwtExpiry: process.env.JWT_EXPIRY || '7d',
 
     // Africa's Talking
     africaTalkingApiKey: process.env.AFRICA_TALKING_API_KEY,
@@ -25,7 +25,7 @@ const config = {
     smsShortcode: process.env.SMS_SHORTCODE || '12345',
 
     // SMS OTP
-    otpExpiryMinutes: 10,
+    otpExpiryMinutes: parseInt(process.env.OTP_EXPIRY_MINUTES) || 10,
     otpLength: 6,
 
     // Rate limiting
@@ -35,6 +35,13 @@ const config = {
     // Sync
     syncBatchSize: 100,
     syncRetryAttempts: 3,
+
+    // SMTP Gateway
+    smtpHost: process.env.SMTP_HOST,
+    smtpPort: parseInt(process.env.SMTP_PORT) || 587,
+    smtpUser: process.env.SMTP_USER,
+    smtpPass: process.env.SMTP_PASS,
+    smtpFrom: process.env.SMTP_FROM || 'EduFlow <noreply@eduflow.app>',
 };
 
 // Validate required config

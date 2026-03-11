@@ -5,6 +5,7 @@ const { verifyToken, optionalAuth } = require('../middleware/auth.middleware');
 
 // GET /api/v1/lessons/packs - Get all lesson packs
 router.get('/packs', optionalAuth, lessonsController.getLessonPacks);
+router.post('/packs', verifyToken, lessonsController.createLessonPack);
 
 // GET /api/v1/lessons/packs/:id - Get lessons for a pack
 router.get('/packs/:id/lessons', optionalAuth, lessonsController.getLessonsForPack);

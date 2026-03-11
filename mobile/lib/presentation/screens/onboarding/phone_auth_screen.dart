@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../bloc/auth/auth_bloc.dart';
 
@@ -26,9 +27,10 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Phone Login'),
+        title: Text(l10n.phoneLogin),
       ),
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
@@ -54,14 +56,14 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
             children: [
               if (!_isOtpSent) ...[
                 Text(
-                  'Enter your phone number',
+                  l10n.enterPhoneNumber,
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'We\'ll send you a verification code',
+                  l10n.verificationCodeDesc,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: AppTheme.textSecondary,
                   ),
@@ -70,10 +72,10 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
                 TextField(
                   controller: _phoneController,
                   keyboardType: TextInputType.phone,
-                  decoration: const InputDecoration(
-                    labelText: 'Phone Number',
-                    hintText: '+254712345678',
-                    prefixIcon: Icon(Icons.phone),
+                  decoration: InputDecoration(
+                    labelText: l10n.phoneNumberLabel,
+                    hintText: l10n.phoneNumberHint,
+                    prefixIcon: const Icon(Icons.phone),
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -81,22 +83,22 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: _sendOtp,
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 4),
-                      child: Text('Send Code'),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: Text(l10n.sendCode),
                     ),
                   ),
                 ),
               ] else ...[
                 Text(
-                  'Enter the code',
+                  l10n.enterCode,
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'We sent a 6-digit code to $_phoneNumber',
+                  l10n.sentCodeTo(_phoneNumber ?? ''),
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: AppTheme.textSecondary,
                   ),
@@ -106,10 +108,10 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
                   controller: _otpController,
                   keyboardType: TextInputType.number,
                   maxLength: 6,
-                  decoration: const InputDecoration(
-                    labelText: 'Verification Code',
+                  decoration: InputDecoration(
+                    labelText: l10n.verificationCodeLabel,
                     hintText: '000000',
-                    prefixIcon: Icon(Icons.lock),
+                    prefixIcon: const Icon(Icons.lock),
                     counterText: '',
                   ),
                 ),
@@ -118,9 +120,9 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: _verifyOtp,
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 4),
-                      child: Text('Verify'),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: Text(l10n.verify),
                     ),
                   ),
                 ),
@@ -128,7 +130,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
                 Center(
                   child: TextButton(
                     onPressed: _resendOtp,
-                    child: const Text('Resend Code'),
+                    child: Text(l10n.resendCode),
                   ),
                 ),
                 Center(
@@ -139,7 +141,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
                         _otpController.clear();
                       });
                     },
-                    child: const Text('Change Phone Number'),
+                    child: Text(l10n.changePhoneNumber),
                   ),
                 ),
               ],
@@ -154,7 +156,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
     final phone = _phoneController.text.trim();
     if (phone.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a phone number')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.pleaseEnterPhone)),
       );
       return;
     }
@@ -166,7 +168,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
     final otp = _otpController.text.trim();
     if (otp.length != 6) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter the 6-digit code')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.pleaseEnterOtp)),
       );
       return;
     }
