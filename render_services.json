@@ -1,0 +1,249 @@
+﻿[
+    {
+        "cursor":  "lNl9aDklhF9hZXY1cjdiczczYWNycTkw",
+        "service":  {
+                        "autoDeploy":  "yes",
+                        "autoDeployTrigger":  "commit",
+                        "branch":  "main",
+                        "createdAt":  "2026-03-11T18:32:29.8118Z",
+                        "dashboardUrl":  "https://dashboard.render.com/web/srv-d6oraev5r7bs73acrq90",
+                        "environmentId":  "evm-d6or9m450q8c73cf5jcg",
+                        "id":  "srv-d6oraev5r7bs73acrq90",
+                        "name":  "eduflow-api",
+                        "notifyOnFail":  "default",
+                        "ownerId":  "tea-cspa1djgbbvc73e72s00",
+                        "repo":  "https://github.com/Amison23/EduFlow",
+                        "rootDir":  "backend",
+                        "serviceDetails":  {
+                                               "buildPlan":  "starter",
+                                               "cache":  {
+                                                             "profile":  "no-cache"
+                                                         },
+                                               "env":  "node",
+                                               "envSpecificDetails":  {
+                                                                          "buildCommand":  "npm install",
+                                                                          "startCommand":  "npm start"
+                                                                      },
+                                               "healthCheckPath":  "",
+                                               "ipAllowList":  [
+                                                                   {
+                                                                       "cidrBlock":  "0.0.0.0/0",
+                                                                       "description":  "everywhere"
+                                                                   }
+                                                               ],
+                                               "maintenanceMode":  {
+                                                                       "enabled":  false,
+                                                                       "uri":  ""
+                                                                   },
+                                               "numInstances":  1,
+                                               "openPorts":  null,
+                                               "plan":  "free",
+                                               "previews":  {
+                                                                "generation":  "off"
+                                                            },
+                                               "pullRequestPreviewsEnabled":  "no",
+                                               "region":  "oregon",
+                                               "runtime":  "node",
+                                               "sshAddress":  "srv-d6oraev5r7bs73acrq90@ssh.oregon.render.com",
+                                               "url":  "https://eduflow-api-ms02.onrender.com"
+                                           },
+                        "slug":  "eduflow-api-ms02",
+                        "suspended":  "not_suspended",
+                        "suspenders":  [
+
+                                       ],
+                        "type":  "web_service",
+                        "updatedAt":  "2026-03-11T19:35:15.505077Z"
+                    }
+    },
+    {
+        "cursor":  "KE5i7KXr1TNiMjQxaG03YzczZjh1aW1n",
+        "service":  {
+                        "autoDeploy":  "yes",
+                        "autoDeployTrigger":  "commit",
+                        "branch":  "main",
+                        "createdAt":  "2026-02-24T08:47:04.941743Z",
+                        "dashboardUrl":  "https://dashboard.render.com/web/srv-d6emb241hm7c73f8uimg",
+                        "id":  "srv-d6emb241hm7c73f8uimg",
+                        "name":  "fpl-assistant-backend",
+                        "notifyOnFail":  "default",
+                        "ownerId":  "tea-cspa1djgbbvc73e72s00",
+                        "repo":  "https://github.com/ShadrachAroni/fpl-assistant",
+                        "rootDir":  "backend",
+                        "serviceDetails":  {
+                                               "buildPlan":  "starter",
+                                               "cache":  {
+                                                             "profile":  "no-cache"
+                                                         },
+                                               "env":  "python",
+                                               "envSpecificDetails":  {
+                                                                          "buildCommand":  "pip install --no-cache-dir -r requirements.txt",
+                                                                          "startCommand":  "bash render-start.sh"
+                                                                      },
+                                               "healthCheckPath":  "/health",
+                                               "ipAllowList":  [
+                                                                   {
+                                                                       "cidrBlock":  "0.0.0.0/0",
+                                                                       "description":  "everywhere"
+                                                                   }
+                                                               ],
+                                               "maintenanceMode":  {
+                                                                       "enabled":  false,
+                                                                       "uri":  ""
+                                                                   },
+                                               "numInstances":  1,
+                                               "openPorts":  null,
+                                               "plan":  "free",
+                                               "previews":  {
+                                                                "generation":  "off"
+                                                            },
+                                               "pullRequestPreviewsEnabled":  "no",
+                                               "region":  "oregon",
+                                               "runtime":  "python",
+                                               "sshAddress":  "srv-d6emb241hm7c73f8uimg@ssh.oregon.render.com",
+                                               "url":  "https://fpl-assistant-backend.onrender.com"
+                                           },
+                        "slug":  "fpl-assistant-backend",
+                        "suspended":  "not_suspended",
+                        "suspenders":  [
+
+                                       ],
+                        "type":  "web_service",
+                        "updatedAt":  "2026-03-01T17:14:25.498377Z"
+                    }
+    },
+    {
+        "cursor":  "J31GEVfVwopyYWdncGg2YzczZDczaGUw",
+        "service":  {
+                        "autoDeploy":  "yes",
+                        "autoDeployTrigger":  "commit",
+                        "branch":  "main",
+                        "createdAt":  "2024-12-29T12:16:42.799538Z",
+                        "dashboardUrl":  "https://dashboard.render.com/static/srv-ctojraggph6c73d73he0",
+                        "id":  "srv-ctojraggph6c73d73he0",
+                        "name":  "FreshFinds-Admin",
+                        "notifyOnFail":  "default",
+                        "ownerId":  "tea-cspa1djgbbvc73e72s00",
+                        "repo":  "https://github.com/ShadrachAroni/FreshFinds",
+                        "rootDir":  "admin",
+                        "serviceDetails":  {
+                                               "buildCommand":  "npm install; npm run build",
+                                               "buildPlan":  "starter",
+                                               "ipAllowList":  [
+                                                                   {
+                                                                       "cidrBlock":  "0.0.0.0/0",
+                                                                       "description":  "everywhere"
+                                                                   }
+                                                               ],
+                                               "previews":  {
+                                                                "generation":  "off"
+                                                            },
+                                               "publishPath":  "./dist",
+                                               "pullRequestPreviewsEnabled":  "no",
+                                               "url":  "https://freshfinds-admin.onrender.com"
+                                           },
+                        "slug":  "freshfinds-admin",
+                        "suspended":  "not_suspended",
+                        "suspenders":  [
+
+                                       ],
+                        "type":  "static_site",
+                        "updatedAt":  "2026-02-22T19:09:32.258898Z"
+                    }
+    },
+    {
+        "cursor":  "J31GEVfVwoppc2dncGg2YzczZDcxbmhn",
+        "service":  {
+                        "autoDeploy":  "yes",
+                        "autoDeployTrigger":  "commit",
+                        "branch":  "main",
+                        "createdAt":  "2024-12-29T11:58:43.249528Z",
+                        "dashboardUrl":  "https://dashboard.render.com/static/srv-ctojisggph6c73d71nhg",
+                        "id":  "srv-ctojisggph6c73d71nhg",
+                        "name":  "FreshFinds",
+                        "notifyOnFail":  "default",
+                        "ownerId":  "tea-cspa1djgbbvc73e72s00",
+                        "repo":  "https://github.com/ShadrachAroni/FreshFinds",
+                        "rootDir":  "frontend",
+                        "serviceDetails":  {
+                                               "buildCommand":  "npm install; npm run build",
+                                               "buildPlan":  "starter",
+                                               "ipAllowList":  [
+                                                                   {
+                                                                       "cidrBlock":  "0.0.0.0/0",
+                                                                       "description":  "everywhere"
+                                                                   }
+                                                               ],
+                                               "previews":  {
+                                                                "generation":  "off"
+                                                            },
+                                               "publishPath":  "./dist",
+                                               "pullRequestPreviewsEnabled":  "no",
+                                               "url":  "https://freshfinds-29lj.onrender.com"
+                                           },
+                        "slug":  "freshfinds-29lj",
+                        "suspended":  "not_suspended",
+                        "suspenders":  [
+
+                                       ],
+                        "type":  "static_site",
+                        "updatedAt":  "2026-02-22T19:09:34.167005Z"
+                    }
+    },
+    {
+        "cursor":  "J31GEVfVwopmbWdncGg2YzczZDcxM3Fn",
+        "service":  {
+                        "autoDeploy":  "yes",
+                        "autoDeployTrigger":  "commit",
+                        "branch":  "main",
+                        "createdAt":  "2024-12-29T11:51:54.817465Z",
+                        "dashboardUrl":  "https://dashboard.render.com/web/srv-ctojfmggph6c73d713qg",
+                        "id":  "srv-ctojfmggph6c73d713qg",
+                        "name":  "FreshFinds-Backend",
+                        "notifyOnFail":  "default",
+                        "ownerId":  "tea-cspa1djgbbvc73e72s00",
+                        "repo":  "https://github.com/ShadrachAroni/FreshFinds",
+                        "rootDir":  "backend",
+                        "serviceDetails":  {
+                                               "buildPlan":  "starter",
+                                               "cache":  {
+                                                             "profile":  "no-cache"
+                                                         },
+                                               "env":  "node",
+                                               "envSpecificDetails":  {
+                                                                          "buildCommand":  "npm install",
+                                                                          "startCommand":  "node server.js"
+                                                                      },
+                                               "healthCheckPath":  "",
+                                               "ipAllowList":  [
+                                                                   {
+                                                                       "cidrBlock":  "0.0.0.0/0",
+                                                                       "description":  "everywhere"
+                                                                   }
+                                                               ],
+                                               "maintenanceMode":  {
+                                                                       "enabled":  false,
+                                                                       "uri":  ""
+                                                                   },
+                                               "numInstances":  1,
+                                               "openPorts":  null,
+                                               "plan":  "free",
+                                               "previews":  {
+                                                                "generation":  "off"
+                                                            },
+                                               "pullRequestPreviewsEnabled":  "no",
+                                               "region":  "oregon",
+                                               "runtime":  "node",
+                                               "sshAddress":  "srv-ctojfmggph6c73d713qg@ssh.oregon.render.com",
+                                               "url":  "https://freshfinds-backend.onrender.com"
+                                           },
+                        "slug":  "freshfinds-backend",
+                        "suspended":  "not_suspended",
+                        "suspenders":  [
+
+                                       ],
+                        "type":  "web_service",
+                        "updatedAt":  "2026-02-22T18:58:17.683167Z"
+                    }
+    }
+]
