@@ -46,6 +46,20 @@ app.use(express.urlencoded({ extended: true }));
 // Request logging
 app.use(requestLogger);
 
+// Root status
+app.get('/', (req, res) => {
+    res.json({
+        name: 'EduFlow API',
+        status: 'running',
+        version: '1.0.0',
+        message: 'Welcome to the EduFlow Backend System',
+        environment: config.nodeEnv || 'development'
+    });
+});
+
+// Ignore favicon requests to prevent 404 logs in browsers
+app.get('/favicon.ico', (req, res) => res.status(204).end());
+
 // Health check
 app.get('/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });

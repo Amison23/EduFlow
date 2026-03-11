@@ -40,6 +40,8 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.x'
+      - name: Create environment configuration
+        run: cd mobile && cp .env.example .env
       - name: Install dependencies
         run: cd mobile && flutter pub get
       - name: Run analyze

@@ -79,7 +79,7 @@ Both the Mobile App and the Dashboard use environment variables to locate the Ba
 Edit `mobile/.env` and update `API_BASE_URL`:
 - **Local (Android Emulator):** `API_BASE_URL=http://10.0.2.2:5000/api/v1`
 - **Local (iOS Simulator/Web):** `API_BASE_URL=http://localhost:5000/api/v1`
-- **Live Deployment:** `API_BASE_URL=https://<your-render-url>/api/v1`
+- **Live Deployment:** `API_BASE_URL=https://eduflow-api-ms02.onrender.com/api/v1`
 *(Run `flutter run` or hot restart after changing the file)*
 
 #### Dashboard Configuration
