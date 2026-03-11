@@ -21,7 +21,17 @@ app.set('trust proxy', 1);
 
 // Security middleware
 app.use(helmet());
-app.use(cors());
+app.use(cors({
+    origin: [
+        'http://localhost:3000',
+        'http://localhost:5000',
+        'https://dashboard-lilac-beta-95.vercel.app',
+        /\.vercel\.app$/,
+    ],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 
 // Rate limiting
 const generalLimiter = rateLimit({
@@ -32,7 +42,7 @@ const generalLimiter = rateLimit({
 
 const authLimiter = rateLimit({
     windowMs: 60 * 60 * 1000, // 1 hour window
-    max: 10, // 10 attempts per hour
+    max: 20, // 20 attempts per hour
     message: { error: 'Too many login attempts, please try again after an hour.' }
 });
 
