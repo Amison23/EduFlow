@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import Cookies from 'js-cookie';
+import { forceLogout } from './session';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -9,15 +10,15 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
 /**
- * Fetch with Automatic Token Refresh & Error Handling
+ * Fetch with Automatic Token Refresh & Graceful Session Expiry
  */
-async function apiFetch(endpoint: string, options: RequestInit = {}) {
-    let token = Cookies.get('accessToken');
+async function apiFetch(endpoint: string, options: RequestInit = {}, _retried = false): Promise<any> {
+    const token = Cookies.get('accessToken');
 
-    const headers = {
+    const headers: Record<string, string> = {
         'Content-Type': 'application/json',
         ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
-        ...options.headers,
+        ...(options.headers as Record<string, string>),
     };
 
     let response = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -25,39 +26,52 @@ async function apiFetch(endpoint: string, options: RequestInit = {}) {
         headers,
     });
 
-    // Handle 401 Unauthorized (Potential token expiry)
+    // Handle 401 Unauthorized
     if (response.status === 401) {
-        const refreshToken = Cookies.get('refreshToken');
-        if (refreshToken) {
-            const refreshRes = await fetch(`${API_BASE_URL}/auth/refresh-token`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ refreshToken }),
-            });
+        // Skip refresh for login endpoint itself to avoid loops
+        if (endpoint === '/admin/login') {
+            const error = await response.json().catch(() => ({}));
+            throw new Error(error.error || 'Invalid credentials');
+        }
 
-            if (refreshRes.ok) {
-                const refreshed = await refreshRes.json();
-                const newAccessToken = refreshed.token || refreshed.accessToken;
-                const newRefreshToken = refreshed.refreshToken;
-                
-                Cookies.set('accessToken', newAccessToken, { expires: 7 });
-                Cookies.set('refreshToken', newRefreshToken, { expires: 30 });
-
-                // Retry original request with new token
-                return apiFetch(endpoint, {
-                    ...options,
-                    headers: {
-                        ...options.headers,
-                        'Authorization': `Bearer ${newAccessToken}`
-                    }
+        // Attempt token refresh if a refresh token is present
+        if (!_retried) {
+            const refreshToken = Cookies.get('refreshToken');
+            if (refreshToken) {
+                const refreshRes = await fetch(`${API_BASE_URL}/auth/refresh-token`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ refreshToken }),
                 });
+
+                if (refreshRes.ok) {
+                    const refreshed = await refreshRes.json();
+                    const newAccessToken = refreshed.token || refreshed.accessToken;
+                    const newRefreshToken = refreshed.refreshToken;
+
+                    Cookies.set('accessToken', newAccessToken, { expires: 7 });
+                    if (newRefreshToken) Cookies.set('refreshToken', newRefreshToken, { expires: 30 });
+
+                    // Retry once with the new token
+                    return apiFetch(endpoint, options, true);
+                }
             }
         }
+
+        // No refresh token or refresh failed — session is expired
+        forceLogout('expired');
+        throw new Error('Session expired. Please log in again.');
+    }
+
+    // Handle 403 Forbidden — unauthorized role
+    if (response.status === 403) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Access denied. Insufficient permissions.');
     }
 
     if (!response.ok) {
         const error = await response.json().catch(() => ({}));
-        throw new Error(error.error || error.message || 'API Request failed');
+        throw new Error(error.error || error.message || `Request failed (${response.status})`);
     }
 
     return response.json();
@@ -65,10 +79,15 @@ async function apiFetch(endpoint: string, options: RequestInit = {}) {
 
 export const api = {
     get: (endpoint: string) => apiFetch(endpoint, { method: 'GET' }),
-    post: (endpoint: string, body: any) => apiFetch(endpoint, { 
-        method: 'POST', 
-        body: JSON.stringify(body) 
+    post: (endpoint: string, body: any) => apiFetch(endpoint, {
+        method: 'POST',
+        body: JSON.stringify(body)
     }),
+    put: (endpoint: string, body: any) => apiFetch(endpoint, {
+        method: 'PUT',
+        body: JSON.stringify(body)
+    }),
+    delete: (endpoint: string) => apiFetch(endpoint, { method: 'DELETE' }),
     getLearners: () => apiFetch('/auth/learners'),
     getLearnerDetails: (id: string) => apiFetch(`/auth/profile/${id}`),
     getAnalytics: () => apiFetch('/analytics/overview'),

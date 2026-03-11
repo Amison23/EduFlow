@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Cookies from 'js-cookie';
 import { api } from '@/lib/api';
 import { ThemeToggle } from '../components/ThemeToggle';
@@ -12,6 +12,9 @@ export default function LoginPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const sessionReason = searchParams.get('session');
+
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -41,6 +44,18 @@ export default function LoginPage() {
                 </div>
 
                 <form onSubmit={handleLogin} className="space-y-6">
+                    {sessionReason === 'expired' && (
+                        <div className="bg-amber-50 text-amber-800 p-3 rounded-md text-sm font-medium border border-amber-200 flex items-center gap-2">
+                            <span>⏱</span>
+                            <span>Your session expired. Please log in again to continue.</span>
+                        </div>
+                    )}
+                    {sessionReason === 'unauthorized' && (
+                        <div className="bg-red-50 text-red-700 p-3 rounded-md text-sm font-medium border border-red-200 flex items-center gap-2">
+                            <span>🔒</span>
+                            <span>Access denied. Please log in with an admin account.</span>
+                        </div>
+                    )}
                     {error && (
                         <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm font-medium border border-red-100 animate-in fade-in slide-in-from-top-1">
                             {error}

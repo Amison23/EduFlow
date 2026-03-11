@@ -1,10 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { ReactNode, useState, useEffect } from 'react';
+import { ReactNode, useState, useEffect, useCallback } from 'react';
 import { usePathname } from 'next/navigation';
-import Cookies from 'js-cookie';
 import { ThemeToggle } from '../../components/ThemeToggle';
+import { getTokenSecondsRemaining, isSessionExpired, forceLogout } from '../../lib/session';
 
 interface AdminUser {
     id: string;
@@ -17,12 +17,26 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     const pathname = usePathname();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [admin, setAdmin] = useState<AdminUser | null>(null);
+    const [sessionWarning, setSessionWarning] = useState<number | null>(null); // seconds remaining
+
+    const checkSession = useCallback(() => {
+        if (isSessionExpired()) {
+            forceLogout('expired');
+            return;
+        }
+        const secs = getTokenSecondsRemaining();
+        setSessionWarning(secs < 300 ? secs : null); // warn when <5 min left
+    }, []);
 
     useEffect(() => {
         try {
             const stored = localStorage.getItem('adminUser');
             if (stored) setAdmin(JSON.parse(stored));
         } catch {}
+
+        checkSession();
+        const interval = setInterval(checkSession, 30_000); // check every 30s
+        return () => clearInterval(interval);
     }, []);
 
     const isMasterAdmin = admin?.role === 'master_admin';
@@ -59,15 +73,33 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                 : 'text-[var(--foreground)] opacity-70 hover:opacity-100 hover:bg-[var(--background)]'
         }`;
 
-    const handleLogout = () => {
-        Cookies.remove('accessToken');
-        Cookies.remove('refreshToken');
-        localStorage.removeItem('adminUser');
-        window.location.href = '/';
+    const handleLogout = () => forceLogout();
+
+    const fmtCountdown = (secs: number) => {
+        const m = Math.floor(secs / 60);
+        const s = secs % 60;
+        return m > 0 ? `${m}m ${s}s` : `${s}s`;
     };
 
     return (
         <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans transition-colors duration-300">
+            {/* Session expiry warning banner */}
+            {sessionWarning !== null && (
+                <div className="sticky top-0 z-[60] bg-amber-500 text-white px-4 py-2 flex items-center justify-between text-sm font-medium shadow-md">
+                    <span>
+                        ⚠️ Your session expires in <strong>{fmtCountdown(sessionWarning)}</strong>. Save your work.
+                    </span>
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => forceLogout()}
+                            className="underline font-bold hover:opacity-80 text-xs"
+                        >
+                            Logout now
+                        </button>
+                        <button onClick={() => setSessionWarning(null)} className="opacity-70 hover:opacity-100">✕</button>
+                    </div>
+                </div>
+            )}
             <nav className="bg-[var(--card)] shadow-sm border-b border-[var(--border)] sticky top-0 z-50 transition-colors duration-300">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
