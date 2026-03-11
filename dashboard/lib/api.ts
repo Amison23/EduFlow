@@ -89,7 +89,6 @@ export const api = {
     }),
     delete: (endpoint: string) => apiFetch(endpoint, { method: 'DELETE' }),
     getLearners: () => apiFetch('/auth/learners'),
-    getLearnerDetails: (id: string) => apiFetch(`/auth/profile/${id}`),
     getAnalytics: () => apiFetch('/analytics/overview'),
     getDetailedAnalytics: () => apiFetch('/analytics/detailed'),
     getLessonPacks: () => apiFetch('/lessons/packs'),

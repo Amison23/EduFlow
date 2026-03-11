@@ -48,7 +48,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         { href: '/dashboard/packs', label: 'Lesson Packs', exact: false, masterOnly: false },
         { href: '/dashboard/groups', label: 'Study Groups', exact: false, masterOnly: false },
         { href: '/dashboard/admins', label: 'Manage Admins', exact: false, masterOnly: true },
-        { href: '/dashboard/database', label: 'Database', exact: false, masterOnly: true },
+        { href: '/dashboard/database', label: 'Data Manager', exact: false, masterOnly: true },
         { href: '/dashboard/settings', label: 'Settings', exact: false, masterOnly: false },
     ];
 
@@ -56,7 +56,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
     const isActive = (href: string, exact: boolean) => {
         if (exact) return pathname === href;
-        return pathname.startsWith(href);
+        // Prevent '/dashboard' from matching '/dashboard/analytics'
+        // by requiring the match to be followed by '/' or end-of-string
+        return pathname === href || pathname.startsWith(href + '/');
     };
 
     const linkClass = (href: string, exact: boolean) =>

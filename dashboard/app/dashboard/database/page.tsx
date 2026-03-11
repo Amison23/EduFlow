@@ -1,95 +1,298 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { api } from '@/lib/api';
+import { useToast } from '@/components/ToastProvider';
 
-export default function DatabaseExplorer() {
-    const [query, setQuery] = useState('LIST_TABLES');
-    const [results, setResults] = useState<any[]>([]);
-    const [tables, setTables] = useState<string[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
+const TABS = ['Learners', 'Languages', 'Lesson Packs', 'Admins'];
 
-    const runQuery = async () => {
-        setLoading(true);
-        setError('');
-        try {
-            const data = await api.post('/admin/query', { query });
-            if (data.tables) setTables(data.tables);
-            if (data.results) setResults(data.results);
-        } catch (err: any) {
-            setError(err.message || 'Failed to execute query');
-        } finally {
-            setLoading(false);
+type TabName = 'Learners' | 'Languages' | 'Lesson Packs' | 'Admins';
+
+export default function DataManagerPage() {
+    const [activeTab, setActiveTab] = useState<TabName>('Languages');
+    const { success, error: toastError, info } = useToast();
+
+    // --- Languages ---
+    const [languages, setLanguages] = useState<any[]>([]);
+    const [langLoading, setLangLoading] = useState(false);
+    const [newLang, setNewLang] = useState({ name: '', code: '' });
+    const [addingLang, setAddingLang] = useState(false);
+
+    // --- Learners ---
+    const [learners, setLearners] = useState<any[]>([]);
+    const [learnersLoading, setLearnersLoading] = useState(false);
+    const [learnerSearch, setLearnerSearch] = useState('');
+
+    // --- Packs ---
+    const [packs, setPacks] = useState<any[]>([]);
+    const [packsLoading, setPacksLoading] = useState(false);
+
+    // --- Admins ---
+    const [admins, setAdmins] = useState<any[]>([]);
+    const [adminsLoading, setAdminsLoading] = useState(false);
+
+    const inputClass = "w-full px-3 py-2 text-sm border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary)] placeholder:opacity-40 transition";
+
+    // Load data for each tab on first visit
+    useEffect(() => {
+        if (activeTab === 'Languages' && languages.length === 0) {
+            setLangLoading(true);
+            api.getLanguages().then(d => setLanguages(Array.isArray(d) ? d : [])).catch(e => toastError(e.message)).finally(() => setLangLoading(false));
         }
+        if (activeTab === 'Learners' && learners.length === 0) {
+            setLearnersLoading(true);
+            api.getLearners().then(d => setLearners(Array.isArray(d) ? d : [])).catch(e => toastError(e.message)).finally(() => setLearnersLoading(false));
+        }
+        if (activeTab === 'Lesson Packs' && packs.length === 0) {
+            setPacksLoading(true);
+            api.getLessonPacks().then(d => setPacks(Array.isArray(d) ? d : [])).catch(e => toastError(e.message)).finally(() => setPacksLoading(false));
+        }
+        if (activeTab === 'Admins' && admins.length === 0) {
+            setAdminsLoading(true);
+            api.getAllAdmins().then(d => setAdmins(Array.isArray(d) ? d : [])).catch(e => toastError(e.message)).finally(() => setAdminsLoading(false));
+        }
+    }, [activeTab]);
+
+    // --- Language operations ---
+    const handleAddLanguage = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!newLang.code || !newLang.name) return;
+        setAddingLang(true);
+        try {
+            const added = await api.addLanguage(newLang);
+            setLanguages(prev => [...prev, added]);
+            setNewLang({ name: '', code: '' });
+            success(`Language "${newLang.name}" added!`);
+        } catch (e: any) { toastError(e.message || 'Failed to add language'); }
+        finally { setAddingLang(false); }
     };
+
+    const toggleLanguage = async (lang: any) => {
+        try {
+            const updated = await api.updateLanguage(lang.id, { is_active: !lang.is_active });
+            setLanguages(prev => prev.map(l => l.id === lang.id ? { ...l, is_active: !l.is_active } : l));
+            info(`${lang.name} ${!lang.is_active ? 'activated' : 'deactivated'}`);
+        } catch (e: any) { toastError(e.message); }
+    };
+
+    // --- Admins operations ---
+    const handleDeleteAdmin = async (id: string, email: string) => {
+        info(`Removing ${email}…`);
+        try {
+            await api.deleteAdmin(id);
+            setAdmins(prev => prev.filter(a => a.id !== id));
+            success(`Admin ${email} removed.`);
+        } catch (e: any) { toastError(e.message || 'Failed to remove admin'); }
+    };
+
+    // Filtered learners
+    const filteredLearners = learners.filter(l =>
+        !learnerSearch || (l.name || '').toLowerCase().includes(learnerSearch.toLowerCase()) ||
+        (l.region || '').toLowerCase().includes(learnerSearch.toLowerCase())
+    );
+
+    const Spinner = () => (
+        <div className="flex justify-center items-center py-16">
+            <div className="animate-spin w-7 h-7 border-4 border-[var(--primary)] border-t-transparent rounded-full" />
+        </div>
+    );
+
+    const EmptyState = ({ icon, label }: { icon: string; label: string }) => (
+        <div className="text-center py-16 text-[var(--foreground)] opacity-40">
+            <div className="text-4xl mb-3">{icon}</div>
+            <p className="text-sm font-medium">{label}</p>
+        </div>
+    );
 
     return (
         <div className="space-y-6">
-            <h1 className="text-3xl font-bold text-gray-900">Database Explorer</h1>
-            
-            <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Safe SQL Query (SELECT only)</label>
-                <div className="flex gap-4">
-                    <input 
-                        type="text" 
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                        placeholder="SELECT * FROM learners..."
-                        className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
-                    />
-                    <button 
-                        onClick={runQuery}
-                        disabled={loading}
-                        className="bg-gray-900 text-white px-6 py-2 rounded-lg font-medium hover:bg-black transition disabled:opacity-50"
-                    >
-                        {loading ? 'Running...' : 'Run Query'}
-                    </button>
-                </div>
-                {error && <p className="mt-2 text-sm text-red-600 font-medium">{error}</p>}
+            {/* Header */}
+            <div>
+                <h1 className="text-2xl font-bold text-[var(--foreground)]">Data Manager</h1>
+                <p className="text-sm text-[var(--foreground)] opacity-50 mt-1">
+                    Browse, create, and manage all platform data entities.
+                </p>
             </div>
 
-            {tables.length > 0 && (
-                <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                    <h3 className="text-lg font-semibold mb-4">Available Tables</h3>
-                    <div className="flex flex-wrap gap-2">
-                        {tables.map(t => (
-                            <button 
-                                key={t} 
-                                onClick={() => { setQuery(`SELECT * FROM ${t}`); runQuery(); }}
-                                className="px-3 py-1 bg-blue-50 text-blue-700 rounded-md text-sm border border-blue-100 hover:bg-blue-100"
-                            >
-                                {t}
+            {/* Tabs */}
+            <div className="flex gap-1 p-1 bg-[var(--background)] rounded-xl border border-[var(--border)] w-fit overflow-x-auto">
+                {TABS.map(tab => (
+                    <button
+                        key={tab}
+                        onClick={() => setActiveTab(tab as TabName)}
+                        className={`px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all ${
+                            activeTab === tab
+                                ? 'bg-[var(--primary)] text-white shadow-sm'
+                                : 'text-[var(--foreground)] opacity-60 hover:opacity-100'
+                        }`}
+                    >
+                        {tab}
+                    </button>
+                ))}
+            </div>
+
+            {/* ── LANGUAGES TAB ── */}
+            {activeTab === 'Languages' && (
+                <div className="space-y-4">
+                    {/* Add form */}
+                    <div className="dashboard-card p-5">
+                        <h2 className="text-sm font-semibold text-[var(--foreground)] opacity-70 uppercase tracking-wide mb-3">Add Language</h2>
+                        <form onSubmit={handleAddLanguage} className="flex flex-col sm:flex-row gap-3">
+                            <input value={newLang.name} onChange={e => setNewLang({ ...newLang, name: e.target.value })} placeholder="Language name (e.g. Somali)" className={inputClass + ' flex-1'} />
+                            <input value={newLang.code} onChange={e => setNewLang({ ...newLang, code: e.target.value.toLowerCase() })} placeholder="Code (e.g. so)" maxLength={5} className={inputClass + ' sm:w-32'} />
+                            <button type="submit" disabled={addingLang || !newLang.name || !newLang.code}
+                                className="px-5 py-2 bg-[var(--primary)] text-white text-sm font-semibold rounded-lg hover:opacity-90 disabled:opacity-50 transition whitespace-nowrap">
+                                {addingLang ? 'Adding…' : '+ Add'}
                             </button>
-                        ))}
+                        </form>
+                    </div>
+
+                    {/* Language list */}
+                    <div className="dashboard-card overflow-hidden">
+                        <div className="px-6 py-4 border-b border-[var(--border)] flex justify-between items-center">
+                            <h2 className="text-sm font-semibold text-[var(--foreground)] opacity-70 uppercase tracking-wide">{languages.length} Languages</h2>
+                            <button onClick={() => { setLangLoading(true); api.getLanguages().then(d => setLanguages(Array.isArray(d) ? d : [])).finally(() => setLangLoading(false)); }}
+                                className="text-xs text-[var(--primary)] hover:underline font-semibold">↻ Refresh</button>
+                        </div>
+                        {langLoading ? <Spinner /> : languages.length === 0 ? <EmptyState icon="🌐" label="No languages added yet" /> : (
+                            <div className="divide-y divide-[var(--border)]">
+                                {languages.map(lang => (
+                                    <div key={lang.id} className="px-6 py-4 flex items-center justify-between hover:bg-[var(--background)] transition-colors">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-10 h-10 rounded-lg bg-[var(--primary)]/10 flex items-center justify-center">
+                                                <span className="text-xs font-black text-[var(--primary)] uppercase">{lang.code}</span>
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-semibold text-[var(--foreground)]">{lang.name}</p>
+                                                <p className="text-xs text-[var(--foreground)] opacity-40 uppercase tracking-wide font-bold">{lang.code}</p>
+                                            </div>
+                                        </div>
+                                        <button onClick={() => toggleLanguage(lang)}
+                                            className={`px-3 py-1.5 rounded-full text-xs font-bold transition ${lang.is_active ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-red-100 text-red-700 hover:bg-red-200'}`}>
+                                            {lang.is_active ? '● Active' : '○ Inactive'}
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 </div>
             )}
 
-            {results.length > 0 && (
-                <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-                    <div className="overflow-x-auto">
-                        <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-50">
-                                <tr>
-                                    {Object.keys(results[0]).map(key => (
-                                        <th key={key} className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">{key}</th>
-                                    ))}
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-200">
-                                {results.map((row, i) => (
-                                    <tr key={i} className="hover:bg-gray-50">
-                                        {Object.values(row).map((val: any, j) => (
-                                            <td key={j} className="px-4 py-3 text-sm text-gray-600 truncate max-w-xs">
-                                                {typeof val === 'object' ? JSON.stringify(val) : String(val)}
-                                            </td>
+            {/* ── LEARNERS TAB ── */}
+            {activeTab === 'Learners' && (
+                <div className="space-y-4">
+                    <div className="dashboard-card p-4 flex flex-col sm:flex-row gap-3">
+                        <input value={learnerSearch} onChange={e => setLearnerSearch(e.target.value)} placeholder="Search by name or region…" className={inputClass + ' flex-1'} />
+                        <span className="text-xs text-[var(--foreground)] opacity-50 self-center whitespace-nowrap">{filteredLearners.length} results</span>
+                    </div>
+                    <div className="dashboard-card overflow-hidden">
+                        {learnersLoading ? <Spinner /> : filteredLearners.length === 0 ? <EmptyState icon="🎓" label="No learners found" /> : (
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-sm">
+                                    <thead>
+                                        <tr className="border-b border-[var(--border)]">
+                                            {['Learner', 'Region', 'Language', 'Progress', 'Enrolled'].map(h => (
+                                                <th key={h} className="px-6 py-3 text-left text-xs font-semibold text-[var(--foreground)] opacity-50 uppercase tracking-wide">{h}</th>
+                                            ))}
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-[var(--border)]">
+                                        {filteredLearners.map(l => (
+                                            <tr key={l.id} className="hover:bg-[var(--background)] transition-colors">
+                                                <td className="px-6 py-4 font-medium text-[var(--foreground)]">{l.name || `#${l.id}`}</td>
+                                                <td className="px-6 py-4 text-[var(--foreground)] opacity-70">{l.region || '—'}</td>
+                                                <td className="px-6 py-4">
+                                                    <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-[var(--primary)]/10 text-[var(--primary)]">{l.language || '—'}</span>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="w-20 h-1.5 bg-[var(--border)] rounded-full overflow-hidden">
+                                                            <div className="h-1.5 bg-[var(--primary)] rounded-full" style={{ width: `${l.progress || 0}%` }} />
+                                                        </div>
+                                                        <span className="text-xs font-semibold text-[var(--foreground)] opacity-60">{l.progress || 0}%</span>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 text-[var(--foreground)] opacity-50 text-xs">
+                                                    {l.created_at ? new Date(l.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: '2-digit' }) : '—'}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
+
+            {/* ── LESSON PACKS TAB ── */}
+            {activeTab === 'Lesson Packs' && (
+                <div className="dashboard-card overflow-hidden">
+                    {packsLoading ? <Spinner /> : packs.length === 0 ? <EmptyState icon="📦" label="No lesson packs found" /> : (
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-sm">
+                                <thead>
+                                    <tr className="border-b border-[var(--border)]">
+                                        {['Pack', 'Type', 'Lessons', 'Language', 'Status'].map(h => (
+                                            <th key={h} className="px-6 py-3 text-left text-xs font-semibold text-[var(--foreground)] opacity-50 uppercase tracking-wide">{h}</th>
                                         ))}
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+                                </thead>
+                                <tbody className="divide-y divide-[var(--border)]">
+                                    {packs.map((p: any) => (
+                                        <tr key={p.id} className="hover:bg-[var(--background)] transition-colors">
+                                            <td className="px-6 py-4 font-semibold text-[var(--foreground)]">{p.name || p.title || '—'}</td>
+                                            <td className="px-6 py-4 text-[var(--foreground)] opacity-70">{p.type || '—'}</td>
+                                            <td className="px-6 py-4 text-[var(--foreground)] opacity-70">{p.lesson_count ?? p.lessons ?? '—'}</td>
+                                            <td className="px-6 py-4">
+                                                <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-[var(--primary)]/10 text-[var(--primary)]">{p.language || '—'}</span>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span className={`px-2 py-0.5 text-xs font-bold rounded-full ${p.is_active !== false ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>
+                                                    {p.is_active !== false ? 'Active' : 'Inactive'}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
+                </div>
+            )}
+
+            {/* ── ADMINS TAB ── */}
+            {activeTab === 'Admins' && (
+                <div className="dashboard-card overflow-hidden">
+                    {adminsLoading ? <Spinner /> : admins.length === 0 ? <EmptyState icon="👤" label="No admins found" /> : (
+                        <div className="divide-y divide-[var(--border)]">
+                            {admins.map(a => (
+                                <div key={a.id} className="px-6 py-4 flex items-center justify-between hover:bg-[var(--background)] transition-colors">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-9 h-9 rounded-full bg-[var(--primary)]/10 flex items-center justify-center text-[var(--primary)] text-sm font-black">
+                                            {(a.name || a.email || 'A')[0].toUpperCase()}
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-semibold text-[var(--foreground)]">{a.name || '—'}</p>
+                                            <p className="text-xs text-[var(--foreground)] opacity-50">{a.email}</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <span className={`px-2 py-0.5 text-[10px] font-black uppercase rounded-full ${
+                                            a.role === 'master_admin' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'
+                                        }`}>{a.role?.replace('_', ' ')}</span>
+                                        {a.role !== 'master_admin' && (
+                                            <button onClick={() => handleDeleteAdmin(a.id, a.email)}
+                                                className="text-xs text-red-500 hover:text-red-700 font-semibold hover:underline transition-colors">
+                                                Remove
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             )}
         </div>
