@@ -8,6 +8,7 @@ class LessonPack {
   final double? sizeMb;
   final String? storagePath;
   final DateTime publishedAt;
+  final bool isLocked;
 
   const LessonPack({
     required this.id,
@@ -18,6 +19,7 @@ class LessonPack {
     this.sizeMb,
     this.storagePath,
     required this.publishedAt,
+    this.isLocked = false,
   });
 
   factory LessonPack.fromJson(Map<String, dynamic> json) {
@@ -30,6 +32,7 @@ class LessonPack {
       sizeMb: (json['size_mb'] as num?)?.toDouble(),
       storagePath: json['storage_path'] as String?,
       publishedAt: DateTime.parse(json['published_at'] as String),
+      isLocked: json['is_locked'] as bool? ?? false,
     );
   }
 
@@ -43,7 +46,32 @@ class LessonPack {
       'size_mb': sizeMb,
       'storage_path': storagePath,
       'published_at': publishedAt.toIso8601String(),
+      'is_locked': isLocked,
     };
+  }
+
+  LessonPack copyWith({
+    String? id,
+    String? subject,
+    int? level,
+    String? language,
+    int? version,
+    double? sizeMb,
+    String? storagePath,
+    DateTime? publishedAt,
+    bool? isLocked,
+  }) {
+    return LessonPack(
+      id: id ?? this.id,
+      subject: subject ?? this.subject,
+      level: level ?? this.level,
+      language: language ?? this.language,
+      version: version ?? this.version,
+      sizeMb: sizeMb ?? this.sizeMb,
+      storagePath: storagePath ?? this.storagePath,
+      publishedAt: publishedAt ?? this.publishedAt,
+      isLocked: isLocked ?? this.isLocked,
+    );
   }
 
   String get displayTitle {

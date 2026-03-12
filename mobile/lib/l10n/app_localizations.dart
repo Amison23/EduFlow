@@ -7,6 +7,7 @@ import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_am.dart';
 import 'app_localizations_en.dart';
+import 'app_localizations_so.dart';
 import 'app_localizations_sw.dart';
 
 // ignore_for_file: type=lint
@@ -97,6 +98,7 @@ abstract class AppLocalizations {
   static const List<Locale> supportedLocales = <Locale>[
     Locale('am'),
     Locale('en'),
+    Locale('so'),
     Locale('sw')
   ];
 
@@ -519,6 +521,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'AI Recommended'**
   String get aiRecommended;
+
+  /// No description provided for @learningProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Learning Progress'**
+  String get learningProgress;
+
+  /// No description provided for @codeSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification code sent'**
+  String get codeSent;
 }
 
 class _AppLocalizationsDelegate
@@ -532,7 +546,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['am', 'en', 'sw'].contains(locale.languageCode);
+      <String>['am', 'en', 'so', 'sw'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -545,6 +559,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsAm();
     case 'en':
       return AppLocalizationsEn();
+    case 'so':
+      return AppLocalizationsSo();
     case 'sw':
       return AppLocalizationsSw();
   }

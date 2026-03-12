@@ -22,6 +22,7 @@ import 'presentation/bloc/sync/sync_cubit.dart';
 import 'presentation/bloc/locale/locale_cubit.dart';
 import 'services/tflite_quiz_service.dart';
 import 'services/log_service.dart';
+import 'data/local/hive_boxes.dart';
 import 'core/utils/app_bloc_observer.dart';
 import 'presentation/screens/error/error_screen.dart';
 import 'dart:ui';
@@ -29,7 +30,22 @@ import 'dart:ui';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Setup Logging Service
+  // Start parallel initializations that don't depend on each other heavily
+  final database = AppDatabase();
+  final tfliteQuizService = TfliteQuizService();
+  
+  await Future.wait([
+    dotenv.load(fileName: ".env"),
+    HiveBoxes.init(),
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]),
+    database.database,
+    tfliteQuizService.init(),
+  ]);
+  
+  // Setup Logging Service (now safe because dotenv and Hive are loaded)
   final logService = LogService();
   
   // Capture Flutter errors
@@ -63,20 +79,7 @@ void main() async {
       },
     );
   };
-  
-  // Load environment variables
-  await dotenv.load(fileName: ".env");
-  
-  // Set preferred orientations
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
-  
-  // Initialize local database
-  final database = AppDatabase();
-  await database.database;
-  
+
   // Initialize API clients
   final authRemote = AuthRemote();
   final lessonRemote = LessonRemote();
@@ -99,9 +102,6 @@ void main() async {
   final communityRepository = CommunityRepository(
     communityRemote: communityRemote,
   );
-  
-  final tfliteQuizService = TfliteQuizService();
-  await tfliteQuizService.init();
   
   // Initialize sync service
   final syncService = SyncService(
@@ -128,6 +128,7 @@ void main() async {
           BlocProvider<LessonBloc>(
             create: (context) => LessonBloc(
               lessonRepository: lessonRepository,
+              progressRepository: progressRepository,
             ),
           ),
           BlocProvider<CommunityBloc>(

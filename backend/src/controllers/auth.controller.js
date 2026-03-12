@@ -11,7 +11,7 @@ const smsService = require('../services/sms.service');
  */
 exports.register = async (req, res, next) => {
     try {
-        const { phone } = req.body;
+        const { phone, name } = req.body;
 
         if (!phone) {
             return res.status(400).json({ error: 'Phone number is required' });
@@ -30,10 +30,14 @@ exports.register = async (req, res, next) => {
             .single();
 
         if (existingLearner) {
-            // Update OTP
+            // Update OTP and potentially name if provided and not already set
+            const updates = { otp, otp_expiry: expiry.toISOString() };
+            if (name && !existingLearner.name) updates.name = name;
+            if (phone && !existingLearner.phone) updates.phone = phone;
+
             await supabase
                 .from('learners')
-                .update({ otp, otp_expiry: expiry.toISOString() })
+                .update(updates)
                 .eq('phone_hash', phoneHash);
         } else {
             // Create new learner
@@ -41,6 +45,8 @@ exports.register = async (req, res, next) => {
                 .from('learners')
                 .insert([{
                     phone_hash: phoneHash,
+                    phone: phone,
+                    name: name || null,
                     otp,
                     otp_expiry: expiry.toISOString(),
                     language: 'en'
@@ -225,6 +231,7 @@ exports.getLearners = async (req, res, next) => {
             .from('learners')
             .select(`
                 id,
+                phone,
                 phone_hash,
                 name,
                 region,

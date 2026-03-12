@@ -126,6 +126,19 @@ class _DashboardTab extends StatelessWidget {
               // Welcome card
               _buildWelcomeCard(context, state),
               const SizedBox(height: 24),
+
+              // Progress Stats
+              if (state is ProgressLoaded) ...[
+                Text(
+                  AppLocalizations.of(context)?.learningProgress ?? 'Learning Progress',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                _buildProgressStats(context, state),
+                const SizedBox(height: 24),
+              ],
               
               // Quick actions
               Text(
@@ -343,6 +356,55 @@ class _DashboardTab extends StatelessWidget {
                 );
               },
               child: const Text('Practice', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProgressStats(BuildContext context, ProgressLoaded state) {
+    final events = state.progress['events'] as List? ?? [];
+    final completedLessons = events.where((e) => 
+      e['event_type'] == 'quiz_completed' || e['event_type'] == 'lesson_completed'
+    ).map((e) => e['lesson_id']).toSet().length;
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.1)),
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '$completedLessons Lessons Done',
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                  const Text(
+                    'Great job! Keep going.',
+                    style: TextStyle(fontSize: 12, color: AppTheme.textSecondary),
+                  ),
+                ],
+              ),
+              const Icon(Icons.stars, color: Colors.amber, size: 32),
+            ],
+          ),
+          const SizedBox(height: 16),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: LinearProgressIndicator(
+              value: completedLessons > 0 ? (completedLessons / 10).clamp(0.0, 1.0) : 0.05, // Placeholder max 10
+              backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.1),
+              valueColor: const AlwaysStoppedAnimation(AppTheme.primaryColor),
+              minHeight: 8,
             ),
           ),
         ],

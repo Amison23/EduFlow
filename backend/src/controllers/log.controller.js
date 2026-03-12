@@ -17,7 +17,12 @@ exports.createLog = async (req, res, next) => {
                 level,
                 message,
                 stack_trace: stackTrace,
-                context,
+                context: {
+                    ...context,
+                    userAgent: req.headers['user-agent'],
+                    ip: req.ip,
+                    timestamp: new Date().toISOString()
+                },
                 source,
                 user_id: userId || (req.user ? req.user.id : null)
             }]);

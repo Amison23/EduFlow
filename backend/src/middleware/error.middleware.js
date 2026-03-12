@@ -11,13 +11,13 @@ exports.errorHandler = async (err, req, res, _next) => {
     console.error(`[ERROR] ${new Date().toISOString()} - ${req.method} ${req.url}`);
     console.error(err.stack);
 
-    // Save to database if it's a critical error (500)
-    if (statusCode >= 500) {
+    // Save to database if it's a critical error (500) or explicitly requested
+    if (statusCode >= 400) {
         try {
             await supabase
                 .from('app_logs')
                 .insert([{
-                    level: 'error',
+                    level: statusCode >= 500 ? 'error' : 'warning',
                     message: message,
                     stack_trace: err.stack,
                     source: 'backend',
@@ -27,6 +27,7 @@ exports.errorHandler = async (err, req, res, _next) => {
                         body: req.body,
                         params: req.params,
                         query: req.query,
+                        userAgent: req.headers['user-agent'],
                         user: req.user ? { id: req.user.id, role: req.user.role } : null
                     }
                 }]);

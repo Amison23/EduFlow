@@ -98,6 +98,7 @@ export default function ManageAdminsPage() {
                     </p>
                 </div>
                 <button
+                    type="button"
                     onClick={() => { setShowForm(!showForm); setShowPassword(false); }}
                     className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--primary)] text-white text-sm font-semibold hover:opacity-90 transition-opacity"
                 >
@@ -218,6 +219,7 @@ export default function ManageAdminsPage() {
                                         <td className="px-6 py-4 text-right">
                                             {a.role !== 'master_admin' && (
                                                 <button
+                                                    type="button"
                                                     onClick={() => setAdminToDelete(a)}
                                                     className="text-xs font-semibold text-red-500 hover:text-red-700 hover:underline transition-colors"
                                                 >
@@ -248,12 +250,14 @@ export default function ManageAdminsPage() {
                         </p>
                         <div className="flex gap-3">
                             <button
+                                type="button"
                                 onClick={() => setAdminToDelete(null)}
                                 className="flex-1 px-4 py-2.5 text-sm font-semibold text-[var(--foreground)] bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--border)] transition"
                             >
                                 Cancel
                             </button>
                             <button
+                                type="button"
                                 onClick={handleDelete}
                                 className="flex-1 px-4 py-2.5 text-sm font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700 transition shadow-lg shadow-red-600/20"
                             >

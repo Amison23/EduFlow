@@ -223,4 +223,10 @@ class AppLocalizationsAm extends AppLocalizations {
 
   @override
   String get aiRecommended => 'በ AI የሚመከር';
+
+  @override
+  String get learningProgress => 'የትምህርት እድገት';
+
+  @override
+  String get codeSent => 'Verification code sent';
 }

@@ -151,3 +151,57 @@ exports.getLeaderboard = async (req, res, next) => {
         next(error);
     }
 };
+
+/**
+ * Get detailed learner stats for dashboard
+ */
+exports.getLearnerStats = async (req, res, next) => {
+    try {
+        const { learnerId } = req.params;
+
+        // 1. Get learner basic info
+        const { data: learner, error: lError } = await supabase
+            .from('learners')
+            .select('id, name, points, completed_lessons, language, region, created_at')
+            .eq('id', learnerId)
+            .single();
+
+        if (lError || !learner) return res.status(404).json({ error: 'Learner not found' });
+
+        // 2. Get activity history
+        const { data: history, error: hError } = await supabase
+            .from('progress_events')
+            .select('event_type, score, server_ts, lessons(title)')
+            .eq('learner_id', learnerId)
+            .order('server_ts', { ascending: false })
+            .limit(20);
+
+        // 3. Average Score
+        const quizEvents = (history || []).filter(e => e.event_type === 'quiz_completed' && e.score !== null);
+        const avgScore = quizEvents.length > 0 
+            ? Math.round(quizEvents.reduce((acc, curr) => acc + parseFloat(curr.score), 0) / quizEvents.length)
+            : 0;
+
+        // 4. Total Lessons
+        const { count: totalLessons } = await supabase
+            .from('lessons')
+            .select('*', { count: 'exact', head: true });
+
+        res.json({
+            ...learner,
+            history: (history || []).map(h => ({
+                activity: h.event_type.replace('_', ' '),
+                subject: h.lessons?.title || 'General',
+                score: h.score,
+                date: new Date(h.server_ts).toLocaleDateString()
+            })),
+            avgScore,
+            totalLessons: totalLessons || 0,
+            progress: totalLessons > 0 ? Math.round((learner.completed_lessons / totalLessons) * 100) : 0,
+            streak: 1, // Simple placeholder
+            lessonsCompleted: learner.completed_lessons
+        });
+    } catch (error) {
+        next(error);
+    }
+};

@@ -4,9 +4,18 @@ import 'package:eduflow/l10n/app_localizations.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../bloc/locale/locale_cubit.dart';
 import '../../bloc/theme/theme_cubit.dart';
+import '../../bloc/language/language_cubit.dart';
+import '../../../domain/entities/language.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
+
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  String? _pendingLanguageCode;
 
   @override
   Widget build(BuildContext context) {
@@ -15,6 +24,18 @@ class SettingsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.settings),
+        actions: [
+          if (_pendingLanguageCode != null)
+            TextButton(
+              onPressed: () {
+                context.read<LocaleCubit>().setLocale(_pendingLanguageCode!);
+                setState(() {
+                  _pendingLanguageCode = null;
+                });
+              },
+              child: const Text('SAVE', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            ),
+        ],
       ),
       body: ListView(
         children: [
@@ -36,14 +57,37 @@ class SettingsScreen extends StatelessWidget {
           ),
           const Divider(),
           _buildSectionHeader(context, l10n.language),
-          BlocBuilder<LocaleCubit, Locale>(
-            builder: (context, locale) {
-              return Column(
-                children: [
-                  _buildLanguageOption(context, 'en', 'English', '🇺🇸', locale.languageCode == 'en'),
-                  _buildLanguageOption(context, 'sw', 'Kiswahili', '🇰🇪', locale.languageCode == 'sw'),
-                  _buildLanguageOption(context, 'am', 'Amharic', '🇪🇹', locale.languageCode == 'am'),
-                ],
+          BlocBuilder<LanguageCubit, LanguageState>(
+            builder: (context, langState) {
+              return BlocBuilder<LocaleCubit, Locale>(
+                builder: (context, locale) {
+                  final activeCode = _pendingLanguageCode ?? locale.languageCode;
+                  
+                  if (langState is LanguageLoading) {
+                    return const Center(child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: CircularProgressIndicator(),
+                    ));
+                  }
+                  
+                  if (langState is LanguageLoaded) {
+                    return Column(
+                      children: langState.languages.map((lang) {
+                        return _buildLanguageOption(context, lang, activeCode == lang.code);
+                      }).toList(),
+                    );
+                  }
+                  
+                  // Fallback if error or initial
+                  return Column(
+                    children: [
+                      _buildBasicLanguageOption(context, 'en', 'English', '🇺🇸', activeCode == 'en'),
+                      _buildBasicLanguageOption(context, 'sw', 'Kiswahili', '🇰🇪', activeCode == 'sw'),
+                      _buildBasicLanguageOption(context, 'am', 'Amharic', '🇪🇹', activeCode == 'am'),
+                      _buildBasicLanguageOption(context, 'so', 'Af-Soomaali', '🇸🇴', activeCode == 'so'),
+                    ],
+                  );
+                },
               );
             },
           ),
@@ -73,13 +117,28 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildLanguageOption(BuildContext context, String code, String name, String flag, bool isSelected) {
+  Widget _buildLanguageOption(BuildContext context, Language language, bool isSelected) {
+    return ListTile(
+      leading: Text(language.flag, style: const TextStyle(fontSize: 24)),
+      title: Text(language.name),
+      trailing: isSelected ? const Icon(Icons.check, color: AppTheme.secondaryColor) : null,
+      onTap: () {
+        setState(() {
+          _pendingLanguageCode = language.code;
+        });
+      },
+    );
+  }
+
+  Widget _buildBasicLanguageOption(BuildContext context, String code, String name, String flag, bool isSelected) {
     return ListTile(
       leading: Text(flag, style: const TextStyle(fontSize: 24)),
       title: Text(name),
       trailing: isSelected ? const Icon(Icons.check, color: AppTheme.secondaryColor) : null,
       onTap: () {
-        context.read<LocaleCubit>().setLocale(code);
+        setState(() {
+          _pendingLanguageCode = code;
+        });
       },
     );
   }

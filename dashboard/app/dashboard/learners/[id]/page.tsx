@@ -12,16 +12,17 @@ export default function LearnerDetailsPage({ params }: { params: { id: string } 
 
     const fetchLearner = useCallback(async () => {
         try {
-            // Fetch from the admin learners list and find by id
             const token = document.cookie.split('; ').find(r => r.startsWith('accessToken='))?.split('=')[1];
             const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
-            const res = await fetch(`${baseUrl}/auth/learners`, {
+            
+            // Fetch from the NEW stats endpoint
+            const res = await fetch(`${baseUrl}/progress/${params.id}/stats`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
-            if (!res.ok) throw new Error(`Failed to fetch learners (${res.status})`);
-            const all = await res.json();
-            const found = Array.isArray(all) ? all.find((l: any) => String(l.id) === String(params.id)) : null;
-            setLearner(found || null);
+            
+            if (!res.ok) throw new Error(`Failed to fetch learner stats (${res.status})`);
+            const data = await res.json();
+            setLearner(data);
         } catch (e: any) {
             toastError(e.message || 'Failed to load learner details');
         } finally {
@@ -47,7 +48,7 @@ export default function LearnerDetailsPage({ params }: { params: { id: string } 
     );
 
     const initials = (learner.name || 'L').split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2);
-    const progress = learner.progress || Math.floor(Math.random() * 100);
+    const progress = learner.progress || 0;
 
     return (
         <div className="space-y-6">
@@ -69,20 +70,19 @@ export default function LearnerDetailsPage({ params }: { params: { id: string } 
                     <div className="w-20 h-20 rounded-full bg-[var(--primary)]/15 flex items-center justify-center text-[var(--primary)] text-2xl font-black mb-4">
                         {initials}
                     </div>
-                    <h2 className="text-xl font-bold text-[var(--foreground)]">{learner.name || '—'}</h2>
-                    <p className="text-sm text-[var(--foreground)] opacity-50 mt-1">{learner.region || 'No region'}</p>
+                    <h2 className="text-xl font-bold text-[var(--foreground)]">{learner.name || 'Anonymous'}</h2>
+                    <p className="text-sm text-[var(--foreground)] opacity-50 mt-1">{learner.region || 'Unknown Region'}</p>
                     <div className="mt-2">
                         <span className="inline-block px-3 py-1 text-xs font-bold uppercase rounded-full bg-[var(--primary)]/10 text-[var(--primary)]">
-                            {learner.language || 'Unknown lang'}
+                            {learner.language || 'English'}
                         </span>
                     </div>
 
                     <div className="w-full mt-6 space-y-3 text-left">
                         {[
                             { label: 'Learner ID', value: `#EFL-${learner.id}` },
-                            { label: 'Phone', value: learner.phone || '—' },
                             { label: 'Enrolled', value: learner.created_at ? new Date(learner.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—' },
-                            { label: 'Last Active', value: learner.lastActive || learner.last_sync || '—' },
+                            { label: 'Last Active', value: learner.last_active_at ? new Date(learner.last_active_at).toLocaleString() : '—' },
                         ].map(({ label, value }) => (
                             <div key={label} className="flex justify-between items-center text-sm py-2 border-b border-[var(--border)] last:border-0">
                                 <span className="text-[var(--foreground)] opacity-50">{label}</span>
@@ -111,9 +111,9 @@ export default function LearnerDetailsPage({ params }: { params: { id: string } 
                         </div>
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                             {[
-                                { label: 'Lessons Done', value: learner.lessonsCompleted || '—', color: 'text-blue-600' },
-                                { label: 'Avg. Score', value: learner.avgScore ? `${learner.avgScore}%` : '—', color: 'text-green-600' },
-                                { label: 'Streak', value: learner.streak ? `${learner.streak}d` : '—', color: 'text-amber-600' },
+                                { label: 'Lessons Done', value: learner.lessonsCompleted || 0, color: 'text-blue-600' },
+                                { label: 'Avg. Score', value: `${learner.avgScore || 0}%`, color: 'text-green-600' },
+                                { label: 'Streak', value: `${learner.streak || 1}d`, color: 'text-amber-600' },
                             ].map(({ label, value, color }) => (
                                 <div key={label} className="bg-[var(--background)] rounded-xl p-4 text-center border border-[var(--border)]">
                                     <p className={`text-2xl font-black ${color}`}>{value}</p>
@@ -129,19 +129,23 @@ export default function LearnerDetailsPage({ params }: { params: { id: string } 
                             <h3 className="text-base font-semibold text-[var(--foreground)]">Recent Activity</h3>
                         </div>
                         <div className="divide-y divide-[var(--border)]">
-                            {(learner.history || []).length > 0 ? learner.history.map((item: any, idx: number) => (
-                                <div key={idx} className="px-6 py-4 flex justify-between items-center hover:bg-[var(--background)] transition-colors">
-                                    <div>
-                                        <p className="text-sm font-semibold text-[var(--foreground)]">{item.activity}</p>
-                                        <p className="text-xs text-[var(--foreground)] opacity-50 mt-0.5">{item.date}</p>
+                            {(learner.history || []).length > 0 ? (
+                                learner.history.map((item: any, idx: number) => (
+                                    <div key={idx} className="px-6 py-4 flex justify-between items-center hover:bg-[var(--background)] transition-colors">
+                                        <div>
+                                            <p className="text-sm font-semibold text-[var(--foreground)]">
+                                                {item.activity} <span className="text-xs opacity-50 font-normal">in {item.subject}</span>
+                                            </p>
+                                            <p className="text-xs text-[var(--foreground)] opacity-50 mt-0.5">{item.date}</p>
+                                        </div>
+                                        {item.score && (
+                                            <span className={`px-2 py-1 rounded-full text-xs font-bold ${item.score > 80 ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
+                                                {item.score}%
+                                            </span>
+                                        )}
                                     </div>
-                                    {item.score && (
-                                        <span className={`px-2 py-1 rounded-full text-xs font-bold ${item.score > 80 ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
-                                            {item.score}%
-                                        </span>
-                                    )}
-                                </div>
-                            )) : (
+                                ))
+                            ) : (
                                 <div className="px-6 py-10 text-center text-sm text-[var(--foreground)] opacity-40">
                                     No activity recorded yet.
                                 </div>

@@ -11,8 +11,9 @@ class CheckAuthStatus extends AuthEvent {}
 /// Request OTP for phone number
 class RequestOtp extends AuthEvent {
   final String phoneNumber;
+  final String? name;
 
-  const RequestOtp(this.phoneNumber);
+  const RequestOtp(this.phoneNumber, {this.name});
 }
 
 /// Verify OTP

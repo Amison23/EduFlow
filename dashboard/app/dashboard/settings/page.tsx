@@ -210,12 +210,12 @@ export default function SettingsPage() {
                         </select>
                     </div>
                     <div className="flex gap-2">
-                        <button onClick={handleSaveLanguage}
+                        <button type="button" onClick={handleSaveLanguage}
                             className="px-5 py-2.5 bg-[var(--primary)] text-white text-sm font-semibold rounded-lg hover:opacity-90 transition whitespace-nowrap">
                             Save
                         </button>
                         {currentUser?.role === 'master_admin' && (
-                            <button onClick={handleSaveGlobalDefault} disabled={savingGlobal || !selectedLanguage}
+                            <button type="button" onClick={handleSaveGlobalDefault} disabled={savingGlobal || !selectedLanguage}
                                 className="px-4 py-2.5 border border-[var(--primary)] text-[var(--primary)] text-sm font-semibold rounded-lg hover:bg-[var(--primary)] hover:text-white transition whitespace-nowrap disabled:opacity-50">
                                 {savingGlobal ? 'Saving…' : 'Set as Global Default'}
                             </button>
@@ -256,7 +256,7 @@ export default function SettingsPage() {
                     ))}
                 </div>
                 <div className="mt-4 flex justify-end">
-                    <button onClick={handleSaveNotifications}
+                    <button type="button" onClick={handleSaveNotifications}
                         className="px-5 py-2 bg-[var(--primary)] text-white text-sm font-semibold rounded-lg hover:opacity-90 transition">
                         Save Preferences
                     </button>
@@ -279,7 +279,7 @@ export default function SettingsPage() {
                                         <p className="text-sm font-semibold text-[var(--foreground)]">{lang.name}</p>
                                     </div>
                                 </div>
-                                <button onClick={() => toggleLanguageStatus(lang)}
+                                <button type="button" onClick={() => toggleLanguageStatus(lang)}
                                     className={`px-3 py-1 text-xs font-bold rounded-full transition ${
                                         lang.is_active ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-red-100 text-red-700 hover:bg-red-200'
                                     }`}>
@@ -326,7 +326,7 @@ export default function SettingsPage() {
                                             a.role === 'master_admin' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'
                                         }`}>{a.role?.replace('_', ' ')}</span>
                                         {a.id !== currentUser?.id && a.role !== 'master_admin' && (
-                                            <button onClick={() => handleDeleteAdmin(a.id, a.email)}
+                                            <button type="button" onClick={() => handleDeleteAdmin(a.id, a.email)}
                                                 className="text-xs text-red-500 hover:text-red-700 font-semibold transition-colors">
                                                 Revoke
                                             </button>

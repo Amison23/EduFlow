@@ -226,4 +226,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get aiRecommended => 'AI Recommended';
+
+  @override
+  String get learningProgress => 'Learning Progress';
+
+  @override
+  String get codeSent => 'Verification code sent';
 }

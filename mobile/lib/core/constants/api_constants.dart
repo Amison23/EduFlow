@@ -6,7 +6,16 @@ class ApiConstants {
 
   /// Base URL for the API
   /// In production, this would be the Render deployed URL
-  static String get baseUrl => dotenv.env['API_BASE_URL'] ?? 'http://10.0.2.2:5000/api/v1';
+  static String get baseUrl {
+    try {
+      if (!dotenv.isInitialized) {
+        return 'http://10.0.2.2:5000/api/v1';
+      }
+      return dotenv.env['API_BASE_URL'] ?? 'http://10.0.2.2:5000/api/v1';
+    } catch (_) {
+      return 'http://10.0.2.2:5000/api/v1';
+    }
+  }
 
   /// API endpoints
   static const String auth = '/auth';
@@ -31,6 +40,9 @@ class ApiConstants {
 
   /// Centralized logging
   static const String logs = '/logs';
+
+  /// Language sync
+  static const String languages = '/languages';
 
   /// Timeout durations
   static const Duration connectionTimeout = Duration(seconds: 30);

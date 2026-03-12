@@ -14,6 +14,8 @@ import 'presentation/screens/onboarding/phone_auth_screen.dart';
 import 'presentation/widgets/offline_banner.dart';
 import 'presentation/bloc/locale/locale_cubit.dart';
 import 'presentation/screens/onboarding/language_selection_screen.dart';
+import 'data/repositories/auth_repository.dart';
+import 'presentation/bloc/language/language_cubit.dart';
 
 class EduFlowApp extends StatelessWidget {
   const EduFlowApp({super.key});
@@ -23,6 +25,11 @@ class EduFlowApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => ThemeCubit()),
+        BlocProvider(
+          create: (context) => LanguageCubit(
+            authRepository: context.read<AuthRepository>(),
+          ),
+        ),
       ],
       child: BlocBuilder<ThemeCubit, ThemeMode>(
         builder: (context, themeMode) {
@@ -46,6 +53,7 @@ class EduFlowApp extends StatelessWidget {
                   Locale('en'),
                   Locale('sw'),
                   Locale('am'),
+                  Locale('so'),
                 ],
                 home: const AuthNavigator(),
               );

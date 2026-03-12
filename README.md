@@ -2,7 +2,11 @@
 
 > **Lifeline Learning for Africa's Displaced**
 
-EduFlow is an **offline-first, AI-enhanced educational platform** engineered specifically for the unique challenges faced by displaced learners and marginalized communities across Africa. By bridging the digital divide with a multi-modal approach—spanning advanced smartphone applications, basic feature phone integration via SMS/USSD, and a powerful NGO administrative suite—EduFlow ensures that quality education remains accessible, even in the most resource-constrained environments.
+EduFlow is an **offline-first, AI-enhanced educational platform** engineered specifically for the unique challenges faced by displaced learners and marginalized communities across Africa.
+
+### 🌐 Live Deployment
+- **Backend API**: [https://eduflow-api-ms02.onrender.com](https://eduflow-api-ms02.onrender.com)
+- **Admin Dashboard**: [https://dashboard-lilac-beta-95.vercel.app](https://dashboard-lilac-beta-95.vercel.app)
 
 ---
 
@@ -79,7 +83,7 @@ Our documentation is structured to help you get the most out of the EduFlow ecos
 - 🏗️ **[Architecture & System Design](docs/PROJECT_DOCUMENTATION.md)**: Deep dive into the tech stack and data flows.
 - 📖 **[Content Management Guide](docs/CONTENT_STRUCTURE.md)**: How to create and deploy new lesson packs.
 - ⚙️ **[Operations & Hosting](docs/OPERATIONS_MANUAL.md)**: Deployment guides for Render, Vercel, and Supabase.
-- 💬 **[SMS Gateway Setup](docs/AFRICA_TALKING_SETUP.md)**: Detailed instructions for configuring Africa's Talking.
+- 💬 **[SMS Gateway Setup & Testing](docs/SMS_TESTING_GUIDE.md)**: Detailed instructions for configuring and testing Africa's Talking.
 - 🔒 **[Security & Privacy Policy](docs/OPERATIONS_MANUAL.md#security)**: Documentation of our data protection measures.
 
 ---

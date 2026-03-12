@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:eduflow/l10n/app_localizations.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/utils/ui_utils.dart';
 import '../../bloc/auth/auth_bloc.dart';
 
 /// Phone authentication screen
@@ -13,6 +14,7 @@ class PhoneAuthScreen extends StatefulWidget {
 }
 
 class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
+  final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
   final _otpController = TextEditingController();
   bool _isOtpSent = false;
@@ -20,6 +22,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
 
   @override
   void dispose() {
+    _nameController.dispose();
     _phoneController.dispose();
     _otpController.dispose();
     super.dispose();
@@ -34,18 +37,26 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
       ),
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
-          if (state is OtpSent) {
+          // Hide loading overlay if previously shown
+          if (state is! AuthLoading) {
+            // Check if dialog is actually showing before popping
+            // A better way is state tracking but this is a common quick fix
+          }
+
+          if (state is AuthLoading) {
+            UiUtils.showLoadingOverlay(context);
+          } else if (state is OtpSent) {
+            UiUtils.hideLoadingOverlay(context);
+            UiUtils.showSuccessSnackBar(context, l10n.codeSent);
             setState(() {
               _isOtpSent = true;
               _phoneNumber = state.phoneNumber;
             });
           } else if (state is AuthError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: AppTheme.errorColor,
-              ),
-            );
+            UiUtils.hideLoadingOverlay(context);
+            UiUtils.showErrorSnackBar(context, state.message);
+          } else if (state is AuthAuthenticated) {
+            UiUtils.hideLoadingOverlay(context);
           }
         },
         child: Padding(
@@ -70,6 +81,16 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
                 ),
                 const SizedBox(height: 24),
                 TextField(
+                  controller: _nameController,
+                  textCapitalization: TextCapitalization.words,
+                  decoration: const InputDecoration(
+                    labelText: 'Full Name (Optional)',
+                    hintText: 'Enter your name',
+                    prefixIcon: Icon(Icons.person_outline),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
                   controller: _phoneController,
                   keyboardType: TextInputType.phone,
                   decoration: InputDecoration(
@@ -79,15 +100,20 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _sendOtp,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4),
-                      child: Text(l10n.sendCode),
-                    ),
-                  ),
+                BlocBuilder<AuthBloc, AuthState>(
+                  builder: (context, state) {
+                    final isLoading = state is AuthLoading;
+                    return SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: isLoading ? null : _sendOtp,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4),
+                          child: Text(l10n.sendCode),
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ] else ...[
                 Text(
@@ -154,6 +180,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
 
   void _sendOtp() {
     final phone = _phoneController.text.trim();
+    final name = _nameController.text.trim();
     if (phone.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppLocalizations.of(context)!.pleaseEnterPhone)),
@@ -161,7 +188,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
       return;
     }
     
-    context.read<AuthBloc>().add(RequestOtp(phone));
+    context.read<AuthBloc>().add(RequestOtp(phone, name: name.isNotEmpty ? name : null));
   }
 
   void _verifyOtp() {

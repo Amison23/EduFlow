@@ -29,6 +29,7 @@ export default function LearnersPage() {
         const filtered = learners.filter(learner => 
             (learner.name?.toLowerCase().includes(lowerCaseSearch)) ||
             (learner.region?.toLowerCase().includes(lowerCaseSearch)) ||
+            (learner.phone?.toLowerCase().includes(lowerCaseSearch)) ||
             (learner.phone_hash?.toLowerCase().includes(lowerCaseSearch)) ||
             (String(learner.id).toLowerCase().includes(lowerCaseSearch))
         );
@@ -53,7 +54,7 @@ export default function LearnersPage() {
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
-                    <button className="bg-[var(--primary)] text-white px-4 py-2 rounded-lg font-medium hover:opacity-90 transition shadow-sm whitespace-nowrap">Export</button>
+                    <button type="button" className="bg-[var(--primary)] text-white px-4 py-2 rounded-lg font-medium hover:opacity-90 transition shadow-sm whitespace-nowrap">Export</button>
                 </div>
             </div>
 
@@ -74,8 +75,12 @@ export default function LearnersPage() {
                             <tr key={learner.id} className="hover:bg-[var(--background)] transition-colors">
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <div className="flex flex-col">
-                                        <span className="text-sm font-semibold text-[var(--foreground)]">{learner.name || `User ${String(learner.id).substring(0, 5)}`}</span>
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-sm font-semibold text-[var(--foreground)]">{learner.name || `User ${String(learner.id).substring(0, 5)}`}</span>
+                                            {learner.phone && <span className="text-[10px] bg-[var(--primary)]/10 text-[var(--primary)] px-1.5 py-0.5 rounded-full font-medium">Verified</span>}
+                                        </div>
                                         <span className="text-xs text-[var(--foreground)] opacity-50 font-mono">#{String(learner.id).substring(0, 8)}</span>
+                                        {learner.phone && <span className="text-xs text-[var(--foreground)] opacity-70 mt-1 font-medium">{learner.phone}</span>}
                                     </div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--foreground)] opacity-80">{learner.region || 'Unknown'}</td>

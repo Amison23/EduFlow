@@ -16,6 +16,9 @@ router.get('/:learnerId/:subject', verifyToken, progressController.getSubjectPro
 // GET /api/v1/progress/:learnerId/streak - Get learner streak
 router.get('/:learnerId/streak', verifyToken, progressController.getStreak);
 
+// GET /api/v1/progress/:learnerId/stats - Get full stats for dashboard
+router.get('/:learnerId/stats', verifyToken, progressController.getLearnerStats);
+
 // POST /api/v1/progress/quiz/submit - Submit quiz answers
 router.post('/quiz/submit', verifyToken, progressController.submitQuizAnswers);
 

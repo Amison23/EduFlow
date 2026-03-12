@@ -55,7 +55,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(AuthLoading());
     
-    final result = await _authRepository.requestOtp(event.phoneNumber);
+    final result = await _authRepository.requestOtp(event.phoneNumber, name: event.name);
     
     if (result.success) {
       emit(OtpSent(phoneNumber: event.phoneNumber));

@@ -79,5 +79,7 @@
   "playingAudio": "Playing audio narration...",
   "smartRecommendations": "Smart Recommendations",
   "recommendedForYou": "Recommended for you based on progress",
-  "aiRecommended": "AI Recommended"
+  "aiRecommended": "AI Recommended",
+  "learningProgress": "Learning Progress",
+  "codeSent": "Verification code sent"
 }

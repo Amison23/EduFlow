@@ -16,7 +16,7 @@ class AuthRepository {
         _authRemote = authRemote;
 
   /// Request OTP for phone number
-  Future<({bool success, String? message})> requestOtp(String phoneNumber) async {
+  Future<({bool success, String? message})> requestOtp(String phoneNumber, {String? name}) async {
     try {
       // Hash phone number for privacy
       final phoneHash = CryptoUtils.hashPhoneNumber(phoneNumber);
@@ -25,7 +25,7 @@ class AuthRepository {
       await HiveBoxes.savePhoneHash(phoneHash);
       
       // Request OTP from server
-      final response = await _authRemote.requestOtp(phoneNumber);
+      final response = await _authRemote.requestOtp(phoneNumber, name: name);
       
       return (success: true, message: response['message'] as String?);
     } catch (e) {
@@ -139,6 +139,16 @@ class AuthRepository {
       hasSeenWelcome: hasSeenWelcome || context != null,
       hasSetContext: context != null,
     );
+  }
+
+  /// Get dynamic supported languages from backend
+  Future<List<Map<String, dynamic>>> getSupportedLanguages() async {
+    try {
+      return await _authRemote.getLanguages();
+    } catch (_) {
+      // Return empty list on failure or handle as needed
+      return [];
+    }
   }
 
   /// Mark onboarding as complete

@@ -7,8 +7,9 @@ class LogService {
   static final LogService _instance = LogService._internal();
   factory LogService() => _instance;
   LogService._internal();
-
-  final ApiClient _apiClient = ApiClient();
+  
+  ApiClient? __apiClient;
+  ApiClient get _apiClient => __apiClient ??= ApiClient();
   String? _userId;
 
   /// Set the user ID for inclusion in logs

@@ -28,6 +28,9 @@ class ApiClient {
         onError: _onError,
       ),
     );
+
+    // Add Retry Interceptor
+    _dio.interceptors.add(_RetryInterceptor(_dio));
   }
 
   /// Set authentication token
@@ -230,5 +233,51 @@ class ApiClient {
       savePath,
       onReceiveProgress: onReceiveProgress,
     );
+  }
+}
+
+/// Dynamic retry interceptor to handle connection issues
+class _RetryInterceptor extends Interceptor {
+  final Dio dio;
+
+  _RetryInterceptor(this.dio);
+
+  @override
+  Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
+    var retryCount = 0;
+    final maxRetries = ApiConstants.maxRetries;
+    
+    // Only retry on connection-related errors or 503/504
+    if (_shouldRetry(err) && retryCount < maxRetries) {
+      retryCount++;
+      
+      try {
+        // Wait before retrying
+        await Future.delayed(ApiConstants.retryDelay);
+        
+        final response = await dio.request(
+          err.requestOptions.path,
+          data: err.requestOptions.data,
+          queryParameters: err.requestOptions.queryParameters,
+          options: Options(
+            method: err.requestOptions.method,
+            headers: err.requestOptions.headers,
+          ),
+        );
+        return handler.resolve(response);
+      } catch (e) {
+        // If retry also fails, propagate the error
+        return super.onError(err, handler);
+      }
+    }
+    
+    return super.onError(err, handler);
+  }
+
+  bool _shouldRetry(DioException err) {
+    return err.type == DioExceptionType.connectionError ||
+           err.type == DioExceptionType.connectionTimeout ||
+           err.type == DioExceptionType.receiveTimeout ||
+           (err.response?.statusCode == 503 || err.response?.statusCode == 504);
   }
 }

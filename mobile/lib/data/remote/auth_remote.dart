@@ -7,12 +7,13 @@ class AuthRemote {
   final ApiClient _apiClient = ApiClient();
 
   /// Request OTP for a phone number
-  Future<Map<String, dynamic>> requestOtp(String phoneNumber) async {
+  Future<Map<String, dynamic>> requestOtp(String phoneNumber, {String? name}) async {
     try {
       final response = await _apiClient.post(
         ApiConstants.register,
         data: {
           'phone': phoneNumber,
+          if (name != null) 'name': name,
         },
       );
       return response.data as Map<String, dynamic>;
@@ -95,6 +96,18 @@ class AuthRemote {
       // Ignore logout errors
     } finally {
       _apiClient.clearAuthToken();
+    }
+  }
+
+  /// Get supported languages
+  Future<List<Map<String, dynamic>>> getLanguages() async {
+    try {
+      final response = await _apiClient.get(ApiConstants.languages);
+      return (response.data as List).cast<Map<String, dynamic>>();
+    } on AppException {
+      rethrow;
+    } catch (e) {
+      throw NetworkException('Failed to fetch languages', originalError: e);
     }
   }
 

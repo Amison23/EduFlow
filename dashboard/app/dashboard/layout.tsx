@@ -37,7 +37,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         // Fetch global settings to apply default language if not set
         const initSettings = async () => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://eduflow-api-ms02.onrender.com'}/api/v1/organization/settings?key=global_config`);
+                const baseUrl = (process.env.NEXT_PUBLIC_API_URL || 'https://eduflow-api-ms02.onrender.com').replace(/\/api\/v1\/?$/, '');
+                const response = await fetch(`${baseUrl}/api/v1/organization/settings?key=global_config`);
                 const data = await response.json();
                 const globalDefault = data?.value?.default_language;
                 
@@ -80,9 +81,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     };
 
     const linkClass = (href: string, exact: boolean) =>
-        `inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-all duration-150 ${
+        `inline-flex items-center px-0.5 lg:px-1 pt-1 border-b-2 text-[13px] lg:text-sm font-medium transition-all duration-150 ${
             isActive(href, exact)
-                ? 'border-[var(--primary)] text-[var(--primary)] font-semibold'
+                ? 'border-[var(--primary)] text-[var(--primary)] font-bold'
                 : 'border-transparent text-[var(--foreground)] opacity-70 hover:opacity-100 hover:border-[var(--border)]'
         }`;
 
@@ -116,7 +117,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                         >
                             Logout now
                         </button>
-                        <button onClick={() => setSessionWarning(null)} className="opacity-70 hover:opacity-100">✕</button>
+                        <button type="button" onClick={() => setSessionWarning(null)} className="opacity-70 hover:opacity-100">✕</button>
                     </div>
                 </div>
             )}
@@ -128,7 +129,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                             <Link href="/dashboard" className="flex-shrink-0">
                                 <span className="text-xl font-black text-[var(--primary)] tracking-tighter">EduFlow</span>
                             </Link>
-                            <div className="hidden sm:ml-8 sm:flex sm:space-x-1">
+                            <div className="hidden sm:ml-4 lg:ml-8 sm:flex sm:space-x-1 lg:space-x-2">
                                 {navLinks.map(link => (
                                     <Link key={link.href} href={link.href} className={linkClass(link.href, link.exact)}>
                                         {link.label}
@@ -143,13 +144,16 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                         {/* Right side: theme + user + logout */}
                         <div className="hidden sm:flex items-center gap-3">
                             <ThemeToggle />
-                            <div className="flex flex-col items-end leading-tight">
-                                <span className="text-sm font-semibold text-[var(--foreground)]">{admin?.name || 'Admin'}</span>
-                                <span className="text-[10px] uppercase tracking-wider font-bold text-[var(--primary)] opacity-70">
-                                    {admin?.role?.replace(/_/g, ' ') || 'admin'}
-                                </span>
+                            <div className="flex flex-col items-end leading-none">
+                                <span className="text-sm font-bold text-[var(--foreground)]">{admin?.name || 'Admin'}</span>
+                                {admin?.name?.toLowerCase() !== (admin?.role?.replace(/_/g, ' ').toLowerCase()) && (
+                                    <span className="text-[9px] uppercase tracking-tighter font-extrabold text-[var(--primary)] opacity-60">
+                                        {admin?.role?.replace(/_/g, ' ') || 'admin'}
+                                    </span>
+                                )}
                             </div>
                             <button
+                                type="button"
                                 onClick={handleLogout}
                                 className="ml-1 text-xs font-semibold px-3 py-1.5 rounded-md border border-[var(--border)] text-[var(--foreground)] opacity-60 hover:opacity-100 hover:border-red-500 hover:text-red-500 transition-all"
                             >
@@ -161,6 +165,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                         <div className="sm:hidden flex items-center gap-2">
                             <ThemeToggle />
                             <button
+                                type="button"
                                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                                 className="inline-flex items-center justify-center p-2 rounded-md text-[var(--foreground)] opacity-60 hover:opacity-100 focus:outline-none"
                                 aria-label="Toggle menu"
@@ -180,10 +185,12 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                     <div className="sm:hidden bg-[var(--card)] border-t border-[var(--border)] px-3 pt-2 pb-4 space-y-1 shadow-lg">
                         <div className="flex items-center gap-2 px-4 py-3 mb-2 rounded-lg bg-[var(--background)] border border-[var(--border)]">
                             <div>
-                                <p className="text-sm font-semibold text-[var(--foreground)]">{admin?.name || 'Admin'}</p>
-                                <p className="text-[10px] uppercase tracking-wider font-bold text-[var(--primary)] opacity-70">
-                                    {admin?.role?.replace(/_/g, ' ')}
-                                </p>
+                                <p className="text-sm font-bold text-[var(--foreground)]">{admin?.name || 'Admin'}</p>
+                                {admin?.name?.toLowerCase() !== (admin?.role?.replace(/_/g, ' ').toLowerCase()) && (
+                                    <p className="text-[10px] uppercase tracking-wider font-extrabold text-[var(--primary)] opacity-70">
+                                        {admin?.role?.replace(/_/g, ' ')}
+                                    </p>
+                                )}
                             </div>
                         </div>
                         {navLinks.map(link => (

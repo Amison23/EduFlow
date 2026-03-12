@@ -226,4 +226,10 @@ class AppLocalizationsSw extends AppLocalizations {
 
   @override
   String get aiRecommended => 'Inapendekezwa na AI';
+
+  @override
+  String get learningProgress => 'Maendeleo ya Masomo';
+
+  @override
+  String get codeSent => 'Verification code sent';
 }
