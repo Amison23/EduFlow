@@ -28,12 +28,12 @@ class ProgressRemote {
   }
 
   /// Get learner progress from server
-  Future<Map<String, dynamic>> getProgress(String learnerId) async {
+  Future<List<dynamic>> getProgress(String learnerId) async {
     try {
       final response = await _apiClient.get(
         '${ApiConstants.progress}/$learnerId',
       );
-      return response.data as Map<String, dynamic>;
+      return response.data as List<dynamic>;
     } on AppException {
       rethrow;
     } catch (e) {

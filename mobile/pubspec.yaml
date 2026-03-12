@@ -40,6 +40,7 @@ dependencies:
   cupertino_icons: ^1.0.6
   shared_preferences: ^2.5.4
   flutter_dotenv: ^5.1.0
+  flutter_markdown: ^0.7.3+1
 
 dev_dependencies:
   flutter_test:
@@ -53,7 +54,8 @@ flutter:
   assets:
     - assets/audio/
     - assets/images/
-    - assets/lesson_packs/
+    - assets/lesson_packs/math_level1.json
+    - assets/lesson_packs/english_level1.json
     - ml_models/
     - .env
 

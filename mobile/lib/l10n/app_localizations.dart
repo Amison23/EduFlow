@@ -369,6 +369,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Got it!'**
   String get gotIt;
+
+  /// No description provided for @settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settings;
+
+  /// No description provided for @appearance.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get appearance;
+
+  /// No description provided for @darkMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark Mode'**
+  String get darkMode;
+
+  /// No description provided for @language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get language;
+
+  /// No description provided for @about.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get about;
+
+  /// No description provided for @quickActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Actions'**
+  String get quickActions;
+
+  /// No description provided for @continueLearning.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue Learning'**
+  String get continueLearning;
+
+  /// No description provided for @joinStudyGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Join Study Group'**
+  String get joinStudyGroup;
+
+  /// No description provided for @subjects.
+  ///
+  /// In en, this message translates to:
+  /// **'Subjects'**
+  String get subjects;
+
+  /// No description provided for @goodMorning.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Morning!'**
+  String get goodMorning;
+
+  /// No description provided for @readyToLearn.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to learn today?'**
+  String get readyToLearn;
+
+  /// No description provided for @lessonPacks.
+  ///
+  /// In en, this message translates to:
+  /// **'Lesson Packs'**
+  String get lessonPacks;
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// No description provided for @noLessonsAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No lessons available'**
+  String get noLessonsAvailable;
+
+  /// No description provided for @checkBackLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Check back later for new content'**
+  String get checkBackLater;
+
+  /// No description provided for @multipleLessons.
+  ///
+  /// In en, this message translates to:
+  /// **'Multiple lessons'**
+  String get multipleLessons;
+
+  /// No description provided for @lessons.
+  ///
+  /// In en, this message translates to:
+  /// **'Lessons'**
+  String get lessons;
+
+  /// No description provided for @noLessonsInPack.
+  ///
+  /// In en, this message translates to:
+  /// **'No lessons in this pack'**
+  String get noLessonsInPack;
+
+  /// No description provided for @loading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading...'**
+  String get loading;
+
+  /// No description provided for @min.
+  ///
+  /// In en, this message translates to:
+  /// **'min'**
+  String get min;
+
+  /// No description provided for @takeQuiz.
+  ///
+  /// In en, this message translates to:
+  /// **'Take Quiz'**
+  String get takeQuiz;
+
+  /// No description provided for @playingAudio.
+  ///
+  /// In en, this message translates to:
+  /// **'Playing audio narration...'**
+  String get playingAudio;
+
+  /// No description provided for @smartRecommendations.
+  ///
+  /// In en, this message translates to:
+  /// **'Smart Recommendations'**
+  String get smartRecommendations;
+
+  /// No description provided for @recommendedForYou.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended for you based on progress'**
+  String get recommendedForYou;
+
+  /// No description provided for @aiRecommended.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Recommended'**
+  String get aiRecommended;
 }
 
 class _AppLocalizationsDelegate

@@ -344,31 +344,73 @@ WHERE learner_id = 'uuid'
 ORDER BY server_ts DESC;
 ```
 
----
-
-## Troubleshooting
-
-### Common Issues
-
-1. **OTP not received**
-   - Check phone number format (+254...)
-   - Verify Africa's Talking configuration
-
-2. **Sync failing**
-   - Check network connectivity
-   - Verify Supabase credentials
-   - Check JWT token validity
-
-3. **Lesson not loading**
-   - Verify lesson content in database
-   - Check storage bucket permissions
-
-### Support
-
-For issues, contact: support@eduflow.app
 
 ---
 
-## License
+## 🧠 Advanced Feature Deep-Dive
 
-MIT License - See LICENSE file for details
+### 1. AI Adaptive Learning Engine (TensorFlow Lite)
+The EduFlow mobile app includes a local machine learning inference engine that powers our adaptive assessments.
+- **Model**: Custom-trained classification model deployed as a `.tflite` file.
+- **Logic**: The engine analyzes the learner's response time, previous score, and current question difficulty.
+- **Outcome**: It predicts the optimal difficulty level for the next question to maintain the "Flow State"—where the challenge matches the learner's skill level.
+- **Offline Capability**: Since the model runs locally on the device, adaptive learning works 100% offline.
+
+### 2. Intelligent Peer Matching Service
+To combat isolation in displacement camps, EduFlow includes a social learning layer.
+- **Algorithm**: When a learner signifies interest in a study group, the Backend service looks for others in the same `region` and `displacement_center` who are studying the same `subject` and `level`.
+- **Connectivity**: Matches are delivered via the app for smartphone users and via SMS for feature phone users.
+- **Anonymity**: Names are never shared; users are matched via internal UUIDs until they choose to meet in person at designated learning hubs.
+
+### 3. Conflict-Resilient Data Sync
+Our sync logic is designed for "vibrant but intermittent" connectivity.
+- **Append-Only Logging**: All progress events (lesson started, quiz answered, score achieved) are stored as an immutable log locally.
+- **Timestamping**: We use dual timestamps (`device_ts` and `server_ts`) to ensure that even if a device is offline for weeks, the historical data is merged in the correct chronological order.
+- **State Reconciliation**: The dashboard uses the latest `server_ts` to present the current learning state, while the mobile app reconciles with the local log.
+
+---
+
+## 🔒 Security & Privacy Architecture
+
+EduFlow is built on the principle of **Privacy by Design**, especially critical for vulnerable displaced populations.
+
+### 1. PII Redaction (Phone Hashing)
+We do not store raw phone numbers in our database.
+- **Hashing**: All phone numbers are hashed using **SHA-256** before being stored.
+- **Authentication**: OTPs are generated and sent via a secure third-party (Africa's Talking), and the system only interacts with the hash in the backend.
+- **Risk Mitigation**: In the unlikely event of a data breach, no individual learner's phone number can be retrieved.
+
+### 2. Row Level Security (RLS)
+We leverage Supabase's PostgreSQL RLS to ensure data isolation.
+- **Policy**: Each learner can only read/write their own progress data.
+- **JWT Vetting**: Every API request is verified against a signed JWT issued during the OTP verification phase.
+
+### 3. Secure Administrative Access
+The NGO Dashboard accesses the database through a dedicated service role with audited permissions.
+- **No Direct Deletion**: Admins can view and manage data but are restricted from bulk deletion of learner history without multi-factor approval.
+
+---
+
+## 📚 Features Guide & FAQ
+
+For a detailed guide on how to use each feature of the platform, please refer to the **[Comprehensive Features Guide](FEATURES_GUIDE.md)**.
+
+---
+
+## 🌍 Impact Metrics tracking
+The system is designed to provide NGOs with the following metrics:
+- **Retention Rate**: Duration of active streaks.
+- **Learning Velocity**: Speed of progression through content levels.
+- **Community Engagement**: Number of successful peer matches and study group sessions.
+
+---
+
+## 🏗️ Support
+For technical issues, please contact the development team at `dev@africaforward.org`.
+
+---
+
+## 📜 License
+
+Copyright (c) 2024 Africa Forward. All rights reserved.
+Licensed under the MIT License.

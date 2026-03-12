@@ -148,4 +148,79 @@ class AppLocalizationsAm extends AppLocalizations {
 
   @override
   String get gotIt => 'ተረድቻለሁ!';
+
+  @override
+  String get settings => 'ቅንብሮች';
+
+  @override
+  String get appearance => 'መልክ';
+
+  @override
+  String get darkMode => 'ጥቁር ሁነታ';
+
+  @override
+  String get language => 'ቋንቋ';
+
+  @override
+  String get about => 'ስለ';
+
+  @override
+  String get quickActions => 'ፈጣን እርምጃዎች';
+
+  @override
+  String get continueLearning => 'ትምህርቱን ይቀጥሉ';
+
+  @override
+  String get joinStudyGroup => 'የጥናት ቡድን ይቀላቀሉ';
+
+  @override
+  String get subjects => 'ትምህርቶች';
+
+  @override
+  String get goodMorning => 'እንደምን አደሩ!';
+
+  @override
+  String get readyToLearn => 'ዛሬ ለመማር ዝግጁ ነዎት?';
+
+  @override
+  String get lessonPacks => 'የትምህርት ጥቅሎች';
+
+  @override
+  String get retry => 'እንደገና ይሞክሩ';
+
+  @override
+  String get noLessonsAvailable => 'ምንም ትምህርቶች የሉም';
+
+  @override
+  String get checkBackLater => 'ለአዳዲስ ይዘቶች ቆይተው ይመልከቱ';
+
+  @override
+  String get multipleLessons => 'በርካታ ትምህርቶች';
+
+  @override
+  String get lessons => 'ትምህርቶች';
+
+  @override
+  String get noLessonsInPack => 'በዚህ ጥቅል ውስጥ ምንም ትምህርቶች የሉም';
+
+  @override
+  String get loading => 'በመጫን ላይ...';
+
+  @override
+  String get min => 'ደቂቃ';
+
+  @override
+  String get takeQuiz => 'ጥያቄዎችን ይውሰዱ';
+
+  @override
+  String get playingAudio => 'የድምጽ ትረካ በመጫወት ላይ...';
+
+  @override
+  String get smartRecommendations => 'ስማርት ምክሮች';
+
+  @override
+  String get recommendedForYou => 'በእድገትዎ ላይ በመመስረት ለእርስዎ ይመከራል';
+
+  @override
+  String get aiRecommended => 'በ AI የሚመከር';
 }

@@ -21,15 +21,27 @@ async function apiFetch(endpoint: string, options: RequestInit = {}, _retried = 
         ...(options.headers as Record<string, string>),
     };
 
-    let response = await fetch(`${API_BASE_URL}${endpoint}`, {
-        ...options,
-        headers,
-    });
+    let response: Response;
+    try {
+        response = await fetch(`${API_BASE_URL}${endpoint}`, {
+            ...options,
+            headers,
+        });
+    } catch (error: any) {
+        // Network/Connection errors
+        await api.logError({
+            level: 'error',
+            message: `Network error: ${error.message}`,
+            source: 'dashboard',
+            context: { endpoint, method: options.method || 'GET' }
+        });
+        throw error;
+    }
 
     // Handle 401 Unauthorized
     if (response.status === 401) {
         // Skip refresh for login endpoint itself to avoid loops
-        if (endpoint === '/admin/login') {
+        if (endpoint === '/admin/login' || endpoint === '/logs') {
             const error = await response.json().catch(() => ({}));
             throw new Error(error.error || 'Invalid credentials');
         }
@@ -71,7 +83,24 @@ async function apiFetch(endpoint: string, options: RequestInit = {}, _retried = 
 
     if (!response.ok) {
         const error = await response.json().catch(() => ({}));
-        throw new Error(error.error || error.message || `Request failed (${response.status})`);
+        const errorMessage = error.error || error.message || `Request failed (${response.status})`;
+
+        // Automatically log 500-level errors to the backend
+        if (response.status >= 500 && endpoint !== '/logs') {
+            api.logError({
+                level: 'critical',
+                message: `Server Error: ${errorMessage}`,
+                source: 'dashboard',
+                context: {
+                    endpoint,
+                    method: options.method || 'GET',
+                    statusCode: response.status,
+                    errorData: error
+                }
+            }).catch(e => console.error('Failed to report error to backend:', e));
+        }
+
+        throw new Error(errorMessage);
     }
 
     return response.json();
@@ -88,6 +117,11 @@ export const api = {
         body: JSON.stringify(body)
     }),
     delete: (endpoint: string) => apiFetch(endpoint, { method: 'DELETE' }),
+    logError: (data: { level: string; message: string; source: string; context?: any; stackTrace?: string }) => 
+        apiFetch('/logs', {
+            method: 'POST',
+            body: JSON.stringify(data)
+        }),
     getLearners: () => apiFetch('/auth/learners'),
     getAnalytics: () => apiFetch('/analytics/overview'),
     getDetailedAnalytics: () => apiFetch('/analytics/detailed'),

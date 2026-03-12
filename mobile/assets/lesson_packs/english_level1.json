@@ -1,0 +1,25 @@
+{
+    "id": "english-pack-level1",
+    "subject": "english",
+    "level": 1,
+    "language": "en",
+    "version": 1,
+    "size_mb": 1.2,
+    "lessons": [
+        {
+            "id": "english-level1-01",
+            "sequence": 1,
+            "title": "The Alphabet",
+            "content": "# The Alphabet\n\nIn this lesson, we will learn the English alphabet.\n\n## The Vowels\nThere are 5 vowels in English:\nA, E, I, O, U\n\n## The Consonants\nThe other 21 letters are consonants, such as B, C, D, F, G, and so on.\n\n## Practice\nTry saying the vowels out loud: A, E, I, O, U!",
+            "audio_url": "https://storage.eduflow.app/audio/english_level1_01.mp3",
+            "duration_mins": 8,
+            "quiz": [
+                {
+                    "question": "How many vowels are in the English alphabet?",
+                    "options": ["3", "5", "7", "21"],
+                    "correct_index": 1
+                }
+            ]
+        }
+    ]
+}

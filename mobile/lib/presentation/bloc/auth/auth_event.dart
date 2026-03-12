@@ -42,3 +42,8 @@ class Logout extends AuthEvent {}
 
 /// Complete onboarding
 class CompleteOnboarding extends AuthEvent {}
+
+/// Mark language as selected during onboarding
+class SetAppLanguage extends AuthEvent {
+  const SetAppLanguage();
+}

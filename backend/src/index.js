@@ -9,6 +9,7 @@ const lessonsRoutes = require('./routes/lessons.routes');
 const progressRoutes = require('./routes/progress.routes');
 const communityRoutes = require('./routes/community.routes');
 const smsRoutes = require('./routes/sms.routes');
+const logRoutes = require('./routes/log.routes');
 
 const { errorHandler } = require('./middleware/error.middleware');
 const { requestLogger } = require('./middleware/logger.middleware');
@@ -85,6 +86,7 @@ app.use('/api/v1/languages', require('./routes/language.routes'));
 app.use('/api/v1/analytics', require('./routes/analytics.routes'));
 app.use('/api/v1/admin', require('./routes/admin.routes'));
 app.use('/api/v1/organization', require('./routes/organization.routes'));
+app.use('/api/v1/logs', logRoutes);
 
 
 // 404 handler

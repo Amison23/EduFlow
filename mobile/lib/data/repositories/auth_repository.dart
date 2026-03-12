@@ -97,6 +97,21 @@ class AuthRepository {
     }
   }
 
+  /// Sync preferred language to backend
+  Future<void> syncPreferredLanguage(String languageCode) async {
+    final learnerId = HiveBoxes.getLearnerId();
+    if (learnerId == null) return;
+
+    try {
+      await _authRemote.updateProfile(
+        learnerId: learnerId,
+        data: {'preferred_language': languageCode},
+      );
+    } catch (_) {
+      // Background sync failures are silent
+    }
+  }
+
   /// Check if user is authenticated
   Future<({bool isAuthenticated, String? token, String? learnerId})> checkAuthStatus() async {
     final token = HiveBoxes.getToken();
@@ -111,13 +126,16 @@ class AuthRepository {
   }
 
   /// Get onboarding status
-  Future<({bool hasSeenWelcome, bool hasSetContext})> getOnboardingStatus() async {
+  Future<({bool hasSelectedLanguage, bool hasSeenWelcome, bool hasSetContext})> getOnboardingStatus() async {
+    final hasSelectedLanguage = HiveBoxes.settings.containsKey('preferred_language');
+    
     final hasSeenWelcome = HiveBoxes.isOnboardingComplete() == false 
         ? false 
         : true;
     final context = HiveBoxes.getDisplacementContext();
     
     return (
+      hasSelectedLanguage: hasSelectedLanguage,
       hasSeenWelcome: hasSeenWelcome || context != null,
       hasSetContext: context != null,
     );

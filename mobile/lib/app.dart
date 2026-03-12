@@ -12,6 +12,8 @@ import 'presentation/screens/onboarding/welcome_screen.dart';
 import 'presentation/screens/onboarding/displacement_context_screen.dart';
 import 'presentation/screens/onboarding/phone_auth_screen.dart';
 import 'presentation/widgets/offline_banner.dart';
+import 'presentation/bloc/locale/locale_cubit.dart';
+import 'presentation/screens/onboarding/language_selection_screen.dart';
 
 class EduFlowApp extends StatelessWidget {
   const EduFlowApp({super.key});
@@ -24,28 +26,30 @@ class EduFlowApp extends StatelessWidget {
       ],
       child: BlocBuilder<ThemeCubit, ThemeMode>(
         builder: (context, themeMode) {
-          return MaterialApp(
-            title: AppConstants.appName,
-            debugShowCheckedModeBanner: false,
-            theme: AppTheme.lightTheme,
-            darkTheme: AppTheme.darkTheme,
-            themeMode: themeMode,
-            localizationsDelegates: const [
-              AppLocalizations.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            supportedLocales: const [
-              Locale('en'),
-              Locale('sw'),
-              Locale('am'),
-            ],
-            home: BlocBuilder<AuthBloc, AuthState>(
-              builder: (context, state) {
-                return const AuthNavigator();
-              },
-            ),
+          return BlocBuilder<LocaleCubit, Locale>(
+            builder: (context, locale) {
+              return MaterialApp(
+                title: AppConstants.appName,
+                debugShowCheckedModeBanner: false,
+                theme: AppTheme.lightTheme,
+                darkTheme: AppTheme.darkTheme,
+                themeMode: themeMode,
+                locale: locale,
+                localizationsDelegates: const [
+                  AppLocalizations.delegate,
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
+                supportedLocales: const [
+                  Locale('en'),
+                  Locale('sw'),
+                  Locale('am'),
+                ],
+                home: const AuthNavigator(),
+              );
+            },
           );
         },
       ),
@@ -69,12 +73,20 @@ class AuthNavigator extends StatelessWidget {
         }
 
         if (state is AuthUnauthenticated) {
-          // Check which step of onboarding they're on
-          if (state.hasSeenWelcome == false) {
+          // Priority: 0. Select Language
+          if (state.hasSelectedLanguage == false) {
+            return const LanguageSelectionScreen();
+          }
+          // 1. Welcome Screen
+          else if (state.hasSeenWelcome == false) {
             return const WelcomeScreen();
-          } else if (state.hasSetDisplacementContext == false) {
+          } 
+          // 2. Displacement Context
+          else if (state.hasSetDisplacementContext == false) {
             return const DisplacementContextScreen();
-          } else {
+          } 
+          // 3. Login
+          else {
             return const PhoneAuthScreen();
           }
         }

@@ -17,6 +17,7 @@
         "flutter_bloc",
         "flutter_dotenv",
         "flutter_localizations",
+        "flutter_markdown",
         "hive_flutter",
         "intl",
         "path",
@@ -53,6 +54,16 @@
         "stream_channel",
         "test_api",
         "vector_math"
+      ]
+    },
+    {
+      "name": "flutter_markdown",
+      "version": "0.7.7+1",
+      "dependencies": [
+        "flutter",
+        "markdown",
+        "meta",
+        "path"
       ]
     },
     {
@@ -307,6 +318,14 @@
         "stream_channel",
         "string_scanner",
         "term_glyph"
+      ]
+    },
+    {
+      "name": "markdown",
+      "version": "7.3.0",
+      "dependencies": [
+        "args",
+        "meta"
       ]
     },
     {
@@ -694,6 +713,11 @@
       ]
     },
     {
+      "name": "args",
+      "version": "2.7.0",
+      "dependencies": []
+    },
+    {
       "name": "web",
       "version": "1.1.1",
       "dependencies": []
@@ -753,11 +777,6 @@
         "meta",
         "petitparser"
       ]
-    },
-    {
-      "name": "args",
-      "version": "2.7.0",
-      "dependencies": []
     },
     {
       "name": "petitparser",

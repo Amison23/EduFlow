@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const config = require('../config/env');
+const supabase = require('../config/supabase');
 
 /**
  * Verify JWT token
@@ -16,6 +17,18 @@ exports.verifyToken = (req, res, next) => {
     try {
         const decoded = jwt.verify(token, config.jwtSecret);
         req.user = decoded;
+
+        // Proactively update last_active_at for learners (fire and forget)
+        if (decoded.learnerId) {
+            supabase
+                .from('learners')
+                .update({ last_active_at: new Date().toISOString() })
+                .eq('id', decoded.learnerId)
+                .then(({ error }) => {
+                    if (error) console.error('Error updating last_active_at:', error);
+                });
+        }
+
         next();
     } catch (error) {
         return res.status(401).json({ error: 'Invalid token' });

@@ -13,10 +13,12 @@ class AuthLoading extends AuthState {}
 
 /// Unauthenticated state
 class AuthUnauthenticated extends AuthState {
+  final bool hasSelectedLanguage;
   final bool hasSeenWelcome;
   final bool hasSetDisplacementContext;
 
   const AuthUnauthenticated({
+    required this.hasSelectedLanguage,
     required this.hasSeenWelcome,
     required this.hasSetDisplacementContext,
   });
@@ -33,12 +35,14 @@ class OtpSent extends AuthState {
 class AuthAuthenticated extends AuthState {
   final String token;
   final String? learnerId;
+  final bool hasSelectedLanguage;
   final bool hasSeenWelcome;
   final bool hasSetDisplacementContext;
 
   const AuthAuthenticated({
     required this.token,
     this.learnerId,
+    required this.hasSelectedLanguage,
     required this.hasSeenWelcome,
     required this.hasSetDisplacementContext,
   });
@@ -46,12 +50,14 @@ class AuthAuthenticated extends AuthState {
   AuthAuthenticated copyWith({
     String? token,
     String? learnerId,
+    bool? hasSelectedLanguage,
     bool? hasSeenWelcome,
     bool? hasSetDisplacementContext,
   }) {
     return AuthAuthenticated(
       token: token ?? this.token,
       learnerId: learnerId ?? this.learnerId,
+      hasSelectedLanguage: hasSelectedLanguage ?? this.hasSelectedLanguage,
       hasSeenWelcome: hasSeenWelcome ?? this.hasSeenWelcome,
       hasSetDisplacementContext: hasSetDisplacementContext ?? this.hasSetDisplacementContext,
     );

@@ -20,8 +20,8 @@ class AudioPlayerWidget extends StatefulWidget {
 class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   final AudioService _audioService = AudioService();
   bool _isPlaying = false;
-  Duration _position = Duration.zero;
-  Duration _duration = Duration.zero;
+  final Duration _position = Duration.zero;
+  final Duration _duration = Duration.zero;
 
   @override
   void initState() {

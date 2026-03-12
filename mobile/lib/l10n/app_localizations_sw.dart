@@ -151,4 +151,79 @@ class AppLocalizationsSw extends AppLocalizations {
 
   @override
   String get gotIt => 'Nimeelewa!';
+
+  @override
+  String get settings => 'Mipangilio';
+
+  @override
+  String get appearance => 'Muonekano';
+
+  @override
+  String get darkMode => 'Modi ya Usiku';
+
+  @override
+  String get language => 'Lugha';
+
+  @override
+  String get about => 'Kuhusu';
+
+  @override
+  String get quickActions => 'Hatua za Haraka';
+
+  @override
+  String get continueLearning => 'Endelea Kujifunza';
+
+  @override
+  String get joinStudyGroup => 'Jiunge na Kikundi';
+
+  @override
+  String get subjects => 'Masomo';
+
+  @override
+  String get goodMorning => 'Habari za Asubuhi!';
+
+  @override
+  String get readyToLearn => 'Uko tayari kujifunza leo?';
+
+  @override
+  String get lessonPacks => 'Vifurushi vya Masomo';
+
+  @override
+  String get retry => 'Jaribu Tena';
+
+  @override
+  String get noLessonsAvailable => 'Hakuna masomo yanayopatikana';
+
+  @override
+  String get checkBackLater => 'Angalia baadaye kwa maudhui mapya';
+
+  @override
+  String get multipleLessons => 'Masomo mengi';
+
+  @override
+  String get lessons => 'Masomo';
+
+  @override
+  String get noLessonsInPack => 'Hakuna masomo kwenye kifurushi hiki';
+
+  @override
+  String get loading => 'Inapakia...';
+
+  @override
+  String get min => 'dakika';
+
+  @override
+  String get takeQuiz => 'Fanya Maswali';
+
+  @override
+  String get playingAudio => 'Inacheza maelezo ya sauti...';
+
+  @override
+  String get smartRecommendations => 'Mapendekezo ya Smart';
+
+  @override
+  String get recommendedForYou => 'Inapendekezwa kwako kulingana na maendeleo';
+
+  @override
+  String get aiRecommended => 'Inapendekezwa na AI';
 }

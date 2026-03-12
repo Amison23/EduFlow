@@ -73,7 +73,7 @@ class LessonCard extends StatelessWidget {
                     Row(
                       children: [
                         if (durationMins != null) ...[
-                          Icon(Icons.schedule, size: 14, color: AppTheme.textHint),
+                          const Icon(Icons.schedule, size: 14, color: AppTheme.textHint),
                           const SizedBox(width: 4),
                           Text(
                             '$durationMins min',
@@ -84,7 +84,7 @@ class LessonCard extends StatelessWidget {
                         ],
                         if (isDownloaded) ...[
                           const SizedBox(width: 12),
-                          Icon(Icons.download_done, size: 14, color: AppTheme.secondaryColor),
+                          const Icon(Icons.download_done, size: 14, color: AppTheme.secondaryColor),
                           const SizedBox(width: 4),
                           Text(
                             'Downloaded',

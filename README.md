@@ -1,104 +1,90 @@
 # EduFlow
 
-> Lifeline Learning for Africa's Displaced
+> **Lifeline Learning for Africa's Displaced**
 
-This repository contains the full EduFlow suite designed for displaced learners, featuring a Flutter mobile app, an Express backend, and a Next.js dashboard.
-
-## Services & Credentials Required
-
-For **full functionality**, you need to ensure the following services are fully configured:
-
-1. **Supabase (Database, Auth & Storage)**
-   - **Status:** Create a project via the Supabase and populated the URL and Anon Key across `.env` and `dashboard/.env.local`.
-   - **Action Required**: Obtain the `service_role` key from your [Supabase Dashboard](https://supabase.com/dashboard/projects) under **Project Settings > API** and paste it into the `SUPABASE_SERVICE_KEY` field in the root `.env`.
-
-2. **Africa's Talking (SMS Gateway)**
-   - **Action Required**: Create an account at [Africa's Talking](https://africastalking.com/). Refer to the [Africa's Talking Setup Guide](docs/AFRICA_TALKING_SETUP.md) for detailed instructions on obtaining an API Key and setting up your credentials.
-
-3. **Vercel (Dashboard Hosting)**
-   - **Status**: The project can be deployed seamlessly to Vercel. Connect your GitHub repository to Vercel, and paste the Vercel Access Token you possess into your Vercel CLI or environment secrets if deploying via CI/CD. Ensure `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are provided in your Vercel project settings.
-
-
-##  NGO Master Dashboard
-
-The EduFlow NGO Dashboard is a unified management suite at `/dashboard`. It is designed for program administrators to oversee learners, content, and system health.
-
-### Key Management Features:
-- **Real-time Analytics**: Monitor learner engagement, completion rates, and regional hotspots.
-- **Learner CRM**: Manage learner profiles, track individual progress, and verify sync status.
-- **Content Studio**: Upload and manage lesson packs, track publishing versions, and audit curriculum updates.
-- **Database Explorer**: Direct (but safe) database access for administrative queries and troubleshooting.
-- **Community Hub**: Manage peer study groups and regional learning cohorts.
+EduFlow is an **offline-first, AI-enhanced educational platform** engineered specifically for the unique challenges faced by displaced learners and marginalized communities across Africa. By bridging the digital divide with a multi-modal approach—spanning advanced smartphone applications, basic feature phone integration via SMS/USSD, and a powerful NGO administrative suite—EduFlow ensures that quality education remains accessible, even in the most resource-constrained environments.
 
 ---
 
-## Installation & Local Development
+## 🌟 Core Capabilities & USPs
+
+### 📱 Smartphone Learning (Flutter)
+A feature-rich, high-fidelity learning experience designed for modern Android and iOS devices.
+- **Offline-First Architecture**: Continuous learning without an active internet connection. Data syncs automatically once a connection is detected.
+- **AI-Driven Adaptive Quizzes**: Utilizing **TensorFlow Lite**, the app dynamically adjusts quiz difficulty based on learner performance to optimize retention.
+- **Audio-Visual Lessons**: Multimedia-rich content packs that cater to diverse learning styles.
+- **Gamified Engagement**: Built-in streaks, badges, and progress tracking to keep learners motivated.
+- **Peer-to-Peer Matching**: Intelligent study group formation to foster community learning even in displacement camps.
+
+### 📟 Feature Phone Integration (SMS/USSD)
+Bypassing the need for smartphones or data plans, EduFlow brings education to the most basic devices.
+- **SMS-Based Lessons**: Full curriculum delivery via standard text messaging.
+- **Interactive USSD Quizzes**: Real-time assessments using simple dial-up menus.
+- **Privacy-Preserving**: All sensitive learner data is hashed (SHA-256) to ensure security and anonymity.
+
+### 📊 NGO Master Dashboard (Next.js)
+A unified command center for organizations to manage, monitor, and scale educational programs.
+- **Real-Time Analytics**: Visual heatmaps and engagement metrics to identify regional needs and student progress.
+- **Learner CRM**: Comprehensive profile management with detailed sync status and learning history.
+- **Content Studio**: A centralized hub for uploading, versioning, and distributing lesson packs.
+- **System Health Monitor**: Live tracking of SMS gateway status and database performance.
+
+---
+
+## 🛠️ Technology Stack
+
+| Component | Technology | Role |
+|-----------|------------|------|
+| **Mobile** | Flutter, BLoC, SQLite, TFLite | Cross-platform offline learning |
+| **Backend** | Node.js (Express), Supabase | Scalable REST API & Auth |
+| **Dashboard** | Next.js, Tailwind CSS, Vercel | Admin interface & Analytics |
+| **Database** | PostgreSQL (Supabase) | Secure, relational data storage |
+| **Gateway** | Africa's Talking | SMS & USSD delivery |
+
+---
+
+## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js (v18+)
-- Flutter SDK
-- Supabase Account
-- Africa's Talking API Credentials
+- **Mobile**: Flutter SDK (v3.10+)
+- **Backend/Web**: Node.js (v18+)
+- **Services**: Supabase Account, Africa's Talking API Key
 
-### 1. Root Configuration
-Copy `.env.example` to `.env` in the root and fill in your credentials.
-```bash
-cp .env.example .env
-```
+### Quick Setup
 
-### 2. Backend Setup
-```bash
-cd backend
-npm install
-npm run dev # Starts on http://localhost:5000
-```
+1. **Environment Configuration**
+   ```bash
+   cp .env.example .env
+   # Fill in your SUPABASE_URL, SUPABASE_SERVICE_KEY, and AFRICA_TALKING_API_KEY
+   ```
 
-### 3. Dashboard Setup
-```bash
-cd dashboard
-npm install
-npm run dev # Starts on http://localhost:3000
-```
+2. **Backend & Dashboard**
+   ```bash
+   # In /backend and /dashboard
+   npm install && npm run dev
+   ```
 
-### 4. Mobile App Setup
-```bash
-cd mobile
-flutter pub get
-flutter run
-```
-
-### 5. Dependency Management
-> [!IMPORTANT]
-> When running `npm install`, you may see security vulnerability warnings from `npm audit`. **Please ignore these for now.** 
-> Many of these are false positives or related to development-only dependencies. Running `npm audit fix` automatically can silently upgrade packages and break the application's core logic or dashboard routing. Only update dependencies if required by future feature updates.
-
-### 6. Local vs. Deployed Testing (Environments)
-Both the Mobile App and the Dashboard use environment variables to locate the Backend API. You can switch between testing locally or against your live deployment by updating the `.env` files.
-
-#### Mobile App Configuration
-Edit `mobile/.env` and update `API_BASE_URL`:
-- **Local (Android Emulator):** `API_BASE_URL=http://10.0.2.2:5000/api/v1`
-- **Local (iOS Simulator/Web):** `API_BASE_URL=http://localhost:5000/api/v1`
-- **Live Deployment:** `API_BASE_URL=https://eduflow-api-ms02.onrender.com/api/v1`
-*(Run `flutter run` or hot restart after changing the file)*
-
-#### Dashboard Configuration
-Edit `dashboard/.env.local` and update `NEXT_PUBLIC_API_URL`:
-- **Local:** `NEXT_PUBLIC_API_URL=http://localhost:5000/api/v1`
-- **Live Deployment:** Set this environment variable in your Vercel Project Settings to point to your live Render backend URL.
-
+3. **Mobile App**
+   ```bash
+   cd mobile
+   flutter pub get && flutter run
+   ```
 
 ---
 
-## Documentation Index
+## 📚 Documentation Index
 
-- [Project Architecture & Design](docs/PROJECT_DOCUMENTATION.md)
-- [Content Structure & Management](docs/CONTENT_STRUCTURE.md)
-- [Operations & Troubleshooting](docs/OPERATIONS_MANUAL.md)
-- [Asset Requirements](docs/ASSETS_REQUIREMENTS.md)
-- [Africa's Talking Setup Guide](docs/AFRICA_TALKING_SETUP.md)
+Our documentation is structured to help you get the most out of the EduFlow ecosystem:
+
+- 🏗️ **[Architecture & System Design](docs/PROJECT_DOCUMENTATION.md)**: Deep dive into the tech stack and data flows.
+- 📖 **[Content Management Guide](docs/CONTENT_STRUCTURE.md)**: How to create and deploy new lesson packs.
+- ⚙️ **[Operations & Hosting](docs/OPERATIONS_MANUAL.md)**: Deployment guides for Render, Vercel, and Supabase.
+- 💬 **[SMS Gateway Setup](docs/AFRICA_TALKING_SETUP.md)**: Detailed instructions for configuring Africa's Talking.
+- 🔒 **[Security & Privacy Policy](docs/OPERATIONS_MANUAL.md#security)**: Documentation of our data protection measures.
 
 ---
 
-## Support & Contributions
-For technical support, please refer to the [Operations Manual](docs/OPERATIONS_MANUAL.md) or contact the dev team at `dev@africaforward.org`.
+## 🌍 Impact
+EduFlow is built with the mission of ensuring that **no learner is left behind**. By empowering NGOs with data and providing learners with flexible, resilient tools, we are building a bridge to a brighter future for Africa's displaced youth.
+
+For support, reach out to **[dev@africaforward.org](mailto:dev@africaforward.org)**.

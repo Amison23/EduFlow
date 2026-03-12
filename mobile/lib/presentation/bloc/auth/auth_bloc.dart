@@ -18,6 +18,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<UpdateProfile>(_onUpdateProfile);
     on<Logout>(_onLogout);
     on<CompleteOnboarding>(_onCompleteOnboarding);
+    on<SetAppLanguage>(_onSetAppLanguage);
   }
 
   Future<void> _onCheckAuthStatus(
@@ -34,13 +35,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthAuthenticated(
         token: result.token!,
         learnerId: result.learnerId,
+        hasSelectedLanguage: onboardingStatus.hasSelectedLanguage,
         hasSeenWelcome: onboardingStatus.hasSeenWelcome,
         hasSetDisplacementContext: onboardingStatus.hasSetContext,
       ));
     } else {
-      emit(const AuthUnauthenticated(
-        hasSeenWelcome: false,
-        hasSetDisplacementContext: false,
+      final onboardingStatus = await _authRepository.getOnboardingStatus();
+      emit(AuthUnauthenticated(
+        hasSelectedLanguage: onboardingStatus.hasSelectedLanguage,
+        hasSeenWelcome: onboardingStatus.hasSeenWelcome,
+        hasSetDisplacementContext: onboardingStatus.hasSetContext,
       ));
     }
   }
@@ -77,6 +81,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthAuthenticated(
         token: result.token!,
         learnerId: result.learnerId,
+        hasSelectedLanguage: onboardingStatus.hasSelectedLanguage,
         hasSeenWelcome: onboardingStatus.hasSeenWelcome,
         hasSetDisplacementContext: onboardingStatus.hasSetContext,
       ));
@@ -125,6 +130,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     await _authRepository.logout();
     emit(const AuthUnauthenticated(
+      hasSelectedLanguage: true, // Language is usually kept after logout
       hasSeenWelcome: true,
       hasSetDisplacementContext: true,
     ));
@@ -139,6 +145,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final currentState = state;
     if (currentState is AuthAuthenticated) {
       emit(currentState.copyWith(hasSeenWelcome: true));
+    }
+  }
+
+  Future<void> _onSetAppLanguage(
+    SetAppLanguage event,
+    Emitter<AuthState> emit,
+  ) async {
+    final currentState = state;
+    if (currentState is AuthUnauthenticated) {
+      emit(AuthUnauthenticated(
+        hasSelectedLanguage: true,
+        hasSeenWelcome: currentState.hasSeenWelcome,
+        hasSetDisplacementContext: currentState.hasSetDisplacementContext,
+      ));
+    } else if (currentState is AuthAuthenticated) {
+      emit(currentState.copyWith(hasSelectedLanguage: true));
     }
   }
 }

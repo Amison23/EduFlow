@@ -17,7 +17,6 @@ class DisplacementContextScreen extends StatefulWidget {
 class _DisplacementContextScreenState extends State<DisplacementContextScreen> {
   String? _selectedContext;
   String? _selectedRegion;
-  String? _selectedLanguage;
 
   List<Map<String, dynamic>> _getDisplacementOptions(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -53,12 +52,6 @@ class _DisplacementContextScreenState extends State<DisplacementContextScreen> {
     'Other',
   ];
 
-  final List<Map<String, String>> _languages = [
-    {'code': 'en', 'name': 'English'},
-    {'code': 'sw', 'name': 'Swahili'},
-    {'code': 'am', 'name': 'Amharic'},
-    {'code': 'so', 'name': 'Somali'},
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -110,24 +103,6 @@ class _DisplacementContextScreenState extends State<DisplacementContextScreen> {
             ),
             const SizedBox(height: 24),
 
-            // Language
-            Text(
-              l10n.preferredLanguage,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Wrap(
-              spacing: 8,
-              children: _languages.map((lang) => ChoiceChip(
-                label: Text(lang['name']!),
-                selected: _selectedLanguage == lang['code'],
-                onSelected: (selected) {
-                  setState(() => _selectedLanguage = selected ? lang['code'] : null);
-                },
-              )).toList(),
-            ),
             const SizedBox(height: 32),
 
             // Continue button
@@ -202,7 +177,7 @@ class _DisplacementContextScreenState extends State<DisplacementContextScreen> {
     context.read<AuthBloc>().add(UpdateProfile({
       'displacement': _selectedContext,
       'region': _selectedRegion,
-      'language': _selectedLanguage ?? 'en',
+      'language': Localizations.localeOf(context).languageCode,
     }));
 
     Navigator.pushReplacement(

@@ -21,14 +21,31 @@ CREATE TABLE IF NOT EXISTS supported_languages (
 CREATE TABLE IF NOT EXISTS learners (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     phone_hash TEXT UNIQUE NOT NULL,
+    name TEXT,
     otp TEXT,
     otp_expiry TIMESTAMPTZ,
     region TEXT,
     displacement TEXT CHECK (displacement IN ('conflict', 'climate', 'other')),
     language TEXT DEFAULT 'en',
     role TEXT DEFAULT 'learner' CHECK (role IN ('learner', 'admin', 'ngo')),
+    points INT DEFAULT 0,
+    completed_lessons INT DEFAULT 0,
+    is_active BOOLEAN DEFAULT true,
+    last_active_at TIMESTAMPTZ,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- App Logs table for centralized error tracking
+CREATE TABLE IF NOT EXISTS app_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    level TEXT NOT NULL CHECK (level IN ('info', 'warn', 'error', 'critical')),
+    message TEXT NOT NULL,
+    stack_trace TEXT,
+    context JSONB,
+    source TEXT NOT NULL, -- 'mobile', 'dashboard', 'backend'
+    user_id UUID,
+    created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- Admins table (Dashboard access)
@@ -143,6 +160,10 @@ CREATE INDEX IF NOT EXISTS idx_quiz_lesson ON quiz_questions(lesson_id);
 CREATE INDEX IF NOT EXISTS idx_rt_learner ON refresh_tokens(learner_id);
 CREATE INDEX IF NOT EXISTS idx_rt_token ON refresh_tokens(token);
 CREATE INDEX IF NOT EXISTS idx_admins_email ON admins(email);
+CREATE INDEX IF NOT EXISTS idx_learners_last_active ON learners(last_active_at);
+CREATE INDEX IF NOT EXISTS idx_app_logs_level ON app_logs(level);
+CREATE INDEX IF NOT EXISTS idx_app_logs_source ON app_logs(source);
+CREATE INDEX IF NOT EXISTS idx_app_logs_created_at ON app_logs(created_at);
 
 -------------------------------------------------------------------------------
 -- 3. ROW LEVEL SECURITY (RLS)
@@ -159,6 +180,7 @@ ALTER TABLE quiz_questions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE progress_events ENABLE ROW LEVEL SECURITY;
 ALTER TABLE study_groups ENABLE ROW LEVEL SECURITY;
 ALTER TABLE group_members ENABLE ROW LEVEL SECURITY;
+ALTER TABLE app_logs ENABLE ROW LEVEL SECURITY;
 
 -- 3.1 Public Read Policies
 CREATE POLICY "Public can view lesson packs" ON lesson_packs FOR SELECT USING (true);
@@ -189,6 +211,13 @@ CREATE POLICY "Admins can view their own profile" ON admins
 -- 3.4 Security Policies
 CREATE POLICY "Service role only for refresh tokens" ON refresh_tokens 
     FOR ALL USING (false); -- Accessible only via Service Role Key (Server-side)
+
+-- 3.5 App Logs Policies
+CREATE POLICY "Admins can view app logs" ON app_logs
+    FOR SELECT USING ((SELECT role FROM admins WHERE id = auth.uid()) IN ('admin', 'master_admin'));
+
+CREATE POLICY "Allow anyone to insert logs" ON app_logs
+    FOR INSERT WITH CHECK (true); -- Clients need to be able to report errors without necessarily being logged in
 
 -------------------------------------------------------------------------------
 -- 4. STORAGE SETUP (Manual Steps)

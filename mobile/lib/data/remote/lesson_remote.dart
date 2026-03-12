@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as p;
 import '../../core/constants/api_constants.dart';
 import '../../core/network/api_client.dart';
 import '../../core/errors/exceptions.dart';
@@ -16,9 +20,10 @@ class LessonRemote {
       final data = response.data as Map<String, dynamic>;
       return List<Map<String, dynamic>>.from(data['packs'] ?? []);
     } on AppException {
-      rethrow;
+      // If server fails, try loading from assets as a fallback for initial content
+      return _getInitialPacksFromAssets();
     } catch (e) {
-      throw NetworkException('Failed to fetch lesson packs', originalError: e);
+      return _getInitialPacksFromAssets();
     }
   }
 
@@ -31,9 +36,10 @@ class LessonRemote {
       final data = response.data as Map<String, dynamic>;
       return List<Map<String, dynamic>>.from(data['lessons'] ?? []);
     } on AppException {
-      rethrow;
+      // Fallback to asset if it matches a pre-baked pack
+      return _getLessonsFromAsset(packId);
     } catch (e) {
-      throw NetworkException('Failed to fetch lessons', originalError: e);
+      return _getLessonsFromAsset(packId);
     }
   }
 
@@ -83,9 +89,10 @@ class LessonRemote {
       final data = response.data as Map<String, dynamic>;
       return List<Map<String, dynamic>>.from(data['questions'] ?? []);
     } on AppException {
-      rethrow;
+      // Check if we can find it in our asset packs
+      return _getQuizFromAsset(lessonId);
     } catch (e) {
-      throw NetworkException('Failed to fetch quiz questions', originalError: e);
+      return _getQuizFromAsset(lessonId);
     }
   }
 
@@ -107,16 +114,70 @@ class LessonRemote {
       final data = response.data as Map<String, dynamic>;
       return List<Map<String, dynamic>>.from(data['questions'] ?? []);
     } on AppException {
-      rethrow;
+      // For adaptive quiz offline, we'd need locally stored question bank
+      return [];
     } catch (e) {
-      throw NetworkException('Failed to fetch adaptive quiz', originalError: e);
+      return [];
     }
+  }
+
+  /// Internal: Get initial packs from assets
+  Future<List<Map<String, dynamic>>> _getInitialPacksFromAssets() async {
+    return [
+      {
+        'id': 'math_level1',
+        'subject': 'math',
+        'level': 1,
+        'size_mb': 1.2,
+        'language': 'en',
+      },
+      {
+        'id': 'english_level1',
+        'subject': 'english',
+        'level': 1,
+        'size_mb': 1.5,
+        'language': 'en',
+      },
+    ];
+  }
+
+  /// Internal: Get lessons from asset file
+  Future<List<Map<String, dynamic>>> _getLessonsFromAsset(String packId) async {
+    try {
+      final String manifestContent = await rootBundle.loadString('assets/lesson_packs/$packId.json');
+      final Map<String, dynamic> data = json.decode(manifestContent);
+      return List<Map<String, dynamic>>.from(data['lessons'] ?? []);
+    } catch (e) {
+      return [];
+    }
+  }
+
+  /// Internal: Get quiz from asset file
+  Future<List<Map<String, dynamic>>> _getQuizFromAsset(String lessonId) async {
+    // This is a naive implementation: it assumes lessonId might be traceable within a pack
+    // In a real app, we'd have a mapping. For now, try to find it in our pre-baked assets.
+    try {
+      final packs = ['math_level1', 'english_level1'];
+      for (final packId in packs) {
+        final String manifestContent = await rootBundle.loadString('assets/lesson_packs/$packId.json');
+        final Map<String, dynamic> data = json.decode(manifestContent);
+        final lessons = data['lessons'] as List;
+        for (final lesson in lessons) {
+          if (lesson['id'] == lessonId && lesson['quiz'] != null) {
+            return List<Map<String, dynamic>>.from(lesson['quiz'] ?? []);
+          }
+        }
+      }
+    } catch (e) {
+      // Silent error
+    }
+    return [];
   }
 
   /// Get download path for a pack
   Future<String> _getDownloadPath(String packId) async {
-    // This would use path_provider in real implementation
-    return '/downloads/$packId.edupack';
+    final directory = await getApplicationDocumentsDirectory();
+    return p.join(directory.path, 'downloads', '$packId.edupack');
   }
 
   /// Set auth token

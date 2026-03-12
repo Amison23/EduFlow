@@ -1,0 +1,14 @@
+{
+    "questions": [
+        {
+            "question": "Which number represents 'nothing'?",
+            "options": ["1", "5", "0", "10"],
+            "correct_index": 2
+        },
+        {
+            "question": "What comes after 3?",
+            "options": ["2", "4", "5", "1"],
+            "correct_index": 1
+        }
+    ]
+}

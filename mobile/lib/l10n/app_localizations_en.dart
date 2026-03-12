@@ -151,4 +151,79 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get gotIt => 'Got it!';
+
+  @override
+  String get settings => 'Settings';
+
+  @override
+  String get appearance => 'Appearance';
+
+  @override
+  String get darkMode => 'Dark Mode';
+
+  @override
+  String get language => 'Language';
+
+  @override
+  String get about => 'About';
+
+  @override
+  String get quickActions => 'Quick Actions';
+
+  @override
+  String get continueLearning => 'Continue Learning';
+
+  @override
+  String get joinStudyGroup => 'Join Study Group';
+
+  @override
+  String get subjects => 'Subjects';
+
+  @override
+  String get goodMorning => 'Good Morning!';
+
+  @override
+  String get readyToLearn => 'Ready to learn today?';
+
+  @override
+  String get lessonPacks => 'Lesson Packs';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get noLessonsAvailable => 'No lessons available';
+
+  @override
+  String get checkBackLater => 'Check back later for new content';
+
+  @override
+  String get multipleLessons => 'Multiple lessons';
+
+  @override
+  String get lessons => 'Lessons';
+
+  @override
+  String get noLessonsInPack => 'No lessons in this pack';
+
+  @override
+  String get loading => 'Loading...';
+
+  @override
+  String get min => 'min';
+
+  @override
+  String get takeQuiz => 'Take Quiz';
+
+  @override
+  String get playingAudio => 'Playing audio narration...';
+
+  @override
+  String get smartRecommendations => 'Smart Recommendations';
+
+  @override
+  String get recommendedForYou => 'Recommended for you based on progress';
+
+  @override
+  String get aiRecommended => 'AI Recommended';
 }

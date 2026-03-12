@@ -6,6 +6,7 @@ import '../local/database.dart';
 import '../local/daos/progress_dao.dart';
 import '../local/hive_boxes.dart';
 import '../remote/progress_remote.dart';
+import '../../services/tflite_quiz_service.dart';
 
 /// Repository for progress tracking
 class ProgressRepository {
@@ -111,10 +112,38 @@ class ProgressRepository {
     }
     
     try {
-      final progress = await _progressRemote.getProgress(learnerId);
-      return (progress: progress, failure: null);
+      final events = await _progressRemote.getProgress(learnerId);
+      
+      // Calculate total points for UI summary
+      int totalPoints = 0;
+      for (var event in events) {
+        if (event['event_type'] == 'quiz_completed') {
+          totalPoints += (event['score'] as num? ?? 0).toInt() * 10; // Simple points logic
+        }
+      }
+
+      return (
+        progress: {
+          'total_points': totalPoints,
+          'events': events,
+        }, 
+        failure: null
+      );
     } catch (e) {
       return (progress: null, failure: ServerFailure(e.toString()));
+    }
+  }
+
+  /// Initialize mastery from server (for cross-device sync)
+  Future<void> initializeMasteryFromServer(TfliteQuizService quizService) async {
+    final learnerId = HiveBoxes.getLearnerId();
+    if (learnerId == null) return;
+
+    try {
+      final events = await _progressRemote.getProgress(learnerId);
+      quizService.initializeFromEvents(events);
+    } catch (_) {
+      // Background initialization failures are silent
     }
   }
 

@@ -217,13 +217,28 @@ exports.resendOtp = async (req, res, next) => {
 
 /**
  * Get all learners (Admin/NGO only)
+ * Enhanced to provide all fields for dashboard monitoring
  */
 exports.getLearners = async (req, res, next) => {
     try {
         const { data, error } = await supabase
             .from('learners')
-            .select('*')
-            .order('created_at', { ascending: false });
+            .select(`
+                id,
+                phone_hash,
+                name,
+                region,
+                displacement,
+                language,
+                role,
+                points,
+                completed_lessons,
+                is_active,
+                last_active_at,
+                created_at,
+                updated_at
+            `)
+            .order('last_active_at', { ascending: false, nullsFirst: false });
 
         if (error) throw error;
         res.json(data);

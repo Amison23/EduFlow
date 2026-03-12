@@ -29,6 +29,9 @@ class ApiConstants {
   static const String smsInbound = '/sms/inbound';
   static const String smsOutbound = '/sms/outbound';
 
+  /// Centralized logging
+  static const String logs = '/logs';
+
   /// Timeout durations
   static const Duration connectionTimeout = Duration(seconds: 30);
   static const Duration receiveTimeout = Duration(seconds: 30);
