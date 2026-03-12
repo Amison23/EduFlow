@@ -14,7 +14,7 @@ export default function AnalyticsPage() {
             .then(res => setData(res))
             .catch(e => toastError(e.message || 'Failed to load analytics'))
             .finally(() => setLoading(false));
-    }, []);
+    }, [toastError]);
 
     const Spinner = () => (
         <div className="flex justify-center items-center py-20">

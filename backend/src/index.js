@@ -84,6 +84,8 @@ app.use('/api/v1/sms', smsRoutes);
 app.use('/api/v1/languages', require('./routes/language.routes'));
 app.use('/api/v1/analytics', require('./routes/analytics.routes'));
 app.use('/api/v1/admin', require('./routes/admin.routes'));
+app.use('/api/v1/organization', require('./routes/organization.routes'));
+
 
 // 404 handler
 app.use((req, res) => {

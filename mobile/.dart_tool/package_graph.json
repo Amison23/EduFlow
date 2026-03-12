@@ -56,6 +56,13 @@
       ]
     },
     {
+      "name": "flutter_dotenv",
+      "version": "5.2.1",
+      "dependencies": [
+        "flutter"
+      ]
+    },
+    {
       "name": "shared_preferences",
       "version": "2.5.4",
       "dependencies": [
@@ -758,13 +765,6 @@
       "dependencies": [
         "collection",
         "meta"
-      ]
-    },
-    {
-      "name": "flutter_dotenv",
-      "version": "5.2.1",
-      "dependencies": [
-        "flutter"
       ]
     }
   ],

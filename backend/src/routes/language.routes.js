@@ -7,5 +7,7 @@ const languageController = require('../controllers/language.controller');
 router.get('/', languageController.getLanguages);
 router.post('/', languageController.addLanguage);
 router.put('/:id', languageController.updateLanguage);
+router.delete('/:id', languageController.deleteLanguage);
+
 
 module.exports = router;

@@ -51,7 +51,7 @@ export default function DataManagerPage() {
             setAdminsLoading(true);
             api.getAllAdmins().then(d => setAdmins(Array.isArray(d) ? d : [])).catch(e => toastError(e.message)).finally(() => setAdminsLoading(false));
         }
-    }, [activeTab]);
+    }, [activeTab, admins.length, languages.length, learners.length, packs.length, toastError]);
 
     // --- Language operations ---
     const handleAddLanguage = async (e: React.FormEvent) => {
@@ -67,6 +67,8 @@ export default function DataManagerPage() {
         finally { setAddingLang(false); }
     };
 
+    const [langToDelete, setLangToDelete] = useState<any>(null);
+
     const toggleLanguage = async (lang: any) => {
         try {
             const updated = await api.updateLanguage(lang.id, { is_active: !lang.is_active });
@@ -75,14 +77,34 @@ export default function DataManagerPage() {
         } catch (e: any) { toastError(e.message); }
     };
 
-    // --- Admins operations ---
-    const handleDeleteAdmin = async (id: string, email: string) => {
-        info(`Removing ${email}…`);
+    const handleDeleteLanguage = async () => {
+        if (!langToDelete) return;
         try {
-            await api.deleteAdmin(id);
-            setAdmins(prev => prev.filter(a => a.id !== id));
-            success(`Admin ${email} removed.`);
-        } catch (e: any) { toastError(e.message || 'Failed to remove admin'); }
+            await api.deleteLanguage(langToDelete.id);
+            setLanguages(prev => prev.filter(l => l.id !== langToDelete.id));
+            success(`Language "${langToDelete.name}" deleted permanently.`);
+        } catch (e: any) {
+            toastError(e.message || 'Failed to delete language. It might be in use.');
+        } finally {
+            setLangToDelete(null);
+        }
+    };
+
+    // --- Admins operations ---
+    const [adminToDelete, setAdminToDelete] = useState<any>(null);
+
+    const handleDeleteAdmin = async () => {
+        if (!adminToDelete) return;
+        info(`Removing ${adminToDelete.email}…`);
+        try {
+            await api.deleteAdmin(adminToDelete.id);
+            setAdmins(prev => prev.filter(a => a.id !== adminToDelete.id));
+            success(`Admin ${adminToDelete.email} removed.`);
+        } catch (e: any) {
+            toastError(e.message || 'Failed to remove admin');
+        } finally {
+            setAdminToDelete(null);
+        }
     };
 
     // Filtered learners
@@ -167,14 +189,52 @@ export default function DataManagerPage() {
                                                 <p className="text-xs text-[var(--foreground)] opacity-40 uppercase tracking-wide font-bold">{lang.code}</p>
                                             </div>
                                         </div>
-                                        <button onClick={() => toggleLanguage(lang)}
-                                            className={`px-3 py-1.5 rounded-full text-xs font-bold transition ${lang.is_active ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-red-100 text-red-700 hover:bg-red-200'}`}>
-                                            {lang.is_active ? '● Active' : '○ Inactive'}
-                                        </button>
+                                        <div className="flex items-center gap-2">
+                                            <button onClick={() => toggleLanguage(lang)}
+                                                className={`px-3 py-1.5 rounded-full text-xs font-bold transition ${lang.is_active ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-red-100 text-red-700 hover:bg-red-200'}`}>
+                                                {lang.is_active ? '● Active' : '○ Inactive'}
+                                            </button>
+                                            <button onClick={() => setLangToDelete(lang)}
+                                                className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                                title="Delete language permanently">
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            </button>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
                         )}
+                    </div>
+                </div>
+            )}
+
+            {/* Language Deletion Confirmation Modal */}
+            {langToDelete && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6 max-w-sm w-full shadow-2xl animate-in zoom-in-95 duration-200">
+                        <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-red-600 text-2xl mb-4">
+                            ⚠️
+                        </div>
+                        <h3 className="text-lg font-bold text-[var(--foreground)] mb-2">Delete Language?</h3>
+                        <p className="text-sm text-[var(--foreground)] opacity-60 mb-6">
+                            Are you sure you want to delete <strong>{langToDelete.name}</strong>? This action is permanent and might affect learners using this language.
+                        </p>
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => setLangToDelete(null)}
+                                className="flex-1 px-4 py-2.5 text-sm font-semibold text-[var(--foreground)] bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--border)] transition"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleDeleteLanguage}
+                                className="flex-1 px-4 py-2.5 text-sm font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700 transition shadow-lg shadow-red-600/20"
+                            >
+                                Delete
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
@@ -283,7 +343,7 @@ export default function DataManagerPage() {
                                             a.role === 'master_admin' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'
                                         }`}>{a.role?.replace('_', ' ')}</span>
                                         {a.role !== 'master_admin' && (
-                                            <button onClick={() => handleDeleteAdmin(a.id, a.email)}
+                                            <button onClick={() => setAdminToDelete(a)}
                                                 className="text-xs text-red-500 hover:text-red-700 font-semibold hover:underline transition-colors">
                                                 Remove
                                             </button>
@@ -293,6 +353,35 @@ export default function DataManagerPage() {
                             ))}
                         </div>
                     )}
+                </div>
+            )}
+
+            {/* Admin Deletion Confirmation Modal */}
+            {adminToDelete && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6 max-w-sm w-full shadow-2xl animate-in zoom-in-95 duration-200">
+                        <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-red-600 text-2xl mb-4">
+                            🚫
+                        </div>
+                        <h3 className="text-lg font-bold text-[var(--foreground)] mb-2">Remove Admin?</h3>
+                        <p className="text-sm text-[var(--foreground)] opacity-60 mb-6">
+                            Are you sure you want to revoke access for <strong>{adminToDelete.email}</strong>? They will no longer be able to access the dashboard.
+                        </p>
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => setAdminToDelete(null)}
+                                className="flex-1 px-4 py-2.5 text-sm font-semibold text-[var(--foreground)] bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--border)] transition"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleDeleteAdmin}
+                                className="flex-1 px-4 py-2.5 text-sm font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700 transition shadow-lg shadow-red-600/20"
+                            >
+                                Revoke
+                            </button>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>

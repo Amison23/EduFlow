@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { api } from '@/lib/api';
 import { useToast } from '@/components/ToastProvider';
 
@@ -22,7 +22,7 @@ export default function ManageAdminsPage() {
     const [submitting, setSubmitting] = useState(false);
     const { success, error: toastError, info } = useToast();
 
-    const fetchAdmins = async () => {
+    const fetchAdmins = useCallback(async () => {
         try {
             setLoading(true);
             const data = await api.getAllAdmins();
@@ -32,9 +32,9 @@ export default function ManageAdminsPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [toastError]);
 
-    useEffect(() => { fetchAdmins(); }, []);
+    useEffect(() => { fetchAdmins(); }, [fetchAdmins]);
 
     const handleCreate = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -53,14 +53,19 @@ export default function ManageAdminsPage() {
         }
     };
 
-    const handleDelete = async (id: string, email: string) => {
-        info(`Deleting ${email}…`);
+    const [adminToDelete, setAdminToDelete] = useState<Admin | null>(null);
+
+    const handleDelete = async () => {
+        if (!adminToDelete) return;
+        info(`Deleting ${adminToDelete.email}…`);
         try {
-            await api.deleteAdmin(id);
-            success(`Admin ${email} removed.`);
+            await api.deleteAdmin(adminToDelete.id);
+            success(`Admin ${adminToDelete.email} removed.`);
             fetchAdmins();
         } catch (e: any) {
             toastError(e.message || 'Failed to delete');
+        } finally {
+            setAdminToDelete(null);
         }
     };
 
@@ -213,7 +218,7 @@ export default function ManageAdminsPage() {
                                         <td className="px-6 py-4 text-right">
                                             {a.role !== 'master_admin' && (
                                                 <button
-                                                    onClick={() => handleDelete(a.id, a.email)}
+                                                    onClick={() => setAdminToDelete(a)}
                                                     className="text-xs font-semibold text-red-500 hover:text-red-700 hover:underline transition-colors"
                                                 >
                                                     Delete
@@ -227,6 +232,34 @@ export default function ManageAdminsPage() {
                                 ))}
                             </tbody>
                         </table>
+                    </div>
+                </div>
+            )}
+            {/* Admin Deletion Confirmation Modal */}
+            {adminToDelete && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6 max-w-sm w-full shadow-2xl animate-in zoom-in-95 duration-200">
+                        <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-red-600 text-2xl mb-4">
+                            🚫
+                        </div>
+                        <h3 className="text-lg font-bold text-[var(--foreground)] mb-2">Remove Admin?</h3>
+                        <p className="text-sm text-[var(--foreground)] opacity-60 mb-6">
+                            Are you sure you want to revoke access for <strong>{adminToDelete.email}</strong>? They will no longer be able to access the dashboard.
+                        </p>
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => setAdminToDelete(null)}
+                                className="flex-1 px-4 py-2.5 text-sm font-semibold text-[var(--foreground)] bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--border)] transition"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleDelete}
+                                className="flex-1 px-4 py-2.5 text-sm font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700 transition shadow-lg shadow-red-600/20"
+                            >
+                                Revoke
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

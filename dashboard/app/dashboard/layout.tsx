@@ -34,10 +34,28 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             if (stored) setAdmin(JSON.parse(stored));
         } catch {}
 
+        // Fetch global settings to apply default language if not set
+        const initSettings = async () => {
+            try {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://eduflow-api-ms02.onrender.com'}/api/v1/organization/settings?key=global_config`);
+                const data = await response.json();
+                const globalDefault = data?.value?.default_language;
+                
+                if (globalDefault && !localStorage.getItem('interfaceLanguage')) {
+                    localStorage.setItem('interfaceLanguage', globalDefault);
+                    // Force a re-render or notify components if needed, 
+                    // though usually a page reload or subsequent navigations will pick it up
+                }
+            } catch (err) {
+                console.error('Failed to load global settings:', err);
+            }
+        };
+
+        initSettings();
         checkSession();
         const interval = setInterval(checkSession, 30_000); // check every 30s
         return () => clearInterval(interval);
-    }, []);
+    }, [checkSession]);
 
     const isMasterAdmin = admin?.role === 'master_admin';
 

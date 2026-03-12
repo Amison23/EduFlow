@@ -21,6 +21,9 @@ export default function SettingsPage() {
     const inputClass = "w-full px-4 py-2.5 border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] rounded-lg focus:ring-2 focus:ring-[var(--primary)] focus:border-[var(--primary)] outline-none transition text-sm placeholder:opacity-40";
     const labelClass = "block text-xs font-semibold text-[var(--foreground)] opacity-60 uppercase tracking-wide mb-1.5";
 
+    const [globalConfig, setGlobalConfig] = useState<any>(null);
+    const [savingGlobal, setSavingGlobal] = useState(false);
+
     useEffect(() => {
         const userJson = localStorage.getItem('adminUser');
         const user = userJson ? JSON.parse(userJson) : null;
@@ -38,17 +41,36 @@ export default function SettingsPage() {
 
         const requests: Promise<any>[] = [
             api.getLanguages(),
+            api.getOrgSettings('global_config'),
             user?.role === 'master_admin' ? api.getAllAdmins() : Promise.resolve([])
         ];
 
         Promise.all(requests)
-            .then(([langsData, adminsData]) => {
+            .then(([langsData, orgSettings, adminsData]) => {
                 setLanguages(Array.isArray(langsData) ? langsData : []);
+                setGlobalConfig(orgSettings?.value || {});
                 setAdmins(Array.isArray(adminsData) ? adminsData : []);
             })
             .catch(e => toastError(e.message || 'Failed to load settings'))
             .finally(() => setLoading(false));
-    }, []);
+    }, [toastError]);
+
+    const handleSaveGlobalDefault = async () => {
+        if (!selectedLanguage) return;
+        setSavingGlobal(true);
+        try {
+            const newValue = { ...globalConfig, default_language: selectedLanguage };
+            await api.updateOrgSettings('global_config', newValue);
+            setGlobalConfig(newValue);
+            // Also save locally as current preference
+            localStorage.setItem('interfaceLanguage', selectedLanguage);
+            success('Global default language updated for the organization!');
+        } catch (e: any) {
+            toastError(e.message || 'Failed to update global settings');
+        } finally {
+            setSavingGlobal(false);
+        }
+    };
 
     const handleSaveLanguage = () => {
         localStorage.setItem('interfaceLanguage', selectedLanguage);
@@ -187,16 +209,31 @@ export default function SettingsPage() {
                             ))}
                         </select>
                     </div>
-                    <button onClick={handleSaveLanguage}
-                        className="px-5 py-2.5 bg-[var(--primary)] text-white text-sm font-semibold rounded-lg hover:opacity-90 transition whitespace-nowrap">
-                        Save
-                    </button>
+                    <div className="flex gap-2">
+                        <button onClick={handleSaveLanguage}
+                            className="px-5 py-2.5 bg-[var(--primary)] text-white text-sm font-semibold rounded-lg hover:opacity-90 transition whitespace-nowrap">
+                            Save
+                        </button>
+                        {currentUser?.role === 'master_admin' && (
+                            <button onClick={handleSaveGlobalDefault} disabled={savingGlobal || !selectedLanguage}
+                                className="px-4 py-2.5 border border-[var(--primary)] text-[var(--primary)] text-sm font-semibold rounded-lg hover:bg-[var(--primary)] hover:text-white transition whitespace-nowrap disabled:opacity-50">
+                                {savingGlobal ? 'Saving…' : 'Set as Global Default'}
+                            </button>
+                        )}
+                    </div>
                 </div>
-                {selectedLanguage && (
-                    <p className="mt-2 text-xs text-[var(--foreground)] opacity-50">
-                        Selected: <strong>{languages.find(l => l.code === selectedLanguage)?.name || selectedLanguage}</strong>
-                    </p>
-                )}
+                <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1">
+                    {selectedLanguage && (
+                        <p className="text-xs text-[var(--foreground)] opacity-50">
+                            Personal preference: <strong>{languages.find(l => l.code === selectedLanguage)?.name || selectedLanguage}</strong>
+                        </p>
+                    )}
+                    {globalConfig?.default_language && (
+                        <p className="text-xs text-[var(--primary)] font-medium">
+                            Organization default: <strong>{languages.find(l => l.code === globalConfig.default_language)?.name || globalConfig.default_language}</strong>
+                        </p>
+                    )}
+                </div>
             </Section>
 
             {/* Notifications */}

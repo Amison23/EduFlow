@@ -95,6 +95,12 @@ export const api = {
     getLanguages: () => apiFetch('/languages'),
     addLanguage: (data: any) => apiFetch('/languages', { method: 'POST', body: JSON.stringify(data) }),
     updateLanguage: (id: string, data: any) => apiFetch(`/languages/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+    deleteLanguage: (id: string) => apiFetch(`/languages/${id}`, { method: 'DELETE' }),
+    getOrgSettings: (key?: string) => apiFetch(`/organization/settings?key=${key || 'global_config'}`),
+    updateOrgSettings: (key: string, value: any) => apiFetch('/organization/settings', {
+        method: 'PUT',
+        body: JSON.stringify({ key, value })
+    }),
     updateProfile: (data: any) => apiFetch('/auth/update-profile', { method: 'POST', body: JSON.stringify(data) }),
     // Admin Management
     getAllAdmins: () => apiFetch('/admin/admins'),

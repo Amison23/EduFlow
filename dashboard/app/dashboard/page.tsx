@@ -29,7 +29,7 @@ export default function DashboardOverview() {
             .then(data => { setStats(data?.stats || data); })
             .catch(e => toastError(e.message || 'Failed to load analytics'))
             .finally(() => setLoading(false));
-    }, []);
+    }, [toastError]);
 
     const greeting = () => {
         const h = new Date().getHours();
@@ -67,7 +67,7 @@ export default function DashboardOverview() {
                     {greeting()}, {admin?.name?.split(' ')[0] || 'Admin'} 👋
                 </h1>
                 <p className="text-sm text-[var(--foreground)] opacity-50 mt-1">
-                    Here's what's happening on the EduFlow platform today.
+                    Here&apos;s what&apos;s happening on the EduFlow platform today.
                 </p>
             </div>
 
