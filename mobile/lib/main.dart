@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:eduflow/data/local/hive_boxes.dart';
 import 'package:eduflow/data/local/database.dart';
@@ -26,6 +27,9 @@ import 'package:eduflow/app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Load environment variables
+  await dotenv.load(fileName: "assets/.env");
   
   // Initialize Hive
   await Hive.initFlutter();

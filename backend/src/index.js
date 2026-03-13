@@ -54,8 +54,15 @@ app.use('/api/v1/auth', authLimiter);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Request logging
-app.use(requestLogger);
+// Custom request logger with device detection
+app.use((req, res, next) => {
+    const userAgent = req.get('User-Agent') || '';
+    const isMobile = /mobile|android|iphone|ipad/i.test(userAgent);
+    const clientIp = req.ip || req.connection.remoteAddress;
+
+    console.log(`[REQUEST] ${req.method} ${req.url} | Device: ${isMobile ? 'MOBILE' : 'WEB'} | IP: ${clientIp} | UA: ${userAgent.substring(0, 50)}...`);
+    next();
+});
 
 // Root status
 app.get('/', (req, res) => {

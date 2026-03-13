@@ -64,5 +64,5 @@ flutter:
     - assets/lesson_packs/math_level1.json
     - assets/lesson_packs/english_level1.json
     - ml_models/
-    - .env
+    - assets/.env
 

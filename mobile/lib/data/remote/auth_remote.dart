@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import '../../core/constants/api_constants.dart';
 import '../../core/network/api_client.dart';
 import '../../core/errors/exceptions.dart';
@@ -20,7 +21,18 @@ class AuthRemote {
     } on AppException {
       rethrow;
     } catch (e) {
-      throw NetworkException('Failed to request OTP', originalError: e);
+      String? fallbackUrl;
+      int? status;
+      if (e is DioException) {
+        fallbackUrl = e.requestOptions.uri.toString();
+        status = e.response?.statusCode;
+      }
+      throw NetworkException(
+        'Failed to request OTP', 
+        originalError: e,
+        url: fallbackUrl ?? ApiConstants.baseUrl + ApiConstants.register,
+        statusCode: status,
+      );
     }
   }
 

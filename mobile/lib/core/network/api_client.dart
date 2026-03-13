@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import '../constants/api_constants.dart';
 import '../errors/exceptions.dart';
 
@@ -52,6 +53,15 @@ class ApiClient {
       options.headers['Authorization'] = 'Bearer $_authToken';
     }
     
+    // Log request details
+    print('[API_CLIENT] Request: ${options.method} ${options.baseUrl}${options.path}');
+    if (options.queryParameters.isNotEmpty) {
+      print('[API_CLIENT] Query: ${options.queryParameters}');
+    }
+    if (options.data != null) {
+      print('[API_CLIENT] Body: ${options.data}');
+    }
+    
     handler.next(options);
   }
 
@@ -62,11 +72,28 @@ class ApiClient {
     handler.next(response);
   }
 
-  void _onError(
+  Future<void> _onError(
     DioException error,
     ErrorInterceptorHandler handler,
-  ) {
+  ) async {
     final exception = _mapDioException(error);
+    
+    // Log connectivity status
+    try {
+      final connectivityResults = await Connectivity().checkConnectivity();
+      print('[API_CLIENT] Connectivity Status: $connectivityResults');
+    } catch (e) {
+      print('[API_CLIENT] Could not check connectivity: $e');
+    }
+
+    // Log error details
+    print('[API_CLIENT] Error: ${error.type}');
+    print('[API_CLIENT] Message: ${error.message}');
+    if (error.response != null) {
+      print('[API_CLIENT] Status: ${error.response?.statusCode}');
+      print('[API_CLIENT] Data: ${error.response?.data}');
+    }
+    
     handler.reject(
       DioException(
         requestOptions: error.requestOptions,
@@ -259,29 +286,47 @@ class _RetryInterceptor extends Interceptor {
 
   @override
   Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
-    var retryCount = 0;
+    final extra = err.requestOptions.extra;
+    final int retryCount = (extra['retryCount'] as int? ?? 0);
     const maxRetries = ApiConstants.maxRetries;
-    
-    // Only retry on connection-related errors or 503/504
+
     if (_shouldRetry(err) && retryCount < maxRetries) {
-      retryCount++;
+      final newRetryCount = retryCount + 1;
+      
+      // Exponential backoff: retryDelay * 2^retryCount (e.g., 2s, 4s, 8s)
+      final delay = ApiConstants.retryDelay * (1 << retryCount);
+      
+      print('[API_CLIENT] Retrying request ($newRetryCount/$maxRetries) in ${delay.inSeconds}s... Path: ${err.requestOptions.path}');
       
       try {
-        // Wait before retrying
-        await Future.delayed(ApiConstants.retryDelay);
+        await Future.delayed(delay);
         
+        // Update extra with new retry count
+        final options = err.requestOptions;
+        options.extra['retryCount'] = newRetryCount;
+
         final response = await dio.request(
-          err.requestOptions.path,
-          queryParameters: err.requestOptions.queryParameters,
-          data: err.requestOptions.data,
+          options.path,
+          queryParameters: options.queryParameters,
+          data: options.data,
           options: Options(
-            method: err.requestOptions.method,
-            headers: err.requestOptions.headers,
+            method: options.method,
+            headers: options.headers,
+            extra: options.extra,
+            responseType: options.responseType,
+            contentType: options.contentType,
+            validateStatus: options.validateStatus,
+            receiveTimeout: options.receiveTimeout,
+            sendTimeout: options.sendTimeout,
           ),
         );
         return handler.resolve(response);
       } catch (e) {
-        // If retry also fails, propagate the error
+        // If the retry itself throws (and it's not handled by the next interceptor),
+        // we should let it propagate or try to handle it.
+        // Usually, the next call to dio.request will also go through this interceptor
+        // if it fails, assuming it doesn't infinite loop. 
+        // But since we are inside onError, we already have a failure.
         return super.onError(err, handler);
       }
     }
@@ -290,9 +335,14 @@ class _RetryInterceptor extends Interceptor {
   }
 
   bool _shouldRetry(DioException err) {
+    // Retry on most network issues and specific server errors
     return err.type == DioExceptionType.connectionError ||
            err.type == DioExceptionType.connectionTimeout ||
            err.type == DioExceptionType.receiveTimeout ||
-           (err.response?.statusCode == 503 || err.response?.statusCode == 504);
+           err.type == DioExceptionType.sendTimeout ||
+           (err.response?.statusCode != null && 
+            (err.response!.statusCode! == 503 || 
+             err.response!.statusCode! == 504 ||
+             err.response!.statusCode! == 502));
   }
 }

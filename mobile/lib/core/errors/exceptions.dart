@@ -13,16 +13,23 @@ class AppException implements Exception {
 /// Network related exceptions
 class NetworkException extends AppException {
   final int? statusCode;
+  final String? url;
 
   NetworkException(
     super.message, {
     super.code,
     super.originalError,
     this.statusCode,
+    this.url,
   });
 
   @override
-  String toString() => 'NetworkException: $message (status: $statusCode)';
+  String toString() {
+    String str = 'NetworkException: $message';
+    if (url != null) str += '\nURL: $url';
+    str += ' (status: $statusCode)';
+    return str;
+  }
 }
 
 /// Authentication related exceptions

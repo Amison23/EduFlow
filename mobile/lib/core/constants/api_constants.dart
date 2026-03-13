@@ -9,11 +9,11 @@ class ApiConstants {
   static String get baseUrl {
     try {
       if (!dotenv.isInitialized) {
-        return 'http://10.0.2.2:5000/api/v1';
+        return 'http://10.0.2.2:3000/api/v1';
       }
-      return dotenv.env['API_BASE_URL'] ?? 'http://10.0.2.2:5000/api/v1';
+      return dotenv.env['API_BASE_URL'] ?? 'http://10.0.2.2:3000/api/v1';
     } catch (_) {
-      return 'http://10.0.2.2:5000/api/v1';
+      return 'http://10.0.2.2:3000/api/v1';
     }
   }
 
@@ -50,10 +50,10 @@ class ApiConstants {
   static const String onboardingReport = '/analytics/onboarding-report';
 
   /// Timeout durations
-  static const Duration connectionTimeout = Duration(seconds: 30);
-  static const Duration receiveTimeout = Duration(seconds: 30);
+  static const Duration connectionTimeout = Duration(seconds: 60);
+  static const Duration receiveTimeout = Duration(seconds: 60);
 
   /// Rate limiting
   static const int maxRetries = 3;
-  static const Duration retryDelay = Duration(seconds: 5);
+  static const Duration retryDelay = Duration(seconds: 2);
 }

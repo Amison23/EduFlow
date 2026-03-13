@@ -49,7 +49,7 @@ class LessonRemote {
     void Function(int, int)? onProgress,
   }) async {
     try {
-      final url = '${ApiConstants.baseUrl}${ApiConstants.downloadPack}/$packId';
+      final url = '${ApiConstants.downloadPack}/$packId';
       
       // Get download directory
       final savePath = await _getDownloadPath(packId);

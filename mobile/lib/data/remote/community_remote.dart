@@ -10,7 +10,7 @@ class CommunityRemote {
   Future<List<Map<String, dynamic>>> getStudyGroups({String? subject}) async {
     try {
       final response = await _apiClient.get(
-        '${ApiConstants.baseUrl}/community/groups',
+        ApiConstants.studyGroups,
         queryParameters: subject != null ? {'subject': subject} : null,
       );
       return List<Map<String, dynamic>>.from(response.data as List);
@@ -30,7 +30,7 @@ class CommunityRemote {
   }) async {
     try {
       final response = await _apiClient.post(
-        '${ApiConstants.baseUrl}/community/groups',
+        ApiConstants.studyGroups,
         data: {
           'name': name,
           'subject': subject,
@@ -50,7 +50,7 @@ class CommunityRemote {
   Future<bool> joinStudyGroup(String groupId) async {
     try {
       final response = await _apiClient.post(
-        '${ApiConstants.baseUrl}/community/groups/$groupId/join',
+        '${ApiConstants.studyGroups}/$groupId/join',
       );
       final data = response.data as Map<String, dynamic>;
       return data['success'] == true;
@@ -65,7 +65,7 @@ class CommunityRemote {
   Future<List<Map<String, dynamic>>> findPeers() async {
     try {
       final response = await _apiClient.get(
-        '${ApiConstants.baseUrl}/community/peers',
+        ApiConstants.findPeers,
       );
       return List<Map<String, dynamic>>.from(response.data as List);
     } on AppException {
