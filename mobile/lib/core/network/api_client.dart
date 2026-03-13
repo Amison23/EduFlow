@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '../constants/api_constants.dart';
 import '../errors/exceptions.dart';
@@ -54,12 +55,14 @@ class ApiClient {
     }
     
     // Log request details
-    print('[API_CLIENT] Request: ${options.method} ${options.baseUrl}${options.path}');
-    if (options.queryParameters.isNotEmpty) {
-      print('[API_CLIENT] Query: ${options.queryParameters}');
-    }
-    if (options.data != null) {
-      print('[API_CLIENT] Body: ${options.data}');
+    if (kDebugMode) {
+      print('[API_CLIENT] Request: ${options.method} ${options.baseUrl}${options.path}');
+      if (options.queryParameters.isNotEmpty) {
+        print('[API_CLIENT] Query: ${options.queryParameters}');
+      }
+      if (options.data != null) {
+        print('[API_CLIENT] Body: ${options.data}');
+      }
     }
     
     handler.next(options);
@@ -79,19 +82,23 @@ class ApiClient {
     final exception = _mapDioException(error);
     
     // Log connectivity status
-    try {
-      final connectivityResults = await Connectivity().checkConnectivity();
-      print('[API_CLIENT] Connectivity Status: $connectivityResults');
-    } catch (e) {
-      print('[API_CLIENT] Could not check connectivity: $e');
+    if (kDebugMode) {
+      try {
+        final connectivityResults = await Connectivity().checkConnectivity();
+        print('[API_CLIENT] Connectivity Status: $connectivityResults');
+      } catch (e) {
+        print('[API_CLIENT] Could not check connectivity: $e');
+      }
     }
 
     // Log error details
-    print('[API_CLIENT] Error: ${error.type}');
-    print('[API_CLIENT] Message: ${error.message}');
-    if (error.response != null) {
-      print('[API_CLIENT] Status: ${error.response?.statusCode}');
-      print('[API_CLIENT] Data: ${error.response?.data}');
+    if (kDebugMode) {
+      print('[API_CLIENT] Error: ${error.type}');
+      print('[API_CLIENT] Message: ${error.message}');
+      if (error.response != null) {
+        print('[API_CLIENT] Status: ${error.response?.statusCode}');
+        print('[API_CLIENT] Data: ${error.response?.data}');
+      }
     }
     
     handler.reject(
@@ -296,7 +303,9 @@ class _RetryInterceptor extends Interceptor {
       // Exponential backoff: retryDelay * 2^retryCount (e.g., 2s, 4s, 8s)
       final delay = ApiConstants.retryDelay * (1 << retryCount);
       
-      print('[API_CLIENT] Retrying request ($newRetryCount/$maxRetries) in ${delay.inSeconds}s... Path: ${err.requestOptions.path}');
+      if (kDebugMode) {
+        print('[API_CLIENT] Retrying request ($newRetryCount/$maxRetries) in ${delay.inSeconds}s... Path: ${err.requestOptions.path}');
+      }
       
       try {
         await Future.delayed(delay);
