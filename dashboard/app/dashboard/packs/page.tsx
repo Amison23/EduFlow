@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { api } from '@/lib/api';
+import Link from 'next/link';
 
 export default function PacksPage() {
     const [packs, setPacks] = useState<any[]>([]);
@@ -88,7 +89,12 @@ export default function PacksPage() {
                                 <span className="text-xs text-gray-400">ID: {String(pack.id).substring(0, 8)}</span>
                                 <div className="flex space-x-2">
                                     <button className="text-sm font-medium text-gray-600 hover:text-gray-900 px-3 py-1 rounded-md transition border border-gray-200">Edit</button>
-                                    <button className="text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded-md transition shadow-sm">Manage</button>
+                                    <Link 
+                                        href={`/dashboard/packs/${pack.id}`}
+                                        className="text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded-md transition shadow-sm"
+                                    >
+                                        Manage
+                                    </Link>
                                 </div>
                             </div>
                         </div>

@@ -21,7 +21,7 @@ class AppDatabase {
     
     return await sqlite.openDatabase(
       path,
-      version: 2,
+      version: 3,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -43,6 +43,46 @@ class AppDatabase {
         content TEXT,
         audio_path TEXT,
         downloaded_at INTEGER
+      )
+    ''');
+
+    // Local lesson packs
+    await db.execute('''
+      CREATE TABLE local_packs (
+        id TEXT PRIMARY KEY,
+        subject TEXT,
+        level INTEGER,
+        language TEXT,
+        version INTEGER,
+        size_mb REAL,
+        storage_path TEXT,
+        cached_at INTEGER
+      )
+    ''');
+
+    // Local study groups
+    await db.execute('''
+      CREATE TABLE local_groups (
+        id TEXT PRIMARY KEY,
+        name TEXT,
+        subject TEXT,
+        creator_id TEXT,
+        max_members INTEGER,
+        is_public INTEGER,
+        member_count INTEGER,
+        cached_at INTEGER
+      )
+    ''');
+
+    // Local quiz questions
+    await db.execute('''
+      CREATE TABLE local_quizzes (
+        id TEXT PRIMARY KEY,
+        lesson_id TEXT,
+        question TEXT,
+        options TEXT,
+        correct_index INTEGER,
+        cached_at INTEGER
       )
     ''');
 
@@ -91,6 +131,8 @@ class AppDatabase {
     await db.execute('CREATE INDEX idx_progress_synced ON local_progress(synced)');
     await db.execute('CREATE INDEX idx_progress_lesson ON local_progress(lesson_id)');
     await db.execute('CREATE INDEX idx_pending_requests_ts ON pending_sync_requests(timestamp)');
+    await db.execute('CREATE INDEX idx_local_lessons_pack ON local_lessons(pack_id)');
+    await db.execute('CREATE INDEX idx_local_quizzes_lesson ON local_quizzes(lesson_id)');
   }
 
   /// Handle database upgrades
@@ -108,6 +150,51 @@ class AppDatabase {
       ''');
       await db.execute('CREATE INDEX IF NOT EXISTS idx_pending_requests_ts ON pending_sync_requests(timestamp)');
     }
+    
+    if (oldVersion < 3) {
+      // Local lesson packs
+      await db.execute('''
+        CREATE TABLE IF NOT EXISTS local_packs (
+          id TEXT PRIMARY KEY,
+          subject TEXT,
+          level INTEGER,
+          language TEXT,
+          version INTEGER,
+          size_mb REAL,
+          storage_path TEXT,
+          cached_at INTEGER
+        )
+      ''');
+
+      // Local study groups
+      await db.execute('''
+        CREATE TABLE IF NOT EXISTS local_groups (
+          id TEXT PRIMARY KEY,
+          name TEXT,
+          subject TEXT,
+          creator_id TEXT,
+          max_members INTEGER,
+          is_public INTEGER,
+          member_count INTEGER,
+          cached_at INTEGER
+        )
+      ''');
+
+      // Local quiz questions
+      await db.execute('''
+        CREATE TABLE IF NOT EXISTS local_quizzes (
+          id TEXT PRIMARY KEY,
+          lesson_id TEXT,
+          question TEXT,
+          options TEXT,
+          correct_index INTEGER,
+          cached_at INTEGER
+        )
+      ''');
+
+      await db.execute('CREATE INDEX IF NOT EXISTS idx_local_lessons_pack ON local_lessons(pack_id)');
+      await db.execute('CREATE INDEX IF NOT EXISTS idx_local_quizzes_lesson ON local_quizzes(lesson_id)');
+    }
   }
 
   /// Close database
@@ -122,6 +209,9 @@ class AppDatabase {
   Future<void> clearAll() async {
     final db = await database;
     await db.delete('local_lessons');
+    await db.delete('local_packs');
+    await db.delete('local_groups');
+    await db.delete('local_quizzes');
     await db.delete('local_progress');
     await db.delete('quiz_weights');
     await db.delete('user_preferences');

@@ -43,19 +43,35 @@ Each lesson file should follow this schema:
 
 ## How Content is Updated
 
-1. **Manual Update**:
-   - Add or edit JSON files in the appropriate folder.
-   - Run the packaging script (e.g., `scripts/pack_lessons.py`) to generate a production-ready bundle.
-   - Upload the bundle to the Supabase Storage bucket (`lesson-packs`).
-   - Update the `lesson_packs` table in the database with the new version number and size.
+EduFlow uses an **Offline-First** strategy. Content is not "hardcoded" after the first run; instead, it is cached in a local SQLite database and synchronized dynamically.
 
-2. **Automation (Proposed)**:
-   - **GitHub Actions**: Content updates can be automated. A workflow can be set up to trigger whenever files in `lesson_content/` are pushed to the `main` branch.
-   - The workflow would run the packaging script and use the Supabase CLI to upload the assets and update the database metadata automatically.
+### Manual Update Workflow
+To update lessons across all platforms:
+1. **Edit JSON Source**: Update the files in `lesson_content/` (root) and `mobile/assets/lesson_packs/`.
+2. **Version Bump**: Increment the `"version"` number in your JSON file and update the `lesson_packs` table in Supabase.
+3. **Synchronization**: The mobile app checks for updates every **2 minutes** and refreshes its local cache automatically.
 
-## Content Guidelines
+---
 
-- **Simplicity**: Lessons must be readable on small screens (mobile) and via SMS.
-- **Micro-learning**: Keep text brief and focused on one concept per lesson.
-- **Accessibility**: Ensure language matches the target learner's profile (Turkana, Swahili, etc.).
-- **Audio Assets**: If a lesson requires audio, the MP3 should be named after the lesson ID and uploaded to the `audio-content` storage bucket.
+## Audio Synchronization (Dashboard Managed)
+
+Adding audio to a lesson is now simplified through the **NGO Dashboard**. You no longer need to manage Supabase Storage buckets manually.
+
+1. **Access Dashboard**: Log in to the [EduFlow Dashboard](https://dashboard-lilac-beta-95.vercel.app).
+2. **Select Pack**: Go to **Lesson Packs** and click the **Manage** button on the desired subject/level.
+3. **Upload MP3**: 
+   - Find the specific lesson in the list.
+   - Click **Add Audio** (or **Update Audio**).
+   - Select your MP3 file.
+4. **Automatic Processing**:
+   - The dashboard uploads the file to the `audio-content` bucket.
+   - The backend automatically updates the lesson's `audio_url`.
+   - The backend **increments the pack version** automatically, triggering an instant sync for all online mobile users.
+
+---
+
+## Offline-First Architecture
+
+- **Initial Fallback**: The JSON files in `mobile/assets/` are only used for the **very first launch** if the device is offline.
+- **Dynamic Cache**: Once online, the app fetches the latest content and stores it in SQLite (`local_lessons`, `local_packs`, `local_quizzes`).
+- **Aggressive Sync**: The `SyncService` performs a check every **2 minutes** and also triggers a sync immediately on app startup or when a connection is restored.

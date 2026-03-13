@@ -72,6 +72,7 @@ void main() async {
         RepositoryProvider<CommunityRepository>(
           create: (context) => CommunityRepository(
             communityRemote: CommunityRemote(),
+            localDatabase: database,
           ),
         ),
         RepositoryProvider<AnalyticsRepository>(
@@ -84,6 +85,7 @@ void main() async {
           create: (context) => SyncService(
             progressRepository: context.read<ProgressRepository>(),
             outboxRepository: context.read<OutboxRepository>(),
+            lessonRepository: context.read<LessonRepository>(),
           ),
         ),
       ],

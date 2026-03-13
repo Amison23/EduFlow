@@ -125,17 +125,17 @@ class LessonRemote {
   Future<List<Map<String, dynamic>>> _getInitialPacksFromAssets() async {
     return [
       {
-        'id': 'math_level1',
+        'id': '8d89a456-11f8-472d-8687-111111111111',
         'subject': 'math',
         'level': 1,
-        'size_mb': 1.2,
+        'size_mb': 0.0,
         'language': 'en',
       },
       {
-        'id': 'english_level1',
+        'id': '8d89a456-11f8-472d-8687-222222222222',
         'subject': 'english',
         'level': 1,
-        'size_mb': 1.5,
+        'size_mb': 1.2,
         'language': 'en',
       },
     ];
@@ -157,7 +157,10 @@ class LessonRemote {
     // This is a naive implementation: it assumes lessonId might be traceable within a pack
     // In a real app, we'd have a mapping. For now, try to find it in our pre-baked assets.
     try {
-      final packs = ['math_level1', 'english_level1'];
+      final packs = [
+        '8d89a456-11f8-472d-8687-111111111111',
+        '8d89a456-11f8-472d-8687-222222222222'
+      ];
       for (final packId in packs) {
         final String manifestContent = await rootBundle.loadString('assets/lesson_packs/$packId.json');
         final Map<String, dynamic> data = json.decode(manifestContent);

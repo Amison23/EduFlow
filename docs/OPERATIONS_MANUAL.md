@@ -56,9 +56,19 @@ The **NGO Master Dashboard** is the central hub for administrative tasks.
 1.  **Learner Management**: View profiles, sync status, and individual progress.
 2.  **Database Explorer**: Run SQL queries to verify raw data.
 3.  **Study Groups**: Monitor regional cohorts and peer learning engagement.
-4.  **Curriculum Management**: Manage live content versions and storage paths.
+4.  **Curriculum Management**: Manage live content versions, lessons, and audio uploads directly.
+    -   **Audio Uploads**: Upload MP3 files per lesson. This automatically handles Supabase Storage, updates the database, and bumps the pack version.
 
-## Content Management (CLI)
+## Content Management
+
+### Simplified Audio Workflow
+Instead of manual CLI or Supabase console operations, administrative users can:
+1.  Navigate to **Lesson Packs** in the Dashboard.
+2.  Click **Manage** on a specific pack.
+3.  Upload audio files per lesson.
+4.  Devices will automatically sync the new audio within 2 minutes.
+
+### CLI (Legacy/Bulk)
 
 ### Adding & Deploying New Lessons
 

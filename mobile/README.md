@@ -8,7 +8,7 @@ The EduFlow mobile application is the primary interface for students. Built with
 
 ## ✨ Key Features
 
-- **📶 Offline-First Continuity**: Download entire lesson packs while online and continue learning seamlessly in remote areas. All progress is cached locally and synchronized with the backend once connectivity resumes.
+- **📶 Offline-First Continuity**: Download entire lesson packs automatically. All progress and content are cached aggressively (2-minute sync cycles) in a local SQLite database, ensuring full accessibility even in remote areas and preventing data loss.
 - **🧠 AI Adaptive Learning**: Integrates **TensorFlow Lite** to provide a personalized learning path. The app analyzes quiz performance in real-time to adjust question difficulty, ensuring learners are neither bored nor overwhelmed.
 - **🎧 Multi-Modal Lessons**: Supports text-based content, high-quality audio narration for better accessibility, and visual diagrams.
 - **🏆 Gamification & Motivation**: Features daily streaks, achievement badges, and a leaderboard to foster consistent learning habits.

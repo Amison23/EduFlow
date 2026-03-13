@@ -366,7 +366,7 @@ To combat isolation in displacement camps, EduFlow includes a social learning la
 Our sync logic is designed for "vibrant but intermittent" connectivity.
 - **Append-Only Logging**: All progress events (lesson started, quiz answered, score achieved) are stored as an immutable log locally.
 - **Timestamping**: We use dual timestamps (`device_ts` and `server_ts`) to ensure that even if a device is offline for weeks, the historical data is merged in the correct chronological order.
-- **State Reconciliation**: The dashboard uses the latest `server_ts` to present the current learning state, while the mobile app reconciles with the local log.
+- **Aggressive Sync Cycles**: The mobile app performs a full state reconciliation every **2 minutes** when online, ensuring the local cache is always fresh.
 
 ---
 

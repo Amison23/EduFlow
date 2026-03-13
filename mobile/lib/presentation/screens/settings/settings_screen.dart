@@ -6,6 +6,7 @@ import '../../bloc/locale/locale_cubit.dart';
 import '../../bloc/theme/theme_cubit.dart';
 import '../../bloc/language/language_cubit.dart';
 import '../../../domain/entities/language.dart';
+import './instructions_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -98,6 +99,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
             title: Text('EduFlow v1.0.0'),
             subtitle: Text('Built for Africa Forward Hackathon'),
           ),
+          const Divider(),
+          _buildSectionHeader(context, 'Help & Support'),
+          ListTile(
+            leading: const Icon(Icons.help_outline, color: AppTheme.primaryColor),
+            title: const Text('App Instructions'),
+            subtitle: const Text('How to use features and SMS learning'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const InstructionsScreen()),
+              );
+            },
+          ),
+          const SizedBox(height: 32),
         ],
       ),
     );

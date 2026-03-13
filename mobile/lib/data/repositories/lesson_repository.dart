@@ -1,7 +1,10 @@
+import 'package:flutter/foundation.dart';
 import '../../core/errors/failures.dart';
 import '../../core/network/connectivity_service.dart';
 import '../local/database.dart';
 import '../local/daos/lesson_dao.dart';
+import '../local/daos/pack_dao.dart';
+import '../local/daos/quiz_dao.dart';
 import '../remote/lesson_remote.dart';
 
 /// Repository for lessons
@@ -18,18 +21,38 @@ class LessonRepository {
 
   /// Get available lesson packs (from cache or server)
   Future<({Failure? failure, List<Map<String, dynamic>> packs})> getLessonPacks({String? language}) async {
-    // If online, fetch from server
+    final packDao = PackDao(_localDatabase);
+    
+    // 1. Try local first (important for immediate UI response)
+    final localPacks = await packDao.getAllPacks(language: language);
+    
+    // 2. If online, fetch from server to update cache
     if (_connectivityService.isOnline) {
       try {
-        final packs = await _lessonRemote.getLessonPacks(language: language);
-        return (packs: packs, failure: null);
+        final serverPacks = await _lessonRemote.getLessonPacks(language: language);
+        
+        // Cache server packs
+        for (final pack in serverPacks) {
+          await packDao.upsertPack(pack);
+        }
+        
+        // Return server packs if we got them
+        return (packs: serverPacks, failure: null);
       } catch (e) {
+        // Log error but return local if we have it
+        if (localPacks.isNotEmpty) {
+          return (packs: localPacks, failure: null);
+        }
         return (packs: <Map<String, dynamic>>[], failure: ServerFailure(e.toString()));
       }
     }
     
-    // Return empty list when offline (packs would be cached)
-    return (packs: <Map<String, dynamic>>[], failure: const NetworkFailure('Offline'));
+    // 3. If offline, return local packs
+    if (localPacks.isNotEmpty) {
+      return (packs: localPacks, failure: null);
+    }
+    
+    return (packs: <Map<String, dynamic>>[], failure: const NetworkFailure('Offline and no cached packs'));
   }
 
   /// Get lessons for a pack
@@ -38,11 +61,7 @@ class LessonRepository {
     final lessonDao = LessonDao(_localDatabase);
     final localLessons = await lessonDao.getLessonsForPack(packId);
     
-    if (localLessons.isNotEmpty) {
-      return (lessons: localLessons, failure: null);
-    }
-    
-    // If online, fetch from server
+    // If online, fetch from server to check for updates
     if (_connectivityService.isOnline) {
       try {
         final lessons = await _lessonRemote.getLessonsForPack(packId);
@@ -61,8 +80,17 @@ class LessonRepository {
         
         return (lessons: lessons, failure: null);
       } catch (e) {
+        // If server fails, use local if available
+        if (localLessons.isNotEmpty) {
+          return (lessons: localLessons, failure: null);
+        }
         return (lessons: <Map<String, dynamic>>[], failure: ServerFailure(e.toString()));
       }
+    }
+    
+    // If offline, use local
+    if (localLessons.isNotEmpty) {
+      return (lessons: localLessons, failure: null);
     }
     
     return (lessons: <Map<String, dynamic>>[], failure: const NetworkFailure('Offline - no cached lessons'));
@@ -91,18 +119,31 @@ class LessonRepository {
     
     // Check local first
     final localLesson = await lessonDao.getLesson(lessonId);
-    if (localLesson != null) {
-      return (lesson: localLesson, failure: null);
-    }
     
     // If online, fetch from server
     if (_connectivityService.isOnline) {
       try {
         final lesson = await _lessonRemote.getLesson(lessonId);
+        
+        // Update local cache
+        await lessonDao.upsertLesson(
+          id: lesson['id'],
+          packId: lesson['pack_id'] ?? '',
+          title: lesson['title'],
+          sequence: lesson['sequence'],
+          content: lesson['content'] ?? '',
+          audioPath: lesson['audio_url'],
+        );
+        
         return (lesson: lesson, failure: null);
       } catch (e) {
+        if (localLesson != null) return (lesson: localLesson, failure: null);
         return (lesson: null, failure: ServerFailure(e.toString()));
       }
+    }
+    
+    if (localLesson != null) {
+      return (lesson: localLesson, failure: null);
     }
     
     return (lesson: null, failure: const NetworkFailure('Offline'));
@@ -110,16 +151,34 @@ class LessonRepository {
 
   /// Get quiz questions for a lesson
   Future<({Failure? failure, List<Map<String, dynamic>> questions})> getQuizQuestions(String lessonId) async {
-    if (!_connectivityService.isOnline) {
-      return (questions: <Map<String, dynamic>>[], failure: const NetworkFailure('Offline'));
+    final quizDao = QuizDao(_localDatabase);
+    
+    // Check local first
+    final localQuizzes = await quizDao.getQuizzesForLesson(lessonId);
+    
+    if (_connectivityService.isOnline) {
+      try {
+        final questions = await _lessonRemote.getQuizQuestions(lessonId);
+        
+        // Cache locally
+        for (final quiz in questions) {
+          await quizDao.upsertQuiz(quiz);
+        }
+        
+        return (questions: questions, failure: null);
+      } catch (e) {
+        if (localQuizzes.isNotEmpty) {
+          return (questions: localQuizzes, failure: null);
+        }
+        return (questions: <Map<String, dynamic>>[], failure: ServerFailure(e.toString()));
+      }
     }
     
-    try {
-      final questions = await _lessonRemote.getQuizQuestions(lessonId);
-      return (questions: questions, failure: null);
-    } catch (e) {
-      return (questions: <Map<String, dynamic>>[], failure: ServerFailure(e.toString()));
+    if (localQuizzes.isNotEmpty) {
+      return (questions: localQuizzes, failure: null);
     }
+    
+    return (questions: <Map<String, dynamic>>[], failure: const NetworkFailure('Offline'));
   }
 
   /// Get adaptive quiz
@@ -148,6 +207,41 @@ class LessonRepository {
   Future<bool> isPackDownloaded(String packId) async {
     final lessonDao = LessonDao(_localDatabase);
     return lessonDao.isPackDownloaded(packId);
+  }
+
+  /// Sync all content for a specific pack (Lessons + Quizzes)
+  Future<void> syncPackContent(String packId) async {
+    if (!_connectivityService.isOnline) return;
+
+    try {
+      final lessons = await _lessonRemote.getLessonsForPack(packId);
+      final lessonDao = LessonDao(_localDatabase);
+      final quizDao = QuizDao(_localDatabase);
+
+      for (final lesson in lessons) {
+        final lessonId = lesson['id'];
+        
+        // 1. Sync Lesson
+        await lessonDao.upsertLesson(
+          id: lessonId,
+          packId: packId,
+          title: lesson['title'],
+          sequence: lesson['sequence'],
+          content: lesson['content'] ?? '',
+          audioPath: lesson['audio_url'],
+        );
+
+        // 2. Sync Quizzes for this lesson
+        final quizzes = await _lessonRemote.getQuizQuestions(lessonId);
+        for (final quiz in quizzes) {
+          await quizDao.upsertQuiz(quiz);
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error syncing pack content: $e');
+      }
+    }
   }
 
   /// Set auth token

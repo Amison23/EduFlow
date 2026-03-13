@@ -12,6 +12,7 @@ The EduFlow Backend is a robust **Node.js (Express)** REST API that bridges the 
 - **🔄 Progress Synchronization**: A conflict-resolution engine that ensures learner progress is accurately merged from multiple offline devices.
 - **📱 SMS/USSD Controller**: Integrated with **Africa's Talking**, enabling full curriculum delivery and interactive quizzes via simple feature phones.
 - **🧩 Peer Matching Engine**: An intelligent algorithm that pairs learners based on region, subject, and learning level to create study groups.
+- **🎧 Audio Content Management**: Secure MP3 upload handling and automatic pack versioning to trigger mobile updates via the NGO Dashboard.
 - **🛡️ Privacy Protection**: Implements SHA-256 hashing for all personal identifiers (PII), ensuring learner safety and compliance with data protection standards.
 
 ---

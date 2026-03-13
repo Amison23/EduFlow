@@ -1,21 +1,54 @@
 import '../remote/community_remote.dart';
 import '../../core/errors/exceptions.dart';
+import '../../core/network/connectivity_service.dart';
+import '../local/database.dart';
+import '../local/daos/community_dao.dart';
 
 /// Repository for community-related operations
 class CommunityRepository {
   final CommunityRemote _communityRemote;
+  final AppDatabase _localDatabase;
+  final ConnectivityService _connectivityService = ConnectivityService();
 
-  CommunityRepository({required CommunityRemote communityRemote})
-      : _communityRemote = communityRemote;
+  CommunityRepository({
+    required CommunityRemote communityRemote,
+    required AppDatabase localDatabase,
+  })  : _communityRemote = communityRemote,
+        _localDatabase = localDatabase;
 
   /// Get study groups with optional subject filter
   Future<CommunityResult> getStudyGroups({String? subject}) async {
-    try {
-      final groups = await _communityRemote.getStudyGroups(subject: subject);
-      return CommunityResult(groups: groups);
-    } on AppException catch (e) {
-      return CommunityResult(failure: e);
+    final communityDao = CommunityDao(_localDatabase);
+    
+    // 1. Try local first
+    final localGroups = await communityDao.getGroups(subject: subject);
+    
+    // 2. If online, fetch from server and update cache
+    if (_connectivityService.isOnline) {
+      try {
+        final groups = await _communityRemote.getStudyGroups(subject: subject);
+        
+        // Update cache
+        for (final group in groups) {
+          await communityDao.upsertGroup(group);
+        }
+        
+        return CommunityResult(groups: groups);
+      } catch (e) {
+        // If server fails, use local if available
+        if (localGroups.isNotEmpty) {
+          return CommunityResult(groups: localGroups);
+        }
+        return CommunityResult(failure: e is AppException ? e : ServerException(e.toString()));
+      }
     }
+    
+    // 3. If offline, return local
+    if (localGroups.isNotEmpty) {
+      return CommunityResult(groups: localGroups);
+    }
+    
+    return CommunityResult(failure: NetworkException('Offline and no cached groups'));
   }
 
   /// Create a study group
@@ -32,6 +65,10 @@ class CommunityRepository {
         maxMembers: maxMembers,
         isPublic: isPublic,
       );
+      
+      // Cache the new group
+      await CommunityDao(_localDatabase).upsertGroup(group);
+      
       return CommunityResult(group: group);
     } on AppException catch (e) {
       return CommunityResult(failure: e);

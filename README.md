@@ -14,23 +14,21 @@ EduFlow is an **offline-first, AI-enhanced educational platform** engineered spe
 
 ### 📱 Smartphone Learning (Flutter)
 A feature-rich, high-fidelity learning experience designed for modern Android and iOS devices.
-- **Offline-First Architecture**: Continuous learning without an active internet connection. Data syncs automatically once a connection is detected.
+- **Offline-First Architecture**: Continuous learning without an active internet connection. Data syncs aggressively every **2 minutes** (and on startup) once a connection is detected.
 - **AI-Driven Adaptive Quizzes**: Utilizing **TensorFlow Lite**, the app dynamically adjusts quiz difficulty based on learner performance to optimize retention.
 - **Audio-Visual Lessons**: Multimedia-rich content packs that cater to diverse learning styles.
 - **Gamified Engagement**: Built-in streaks, badges, and progress tracking to keep learners motivated.
-- **Peer-to-Peer Matching**: Intelligent study group formation to foster community learning even in displacement camps.
 
 ### 📟 Feature Phone Integration (SMS/USSD)
 Bypassing the need for smartphones or data plans, EduFlow brings education to the most basic devices.
 - **SMS-Based Lessons**: Full curriculum delivery via standard text messaging.
 - **Interactive USSD Quizzes**: Real-time assessments using simple dial-up menus.
-- **Privacy-Preserving**: All sensitive learner data is hashed (SHA-256) to ensure security and anonymity.
 
 ### 📊 NGO Master Dashboard (Next.js)
 A unified command center for organizations to manage, monitor, and scale educational programs.
 - **Real-Time Analytics**: Visual heatmaps and engagement metrics to identify regional needs and student progress.
 - **Learner CRM**: Comprehensive profile management with detailed sync status and learning history.
-- **Content Studio**: A centralized hub for uploading, versioning, and distributing lesson packs.
+- **Content Studio**: A centralized hub for managing lessons, uploading audio directly (MP3), and versioning content packs.
 - **System Health Monitor**: Live tracking of SMS gateway status and database performance.
 
 ---

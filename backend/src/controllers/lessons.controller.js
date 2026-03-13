@@ -127,6 +127,62 @@ exports.createLessonPack = async (req, res, next) => {
     }
 };
 
+const storageService = require('../services/storage.service');
+
+/**
+ * Upload lesson audio
+ */
+exports.uploadLessonAudio = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const file = req.file;
+
+        if (!file) {
+            return res.status(400).json({ error: 'No audio file uploaded' });
+        }
+
+        // 1. Get lesson to find its pack_id
+        const { data: lesson, error: lessonError } = await supabase
+            .from('lessons')
+            .select('pack_id, title')
+            .eq('id', id)
+            .single();
+
+        if (lessonError || !lesson) {
+            return res.status(404).json({ error: 'Lesson not found' });
+        }
+
+        // 2. Upload to Storage
+        const fileName = `${id}_${Date.now()}.mp3`;
+        const storagePath = `lessons/${fileName}`;
+        const publicUrl = await storageService.uploadFile(
+            'audio-content', 
+            storagePath, 
+            file.buffer, 
+            file.mimetype
+        );
+
+        // 3. Update Lesson Database
+        const { error: updateError } = await supabase
+            .from('lessons')
+            .update({ audio_url: publicUrl })
+            .eq('id', id);
+
+        if (updateError) throw updateError;
+
+        // 4. Bump Pack Version (to trigger mobile sync)
+        await supabase.rpc('increment_pack_version', { pack_id: lesson.pack_id });
+
+        res.json({ 
+            message: 'Audio uploaded successfully', 
+            audioUrl: publicUrl,
+            lessonTitle: lesson.title
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 exports.downloadPack = async (req, res, next) => {
     try {
         const { id } = req.params;

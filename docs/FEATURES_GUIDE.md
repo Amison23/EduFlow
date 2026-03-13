@@ -11,7 +11,8 @@ This guide provides a comprehensive overview of the features available in the Ed
 - **Taking a Quiz**: At the end of each lesson, you will be presented with an adaptive quiz.
 - **Viewing Progress**: The 'Stats' tab shows your current streak, lessons completed, and badges earned.
 - **Peer Matching**: Navigate to the 'Community' tab and tap 'Find Study Group' to be paired with local learners.
-- **Offline Mode**: If you lose connection, a banner will appear. You can still access *downloaded* lessons. Your progress will sync automatically when you are back online.
+- **Offline Mode**: If you lose connection, a banner will appear. You can still access and complete *cached* lessons. Your progress and content will sync automatically every 2 minutes when you are back online.
+- **Tutorials & Help**: Navigate to **Settings -> How to Use** for built-in instructions on all app features.
 
 ### 2. Feature Phone (SMS/USSD)
 - **Registration**: SMS `START` to our shortcode to register your hashed profile.
@@ -26,11 +27,11 @@ This guide provides a comprehensive overview of the features available in the Ed
 ### 1. NGO Dashboard (Next.js)
 - **Analytics Overview**: View the main dashboard for high-level metrics like "Total Active Learners" and "Average Quiz Scores."
 - **Managing Learners**: Use the 'Learners' tab to search for specific student IDs, check their last sync time, and view their certificates.
-- **Uploading Content**: 
-    1. Navigate to 'Content Studio'.
-    2. Click 'Upload Pack'.
-    3. Select your JSON lesson pack and accompanying audio files.
-    4. Click 'Publish' to make it available to all devices.
+- **Content & Audio Management**: 
+    1. Navigate to **Lesson Packs**.
+    2. Click the **Manage** button on a specific pack.
+    3. View all lessons and their audio status.
+    4. Click **Add/Update Audio** to upload an MP3 directly. This automatically bumps the pack version and triggers a mobile sync.
 - **Database Access**: For advanced users, use the 'Explorer' tab to run read-only SQL queries against the learner database.
 
 ---
