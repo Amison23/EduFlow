@@ -105,7 +105,7 @@ void main() async {
           BlocProvider<CommunityBloc>(
             create: (context) => CommunityBloc(
               communityRepository: context.read<CommunityRepository>(),
-            )..add(const LoadStudyGroups()),
+            ),
           ),
           BlocProvider<ProgressBloc>(
             create: (context) => ProgressBloc(

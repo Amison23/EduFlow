@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import '../../../data/repositories/community_repository.dart';
+import '../../../data/local/hive_boxes.dart';
 
 part 'community_event.dart';
 part 'community_state.dart';
@@ -22,6 +23,14 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
     LoadStudyGroups event,
     Emitter<CommunityState> emit,
   ) async {
+    // Prevent fetching if not authenticated (token missing)
+    final token = HiveBoxes.getToken();
+    if (token == null) {
+      // Return empty list or silent error to avoid crashing/distracting user
+      emit(const StudyGroupsLoaded([]));
+      return;
+    }
+
     emit(CommunityLoading());
     final result = await _communityRepository.getStudyGroups(subject: event.subject);
     if (result.success) {

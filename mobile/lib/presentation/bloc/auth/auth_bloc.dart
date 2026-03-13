@@ -85,6 +85,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         hasSeenWelcome: onboardingStatus.hasSeenWelcome,
         hasSetDisplacementContext: onboardingStatus.hasSetContext,
       ));
+
+      // Sync profile data to backend after successful login
+      add(UpdateProfile(data: {
+        'last_login': DateTime.now().toIso8601String(),
+      }));
     } else {
       emit(AuthError(result.failure?.message ?? 'Invalid OTP'));
     }

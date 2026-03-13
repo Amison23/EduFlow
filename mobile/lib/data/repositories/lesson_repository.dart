@@ -43,7 +43,7 @@ class LessonRepository {
         if (localPacks.isNotEmpty) {
           return (packs: localPacks, failure: null);
         }
-        return (packs: <Map<String, dynamic>>[], failure: ServerFailure(e.toString()));
+        return (packs: <Map<String, dynamic>>[], failure: e is AppException ? e as Failure : ServerFailure(e.toString()));
       }
     }
     
@@ -84,7 +84,7 @@ class LessonRepository {
         if (localLessons.isNotEmpty) {
           return (lessons: localLessons, failure: null);
         }
-        return (lessons: <Map<String, dynamic>>[], failure: ServerFailure(e.toString()));
+        return (lessons: <Map<String, dynamic>>[], failure: e is AppException ? e as Failure : ServerFailure(e.toString()));
       }
     }
     

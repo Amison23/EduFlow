@@ -21,6 +21,14 @@ class _StudyGroupScreenState extends State<StudyGroupScreen> {
   void initState() {
     super.initState();
     _quizService = context.read<TfliteQuizService>();
+    
+    // Initial fetch if not already loaded or in error
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final state = context.read<CommunityBloc>().state;
+      if (state is CommunityInitial || state is CommunityError) {
+        context.read<CommunityBloc>().add(const LoadStudyGroups());
+      }
+    });
   }
 
   @override
@@ -77,14 +85,19 @@ class _StudyGroupScreenState extends State<StudyGroupScreen> {
                     if (state.groups.isEmpty)
                       _buildEmptyState('No study groups available yet.')
                     else
-                      ...state.groups.map((group) => _buildGroupCard(
-                        context,
-                        group['name'] ?? 'Unnamed Group',
-                        '${group['group_members_count'] ?? 0} members',
-                        _getIconForSubject(group['subject']),
-                        _getColorForSubject(group['subject']),
-                        group['id'],
-                      ))
+                      ...state.groups.map((group) {
+                        final id = group['id'] as String?;
+                        if (id == null) return const SizedBox.shrink();
+                        
+                        return _buildGroupCard(
+                          context,
+                          group['name'] ?? 'Unnamed Group',
+                          '${group['group_members_count'] ?? 0} members',
+                          _getIconForSubject(group['subject']),
+                          _getColorForSubject(group['subject']),
+                          id,
+                        );
+                      })
                   else
                     _buildEmptyState('Something went wrong. Pull to refresh.'),
                   

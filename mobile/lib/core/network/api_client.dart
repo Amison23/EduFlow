@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '../constants/api_constants.dart';
 import '../errors/exceptions.dart';
+import '../../data/local/hive_boxes.dart';
 
 /// HTTP client wrapper using Dio
 class ApiClient {
@@ -50,8 +51,9 @@ class ApiClient {
     RequestInterceptorHandler handler,
   ) {
     // Add auth token if available
-    if (_authToken != null) {
-      options.headers['Authorization'] = 'Bearer $_authToken';
+    final token = _authToken ?? HiveBoxes.getToken();
+    if (token != null) {
+      options.headers['Authorization'] = 'Bearer $token';
     }
     
     // Log request details
