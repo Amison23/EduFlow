@@ -3,17 +3,22 @@ import '../../core/utils/crypto.dart';
 import '../local/database.dart';
 import '../local/hive_boxes.dart';
 import '../remote/auth_remote.dart';
+import '../repositories/outbox_repository.dart';
+import '../../core/constants/api_constants.dart';
 
 /// Repository for authentication
 class AuthRepository {
   final AppDatabase _localDatabase;
   final AuthRemote _authRemote;
+  final OutboxRepository _outboxRepository;
 
   AuthRepository({
     required AppDatabase localDatabase,
     required AuthRemote authRemote,
+    required OutboxRepository outboxRepository,
   })  : _localDatabase = localDatabase,
-        _authRemote = authRemote;
+        _authRemote = authRemote,
+        _outboxRepository = outboxRepository;
 
   /// Request OTP for phone number
   Future<({bool success, String? message})> requestOtp(String phoneNumber, {String? name}) async {
@@ -78,22 +83,25 @@ class AuthRepository {
     required String learnerId,
     required Map<String, dynamic> data,
   }) async {
+    // Update Hive first (source of truth for UI)
+    if (data.containsKey('displacement')) {
+      await HiveBoxes.setDisplacementContext(data['displacement']);
+    }
+    if (data.containsKey('language')) {
+      await HiveBoxes.setPreferredLanguage(data['language']);
+    }
+
     try {
       await _authRemote.updateProfile(learnerId: learnerId, data: data);
-      
-      // Save displacement context
-      if (data.containsKey('displacement')) {
-        await HiveBoxes.setDisplacementContext(data['displacement']);
-      }
-      
-      // Save preferred language
-      if (data.containsKey('language')) {
-        await HiveBoxes.setPreferredLanguage(data['language']);
-      }
-      
       return (success: true, failure: null);
     } catch (e) {
-      return (success: false, failure: ServerFailure(e.toString()));
+      // Queue for background sync if failed
+      await _outboxRepository.enqueueRequest(
+        url: '${ApiConstants.auth}/profile/$learnerId',
+        method: 'PUT',
+        body: data,
+      );
+      return (success: true, failure: null); // Return success as it's queued
     }
   }
 
@@ -102,13 +110,19 @@ class AuthRepository {
     final learnerId = HiveBoxes.getLearnerId();
     if (learnerId == null) return;
 
+    final data = {'preferred_language': languageCode};
+    
     try {
       await _authRemote.updateProfile(
         learnerId: learnerId,
-        data: {'preferred_language': languageCode},
+        data: data,
       );
     } catch (_) {
-      // Background sync failures are silent
+      await _outboxRepository.enqueueRequest(
+        url: '${ApiConstants.auth}/profile/$learnerId',
+        method: 'PUT',
+        body: data,
+      );
     }
   }
 

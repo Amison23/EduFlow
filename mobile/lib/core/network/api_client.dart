@@ -207,6 +207,21 @@ class ApiClient {
     );
   }
 
+  /// PATCH request
+  Future<Response<T>> patch<T>(
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+  }) async {
+    return _dio.patch<T>(
+      path,
+      data: data,
+      queryParameters: queryParameters,
+      options: options,
+    );
+  }
+
   /// DELETE request
   Future<Response<T>> delete<T>(
     String path, {
@@ -245,7 +260,7 @@ class _RetryInterceptor extends Interceptor {
   @override
   Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
     var retryCount = 0;
-    final maxRetries = ApiConstants.maxRetries;
+    const maxRetries = ApiConstants.maxRetries;
     
     // Only retry on connection-related errors or 503/504
     if (_shouldRetry(err) && retryCount < maxRetries) {
@@ -257,8 +272,8 @@ class _RetryInterceptor extends Interceptor {
         
         final response = await dio.request(
           err.requestOptions.path,
-          data: err.requestOptions.data,
           queryParameters: err.requestOptions.queryParameters,
+          data: err.requestOptions.data,
           options: Options(
             method: err.requestOptions.method,
             headers: err.requestOptions.headers,

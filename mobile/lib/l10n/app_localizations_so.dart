@@ -12,13 +12,13 @@ class AppLocalizationsSo extends AppLocalizations {
   String get appName => 'EduFlow';
 
   @override
-  String get appTagline => 'Barashada Guruubyada ee Barokacayaasha Afrika';
+  String get appTagline => 'Barashada Guruubyada ee Dhammaan Baratayaasha';
 
   @override
   String get aboutYou => 'Kugusaabsan';
 
   @override
-  String get whyAreYouDisplaced => 'Maxaad u barokacday?';
+  String get whyAreYouDisplaced => 'Nooga warran xaaladdaada';
 
   @override
   String get currentLocation => 'Goobta aad hadda ku sugan tahay';
@@ -47,10 +47,17 @@ class AppLocalizationsSo extends AppLocalizations {
       'Waxa la iiga barokiciyay daadad, abaaro, ama isbeddelka cimilada';
 
   @override
+  String get remoteRegion => 'Gobolka Fog';
+
+  @override
+  String get remoteRegionDescription =>
+      'Waxaan ku noolahay meel fog oo helitaanka dugsiyadu ku xaddidan yahay';
+
+  @override
   String get otherReason => 'Sababo kale';
 
   @override
-  String get otherDescription => 'Sabab kale oo barokac';
+  String get otherDescription => 'Xaalad kale';
 
   @override
   String get worksOffline => 'Wuxuu ku shaqeeyaa internet la\'aan';

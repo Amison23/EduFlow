@@ -1,19 +1,24 @@
 import 'dart:async';
 import '../core/network/connectivity_service.dart';
 import '../data/repositories/progress_repository.dart';
+import '../data/repositories/outbox_repository.dart';
 import '../core/errors/failures.dart';
 
-/// Service for background sync of progress events
+/// Service for background sync of progress events and outbox requests
 class SyncService {
   final ProgressRepository _progressRepository;
+  final OutboxRepository _outboxRepository;
   final ConnectivityService _connectivityService = ConnectivityService();
   
   StreamSubscription<bool>? _connectivitySubscription;
   Timer? _syncTimer;
   bool _isSyncing = false;
 
-  SyncService({required ProgressRepository progressRepository})
-      : _progressRepository = progressRepository {
+  SyncService({
+    required ProgressRepository progressRepository,
+    required OutboxRepository outboxRepository,
+  })  : _progressRepository = progressRepository,
+        _outboxRepository = outboxRepository {
     _init();
   }
 
@@ -47,8 +52,13 @@ class SyncService {
     _isSyncing = true;
 
     try {
-      final result = await _progressRepository.syncProgress();
-      return result;
+      // 1. Process Generic Outbox (Analytics, Profile, etc.)
+      await _outboxRepository.processOutbox();
+
+      // 2. Process Progress Events
+      final progressResult = await _progressRepository.syncProgress();
+      
+      return progressResult;
     } catch (e) {
       return (syncedCount: 0, failure: ServerFailure(e.toString()));
     } finally {
@@ -56,9 +66,11 @@ class SyncService {
     }
   }
 
-  /// Get pending sync count
+  /// Get total pending sync count
   Future<int> getPendingCount() async {
-    return _progressRepository.getPendingSyncCount();
+    final progressCount = await _progressRepository.getPendingSyncCount();
+    final outboxCount = await _outboxRepository.getPendingCount();
+    return progressCount + outboxCount;
   }
 
   /// Dispose resources

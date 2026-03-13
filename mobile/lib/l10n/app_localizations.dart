@@ -111,7 +111,7 @@ abstract class AppLocalizations {
   /// No description provided for @appTagline.
   ///
   /// In en, this message translates to:
-  /// **'Lifeline Learning for Africa\'s Displaced'**
+  /// **'Lifeline Learning for All Learners'**
   String get appTagline;
 
   /// No description provided for @aboutYou.
@@ -123,7 +123,7 @@ abstract class AppLocalizations {
   /// No description provided for @whyAreYouDisplaced.
   ///
   /// In en, this message translates to:
-  /// **'Why are you displaced?'**
+  /// **'Tell us about your context'**
   String get whyAreYouDisplaced;
 
   /// No description provided for @currentLocation.
@@ -174,6 +174,18 @@ abstract class AppLocalizations {
   /// **'I was displaced due to floods, drought, or climate change'**
   String get climateDescription;
 
+  /// No description provided for @remoteRegion.
+  ///
+  /// In en, this message translates to:
+  /// **'Remote Region'**
+  String get remoteRegion;
+
+  /// No description provided for @remoteRegionDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'I live in a remote area with limited access to schools'**
+  String get remoteRegionDescription;
+
   /// No description provided for @otherReason.
   ///
   /// In en, this message translates to:
@@ -183,7 +195,7 @@ abstract class AppLocalizations {
   /// No description provided for @otherDescription.
   ///
   /// In en, this message translates to:
-  /// **'Other reason for displacement'**
+  /// **'Other situational context'**
   String get otherDescription;
 
   /// No description provided for @worksOffline.

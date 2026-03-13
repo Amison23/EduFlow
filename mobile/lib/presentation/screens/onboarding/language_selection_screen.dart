@@ -5,6 +5,7 @@ import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/locale/locale_cubit.dart';
 import '../../bloc/language/language_cubit.dart';
 import '../../../domain/entities/language.dart';
+import '../../../data/repositories/analytics_repository.dart';
 
 class LanguageSelectionScreen extends StatefulWidget {
   const LanguageSelectionScreen({super.key});
@@ -122,6 +123,13 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
       context.read<LocaleCubit>().setLocale(_selectedLanguageCode!);
       // Notify auth bloc that language is selected
       context.read<AuthBloc>().add(const SetAppLanguage());
+
+      // Track analytics
+      context.read<AnalyticsRepository>().trackOnboardingStep(
+        step: 'language_selection',
+        selectionType: 'language',
+        selectionValue: _selectedLanguageCode,
+      );
     }
   }
 

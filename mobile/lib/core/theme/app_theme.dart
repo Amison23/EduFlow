@@ -66,7 +66,7 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: Colors.white,
-        hintStyle: TextStyle(color: textHint.withOpacity(0.6)),
+        hintStyle: TextStyle(color: textHint.withValues(alpha: 0.6)),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
@@ -74,7 +74,7 @@ class AppTheme {
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: textHint.withOpacity(0.5)),
+          borderSide: BorderSide(color: textHint.withValues(alpha: 0.5)),
         ),
       ),
       pageTransitionsTheme: const PageTransitionsTheme(
@@ -136,7 +136,7 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: darkSurface,
-        hintStyle: TextStyle(color: Colors.white24.withOpacity(0.6)),
+        hintStyle: TextStyle(color: Colors.white24.withValues(alpha: 0.6)),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),

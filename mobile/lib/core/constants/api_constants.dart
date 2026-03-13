@@ -44,6 +44,11 @@ class ApiConstants {
   /// Language sync
   static const String languages = '/languages';
 
+  /// Analytics
+  static const String analytics = '/analytics';
+  static const String trackOnboarding = '/analytics/track-onboarding';
+  static const String onboardingReport = '/analytics/onboarding-report';
+
   /// Timeout durations
   static const Duration connectionTimeout = Duration(seconds: 30);
   static const Duration receiveTimeout = Duration(seconds: 30);

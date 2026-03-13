@@ -4,9 +4,10 @@ import 'package:eduflow/l10n/app_localizations.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../bloc/auth/auth_bloc.dart';
+import '../../../data/repositories/analytics_repository.dart';
 import 'phone_auth_screen.dart';
 
-/// Screen for selecting displacement context
+/// Screen for selecting situational context
 class DisplacementContextScreen extends StatefulWidget {
   const DisplacementContextScreen({super.key});
 
@@ -32,6 +33,12 @@ class _DisplacementContextScreenState extends State<DisplacementContextScreen> {
         'title': l10n.climateDisaster,
         'description': l10n.climateDescription,
         'icon': Icons.cloud,
+      },
+      {
+        'value': AppConstants.displacementRemote,
+        'title': l10n.remoteRegion,
+        'description': l10n.remoteRegionDescription,
+        'icon': Icons.public,
       },
       {
         'value': AppConstants.displacementOther,
@@ -64,7 +71,6 @@ class _DisplacementContextScreenState extends State<DisplacementContextScreen> {
     'Other',
   ];
 
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -83,7 +89,7 @@ class _DisplacementContextScreenState extends State<DisplacementContextScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Displacement context
+            // Situational context
             Text(
               l10n.whyAreYouDisplaced,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -191,6 +197,21 @@ class _DisplacementContextScreenState extends State<DisplacementContextScreen> {
       'region': _selectedRegion,
       'language': Localizations.localeOf(context).languageCode,
     }));
+
+    // Track analytics
+    context.read<AnalyticsRepository>().trackOnboardingStep(
+          step: 'displacement_selection',
+          selectionType: 'displacement',
+          selectionValue: _selectedContext,
+        );
+    
+    if (_selectedRegion != null) {
+      context.read<AnalyticsRepository>().trackOnboardingStep(
+            step: 'location_selection',
+            selectionType: 'region',
+            selectionValue: _selectedRegion,
+          );
+    }
 
     Navigator.pushReplacement(
       context,

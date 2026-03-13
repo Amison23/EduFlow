@@ -1,11 +1,11 @@
 {
   "appName": "EduFlow",
-  "appTagline": "Lifeline Learning for Africa's Displaced",
+  "appTagline": "Lifeline Learning for All Learners",
   "@appName": {
     "description": "The name of the application"
   },
   "aboutYou": "About You",
-  "whyAreYouDisplaced": "Why are you displaced?",
+  "whyAreYouDisplaced": "Tell us about your context",
   "currentLocation": "Current Location",
   "selectYourLocation": "Select your location",
   "preferredLanguage": "Preferred Language",
@@ -14,8 +14,10 @@
   "conflictDescription": "I was displaced due to conflict or violence",
   "climateDisaster": "Climate Disaster",
   "climateDescription": "I was displaced due to floods, drought, or climate change",
+  "remoteRegion": "Remote Region",
+  "remoteRegionDescription": "I live in a remote area with limited access to schools",
   "otherReason": "Other",
-  "otherDescription": "Other reason for displacement",
+  "otherDescription": "Other situational context",
   "worksOffline": "Works Offline",
   "worksOfflineDesc": "Download lessons and learn without internet",
   "smsLearning": "SMS Learning",

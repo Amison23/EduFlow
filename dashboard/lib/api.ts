@@ -125,6 +125,7 @@ export const api = {
     getLearners: () => apiFetch('/auth/learners'),
     getAnalytics: () => apiFetch('/analytics/overview'),
     getDetailedAnalytics: () => apiFetch('/analytics/detailed'),
+    getOnboardingReport: () => apiFetch('/analytics/onboarding-report'),
     getLessonPacks: () => apiFetch('/lessons/packs'),
     getLanguages: () => apiFetch('/languages'),
     addLanguage: (data: any) => apiFetch('/languages', { method: 'POST', body: JSON.stringify(data) }),

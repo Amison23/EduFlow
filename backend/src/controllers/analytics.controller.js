@@ -53,3 +53,63 @@ exports.getDetailedAnalytics = async (req, res, next) => {
         next(error);
     }
 };
+
+/**
+ * Track an anonymous onboarding event
+ */
+exports.trackOnboardingEvent = async (req, res, next) => {
+    try {
+        const { sessionId, step, selectionType, selectionValue } = req.body;
+
+        if (!sessionId || !step) {
+            return res.status(400).json({ error: 'sessionId and step are required' });
+        }
+
+        const { error } = await supabase
+            .from('onboarding_analytics')
+            .insert([{
+                session_id: sessionId,
+                step,
+                selection_type: selectionType,
+                selection_value: selectionValue
+            }]);
+
+        if (error) throw error;
+
+        res.status(201).json({ success: true });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * Get aggregated onboarding analytics report
+ */
+exports.getOnboardingReport = async (req, res, next) => {
+    try {
+        // Get distributions for language, displacement, and region
+        const { data: rawData, error } = await supabase
+            .from('onboarding_analytics')
+            .select('selection_type, selection_value');
+
+        if (error) throw error;
+
+        const report = {
+            language: {},
+            displacement: {},
+            region: {},
+            dropoffs: {} // Could be calculated by comparing session counts per step
+        };
+
+        rawData.forEach(item => {
+            if (item.selection_type && item.selection_value && report[item.selection_type]) {
+                const val = item.selection_value;
+                report[item.selection_type][val] = (report[item.selection_type][val] || 0) + 1;
+            }
+        });
+
+        res.json(report);
+    } catch (error) {
+        next(error);
+    }
+};

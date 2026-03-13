@@ -1,11 +1,11 @@
 {
   "appName": "EduFlow",
-  "appTagline": "Barashada Guruubyada ee Barokacayaasha Afrika",
+  "appTagline": "Barashada Guruubyada ee Dhammaan Baratayaasha",
   "@appName": {
     "description": "Magaca codsiga"
   },
   "aboutYou": "Kugusaabsan",
-  "whyAreYouDisplaced": "Maxaad u barokacday?",
+  "whyAreYouDisplaced": "Nooga warran xaaladdaada",
   "currentLocation": "Goobta aad hadda ku sugan tahay",
   "selectYourLocation": "Dooro goobtaada",
   "preferredLanguage": "Luuqadda aad door bidayso",
@@ -14,8 +14,10 @@
   "conflictDescription": "Waxa la iiga barokiciyay colaad ama rabshado",
   "climateDisaster": "Masiibada Cimilada",
   "climateDescription": "Waxa la iiga barokiciyay daadad, abaaro, ama isbeddelka cimilada",
+  "remoteRegion": "Gobolka Fog",
+  "remoteRegionDescription": "Waxaan ku noolahay meel fog oo helitaanka dugsiyadu ku xaddidan yahay",
   "otherReason": "Sababo kale",
-  "otherDescription": "Sabab kale oo barokac",
+  "otherDescription": "Xaalad kale",
   "worksOffline": "Wuxuu ku shaqeeyaa internet la'aan",
   "worksOfflineDesc": "Soo dejiso casharrada oo baro adigoon internet haysan",
   "smsLearning": "Barashada SMS",

@@ -8,4 +8,8 @@ const { verifyToken, isAdmin } = require('../middleware/auth.middleware');
 router.get('/overview', verifyToken, isAdmin, analyticsController.getOverview);
 router.get('/detailed', verifyToken, isAdmin, analyticsController.getDetailedAnalytics);
 
+// Onboarding Analytics
+router.post('/track-onboarding', analyticsController.trackOnboardingEvent); // Public for anonymous tracking
+router.get('/onboarding-report', verifyToken, isAdmin, analyticsController.getOnboardingReport); // Admin only
+
 module.exports = router;

@@ -1,156 +1,121 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-
-import 'app.dart';
-import 'data/local/database.dart';
-import 'data/remote/auth_remote.dart';
-import 'data/remote/lesson_remote.dart';
-import 'data/remote/progress_remote.dart';
-import 'data/remote/community_remote.dart';
-import 'data/repositories/auth_repository.dart';
-import 'data/repositories/lesson_repository.dart';
-import 'data/repositories/progress_repository.dart';
-import 'data/repositories/community_repository.dart';
-import 'presentation/bloc/auth/auth_bloc.dart';
-import 'presentation/bloc/lesson/lesson_bloc.dart';
-import 'presentation/bloc/community/community_bloc.dart';
-import 'services/sync_service.dart';
-import 'presentation/bloc/progress/progress_bloc.dart';
-import 'presentation/bloc/sync/sync_cubit.dart';
-import 'presentation/bloc/locale/locale_cubit.dart';
-import 'services/tflite_quiz_service.dart';
-import 'services/log_service.dart';
-import 'data/local/hive_boxes.dart';
-import 'core/utils/app_bloc_observer.dart';
-import 'presentation/screens/error/error_screen.dart';
-import 'dart:ui';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:eduflow/data/local/hive_boxes.dart';
+import 'package:eduflow/data/local/database.dart';
+import 'package:eduflow/data/remote/auth_remote.dart';
+import 'package:eduflow/data/remote/lesson_remote.dart';
+import 'package:eduflow/data/remote/progress_remote.dart';
+import 'package:eduflow/data/remote/community_remote.dart';
+import 'package:eduflow/data/remote/analytics_remote.dart';
+import 'package:eduflow/data/repositories/auth_repository.dart';
+import 'package:eduflow/data/repositories/lesson_repository.dart';
+import 'package:eduflow/data/repositories/progress_repository.dart';
+import 'package:eduflow/data/repositories/community_repository.dart';
+import 'package:eduflow/data/repositories/analytics_repository.dart';
+import 'package:eduflow/data/repositories/outbox_repository.dart';
+import 'package:eduflow/services/sync_service.dart';
+import 'package:eduflow/services/tflite_quiz_service.dart';
+import 'package:eduflow/presentation/bloc/auth/auth_bloc.dart';
+import 'package:eduflow/presentation/bloc/lesson/lesson_bloc.dart';
+import 'package:eduflow/presentation/bloc/community/community_bloc.dart';
+import 'package:eduflow/presentation/bloc/progress/progress_bloc.dart';
+import 'package:eduflow/presentation/bloc/sync/sync_cubit.dart';
+import 'package:eduflow/presentation/bloc/locale/locale_cubit.dart';
+import 'package:eduflow/app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Start parallel initializations that don't depend on each other heavily
+  // Initialize Hive
+  await Hive.initFlutter();
+  await HiveBoxes.init();
+  
+  // Initialize SQLite
   final database = AppDatabase();
+  
+  // Initialize TFLite service
   final tfliteQuizService = TfliteQuizService();
-  
-  await Future.wait([
-    dotenv.load(fileName: ".env"),
-    HiveBoxes.init(),
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]),
-    database.database,
-    tfliteQuizService.init(),
-  ]);
-  
-  // Setup Logging Service (now safe because dotenv and Hive are loaded)
-  final logService = LogService();
-  
-  // Capture Flutter errors
-  FlutterError.onError = (details) {
-    FlutterError.presentError(details);
-    logService.logError(
-      message: details.exceptionAsString(),
-      stackTrace: details.stack.toString(),
-      level: 'error',
-      context: {'library': 'flutter'},
-    );
-  };
+  await tfliteQuizService.init();
 
-  // Capture platform errors (async/main errors)
-  PlatformDispatcher.instance.onError = (error, stack) {
-    logService.logFatal(error, stack);
-    return true; // Error was handled
-  };
-
-  // Set Bloc observer
-  Bloc.observer = GlobalBlocObserver();
-  
-  // Custom Error Widget for UI crashes
-  ErrorWidget.builder = (details) {
-    return ErrorScreen(
-      error: details.exception,
-      onRetry: () {
-        // Simple restart by clearing state and reloading main
-        // In a real app, you might use Phoenix or similar
-        main(); 
-      },
-    );
-  };
-
-  // Initialize API clients
-  final authRemote = AuthRemote();
-  final lessonRemote = LessonRemote();
-  final progressRemote = ProgressRemote();
-  final communityRemote = CommunityRemote();
-  
-  // Initialize repositories
-  final authRepository = AuthRepository(
-    localDatabase: database,
-    authRemote: authRemote,
-  );
-  final lessonRepository = LessonRepository(
-    localDatabase: database,
-    lessonRemote: lessonRemote,
-  );
-  final progressRepository = ProgressRepository(
-    localDatabase: database,
-    progressRemote: progressRemote,
-  );
-  final communityRepository = CommunityRepository(
-    communityRemote: communityRemote,
-  );
-  
-  // Initialize sync service
-  final syncService = SyncService(
-    progressRepository: progressRepository,
-  );
-  
   runApp(
     MultiRepositoryProvider(
       providers: [
-        RepositoryProvider<AuthRepository>.value(value: authRepository),
-        RepositoryProvider<LessonRepository>.value(value: lessonRepository),
-        RepositoryProvider<ProgressRepository>.value(value: progressRepository),
-        RepositoryProvider<CommunityRepository>.value(value: communityRepository),
-        RepositoryProvider<SyncService>.value(value: syncService),
+        RepositoryProvider<AppDatabase>.value(value: database),
         RepositoryProvider<TfliteQuizService>.value(value: tfliteQuizService),
+        RepositoryProvider<OutboxRepository>(
+          create: (context) => OutboxRepository(localDatabase: database),
+        ),
+        RepositoryProvider<AuthRepository>(
+          create: (context) => AuthRepository(
+            localDatabase: database,
+            authRemote: AuthRemote(),
+            outboxRepository: context.read<OutboxRepository>(),
+          ),
+        ),
+        RepositoryProvider<LessonRepository>(
+          create: (context) => LessonRepository(
+            localDatabase: database,
+            lessonRemote: LessonRemote(),
+          ),
+        ),
+        RepositoryProvider<ProgressRepository>(
+          create: (context) => ProgressRepository(
+            localDatabase: database,
+            progressRemote: ProgressRemote(),
+          ),
+        ),
+        RepositoryProvider<CommunityRepository>(
+          create: (context) => CommunityRepository(
+            communityRemote: CommunityRemote(),
+          ),
+        ),
+        RepositoryProvider<AnalyticsRepository>(
+          create: (context) => AnalyticsRepository(
+            analyticsRemote: AnalyticsRemote(),
+            outboxRepository: context.read<OutboxRepository>(),
+          ),
+        ),
+        RepositoryProvider<SyncService>(
+          create: (context) => SyncService(
+            progressRepository: context.read<ProgressRepository>(),
+            outboxRepository: context.read<OutboxRepository>(),
+          ),
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
           BlocProvider<AuthBloc>(
             create: (context) => AuthBloc(
-              authRepository: authRepository,
+              authRepository: context.read<AuthRepository>(),
             )..add(CheckAuthStatus()),
           ),
           BlocProvider<LessonBloc>(
             create: (context) => LessonBloc(
-              lessonRepository: lessonRepository,
-              progressRepository: progressRepository,
+              lessonRepository: context.read<LessonRepository>(),
+              progressRepository: context.read<ProgressRepository>(),
             ),
           ),
           BlocProvider<CommunityBloc>(
             create: (context) => CommunityBloc(
-              communityRepository: communityRepository,
+              communityRepository: context.read<CommunityRepository>(),
             )..add(const LoadStudyGroups()),
           ),
           BlocProvider<ProgressBloc>(
             create: (context) => ProgressBloc(
-              progressRepository: progressRepository,
-              quizService: tfliteQuizService,
+              progressRepository: context.read<ProgressRepository>(),
+              quizService: context.read<TfliteQuizService>(),
             )..add(const LoadProgress()),
           ),
           BlocProvider<SyncCubit>(
             create: (context) => SyncCubit(
-              syncService: syncService,
-              progressRepository: progressRepository,
-            ),
+              syncService: context.read<SyncService>(),
+              progressRepository: context.read<ProgressRepository>(),
+            )..init(),
           ),
           BlocProvider<LocaleCubit>(
             create: (context) => LocaleCubit(
-              authRepository: authRepository,
+              authRepository: context.read<AuthRepository>(),
             ),
           ),
         ],

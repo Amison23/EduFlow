@@ -12,13 +12,13 @@ class AppLocalizationsAm extends AppLocalizations {
   String get appName => 'EduFlow';
 
   @override
-  String get appTagline => 'ለአፍሪካ ተፈናቃዮች የህይወት መስመር ትምህርት';
+  String get appTagline => 'ለሁሉም ተማሪዎች የህይወት መስመር ትምህርት';
 
   @override
   String get aboutYou => 'ስለ እርሶ';
 
   @override
-  String get whyAreYouDisplaced => 'ለምን ተፈናቀሉ?';
+  String get whyAreYouDisplaced => 'ስለ ሁኔታዎ ይንገሩን';
 
   @override
   String get currentLocation => 'ያሉበት ቦታ';
@@ -45,10 +45,17 @@ class AppLocalizationsAm extends AppLocalizations {
   String get climateDescription => 'በጎርፍ፣ በድርቅ ወይም በአየር ንብረት ለውጥ ምክንያት ተፈናቅያለሁ';
 
   @override
+  String get remoteRegion => 'የርቀት ክልል';
+
+  @override
+  String get remoteRegionDescription =>
+      'የትምህርት ቤት ተደራሽነት ውስን በሆነበት ራቅ ባለ አካባቢ እኖራለሁ';
+
+  @override
   String get otherReason => 'ሌላ';
 
   @override
-  String get otherDescription => 'ሌላ የመፈናቀያ ምክንያት';
+  String get otherDescription => 'ሌላ ሁኔታ';
 
   @override
   String get worksOffline => 'ከመስመር ውጭ ይሰራል';

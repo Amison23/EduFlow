@@ -18,7 +18,7 @@ class SyncCubit extends Cubit<SyncState> {
 
   /// Initialize sync
   Future<void> init() async {
-    final pendingCount = await _progressRepository.getPendingSyncCount();
+    final pendingCount = await _syncService.getPendingCount();
     final lastSyncTime = _progressRepository.getLastSyncTime();
     
     emit(state.copyWith(
@@ -55,7 +55,7 @@ class SyncCubit extends Cubit<SyncState> {
 
   /// Check pending sync count
   Future<void> checkPending() async {
-    final pendingCount = await _progressRepository.getPendingSyncCount();
+    final pendingCount = await _syncService.getPendingCount();
     
     emit(state.copyWith(
       pendingCount: pendingCount,

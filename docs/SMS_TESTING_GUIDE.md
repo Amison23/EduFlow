@@ -31,3 +31,38 @@ The app and backend are configured to use:
 ## 6. Development Fallback
 If the Render backend is unavailable, you can run the backend locally:
 - Base URL: `http://10.0.2.2:5000/api/v1` (for Android Emulator)
+34: 
+35: ## 7. End-to-End Lesson Flow Example
+36: This example illustrates how a learner interacts with the system via SMS to start a Mathematics lesson.
+37: 
+38: ### Step 1: Request Lesson
+39: **Learner Sends:** `MATH1`
+40: 
+41: **System Logic:**
+42: 1.  Receives `MATH1` via the `/api/v1/sms/inbound` webhook.
+43: 2.  Identifies the learner by hashing their phone number.
+44: 3.  Looks up `subject: math`, `level: 1` in the `lesson_packs` table.
+45: 4.  Retrieves the first lesson (sequence 1) from the `lessons` table.
+46: 
+47: ### Step 2: System Response
+48: **System Sends:**
+49: ```text
+50: EduFlow MATH L1: Introduction to Addition
+51: In this lesson, we learn how to add numbers. 1 + 1 = 2.
+52: 
+53: Reply NEXT for the quiz.
+54: ```
+55: 
+56: ### Step 3: Request Quiz
+57: **Learner Sends:** `NEXT`
+58: 
+59: **System Response:**
+60: ```text
+61: EduFlow QUIZ: What is 2 + 2?
+62: 1. 3
+63: 2. 4
+64: 3. 5
+65: 
+66: Reply with the option number.
+67: ```
+

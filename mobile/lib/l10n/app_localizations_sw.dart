@@ -12,13 +12,13 @@ class AppLocalizationsSw extends AppLocalizations {
   String get appName => 'EduFlow';
 
   @override
-  String get appTagline => 'Elimu ya Maisha kwa Wakimbizi wa Afrika';
+  String get appTagline => 'Mafunzo ya Maisha kwa Wanafunzi Wote';
 
   @override
   String get aboutYou => 'Kuhusu Wewe';
 
   @override
-  String get whyAreYouDisplaced => 'Kwa nini umekimbia makazi yako?';
+  String get whyAreYouDisplaced => 'Tueleze kuhusu hali yako';
 
   @override
   String get currentLocation => 'Mahali Ulipo Sasa';
@@ -47,10 +47,17 @@ class AppLocalizationsSw extends AppLocalizations {
       'Nilihama makazi yangu kutokana na mafuriko, ukame, au mabadiliko ya hali ya hewa';
 
   @override
+  String get remoteRegion => 'Eneo la Mbali';
+
+  @override
+  String get remoteRegionDescription =>
+      'Ninaishi katika eneo la mbali lenye upatikanaji mdogo wa shule';
+
+  @override
   String get otherReason => 'Nyingine';
 
   @override
-  String get otherDescription => 'Sababu nyingine ya kuhama makazi';
+  String get otherDescription => 'Hali nyingine ya kimazingira';
 
   @override
   String get worksOffline => 'Inafanya Kazi Nje ya Mtandao';

@@ -12,13 +12,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appName => 'EduFlow';
 
   @override
-  String get appTagline => 'Lifeline Learning for Africa\'s Displaced';
+  String get appTagline => 'Lifeline Learning for All Learners';
 
   @override
   String get aboutYou => 'About You';
 
   @override
-  String get whyAreYouDisplaced => 'Why are you displaced?';
+  String get whyAreYouDisplaced => 'Tell us about your context';
 
   @override
   String get currentLocation => 'Current Location';
@@ -47,10 +47,17 @@ class AppLocalizationsEn extends AppLocalizations {
       'I was displaced due to floods, drought, or climate change';
 
   @override
+  String get remoteRegion => 'Remote Region';
+
+  @override
+  String get remoteRegionDescription =>
+      'I live in a remote area with limited access to schools';
+
+  @override
   String get otherReason => 'Other';
 
   @override
-  String get otherDescription => 'Other reason for displacement';
+  String get otherDescription => 'Other situational context';
 
   @override
   String get worksOffline => 'Works Offline';

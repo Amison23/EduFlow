@@ -4,7 +4,7 @@ class AppConstants {
 
   /// App name
   static const String appName = 'EduFlow';
-  static const String appTagline = 'Lifeline Learning for Africa\'s Displaced';
+  static const String appTagline = 'Lifeline Learning for All Learners';
 
   /// Supported languages
   static const String english = 'en';
@@ -14,6 +14,7 @@ class AppConstants {
   /// Displacement types
   static const String displacementConflict = 'conflict';
   static const String displacementClimate = 'climate';
+  static const String displacementRemote = 'remote';
   static const String displacementOther = 'other';
 
   /// Subject areas

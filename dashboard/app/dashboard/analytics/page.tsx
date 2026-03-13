@@ -6,12 +6,19 @@ import { useToast } from '@/components/ToastProvider';
 
 export default function AnalyticsPage() {
     const [data, setData] = useState<any>(null);
+    const [onboardingData, setOnboardingData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const { error: toastError } = useToast();
 
     useEffect(() => {
-        api.getDetailedAnalytics()
-            .then(res => setData(res))
+        Promise.all([
+            api.getDetailedAnalytics(),
+            api.getOnboardingReport()
+        ])
+            .then(([detailed, onboarding]) => {
+                setData(detailed);
+                setOnboardingData(onboarding);
+            })
             .catch(e => toastError(e.message || 'Failed to load analytics'))
             .finally(() => setLoading(false));
     }, [toastError]);
@@ -95,6 +102,81 @@ export default function AnalyticsPage() {
                                 ))}
                             </div>
                         )}
+                    </div>
+
+                    {/* Onboarding Insights */}
+                    <div className="lg:col-span-2 space-y-6">
+                        <div className="flex items-center gap-3">
+                            <h2 className="text-xl font-bold text-[var(--foreground)]">Onboarding Insights</h2>
+                            <span className="bg-[var(--primary)]/10 text-[var(--primary)] text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">New</span>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {/* Preferred Languages */}
+                            <div className="dashboard-card p-6">
+                                <h3 className="text-sm font-semibold text-[var(--foreground)] opacity-60 mb-4 flex items-center gap-2">
+                                    <span>🌐</span> Languages Selected
+                                </h3>
+                                <div className="space-y-4">
+                                    {onboardingData?.language && Object.keys(onboardingData.language).length > 0 ? (
+                                        Object.entries(onboardingData.language).map(([lang, count]: [string, any]) => (
+                                            <div key={lang} className="flex flex-col gap-1.5">
+                                                <div className="flex justify-between text-xs font-bold">
+                                                    <span className="uppercase text-[var(--foreground)]">{lang}</span>
+                                                    <span className="text-[var(--primary)]">{count} users</span>
+                                                </div>
+                                                <div className="h-1.5 bg-[var(--border)] rounded-full overflow-hidden">
+                                                    <div 
+                                                        className="h-full bg-[var(--primary)] transition-all duration-1000" 
+                                                        style={{ width: `${(count / (Object.values(onboardingData.language).reduce((a: any, b: any) => a + b, 0) as number)) * 100}%` }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <p className="text-xs text-center opacity-40 py-4">No language data yet</p>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Displacement Contexts */}
+                            <div className="dashboard-card p-6">
+                                <h3 className="text-sm font-semibold text-[var(--foreground)] opacity-60 mb-4 flex items-center gap-2">
+                                    <span>🤝</span> Displacement Context
+                                </h3>
+                                <div className="space-y-3">
+                                    {onboardingData?.displacement && Object.keys(onboardingData.displacement).length > 0 ? (
+                                        Object.entries(onboardingData.displacement).map(([ctx, count]: [string, any]) => (
+                                            <div key={ctx} className="p-3 rounded-lg border border-[var(--border)] bg-[var(--background)] flex justify-between items-center">
+                                                <span className="text-xs font-medium text-[var(--foreground)]">{ctx}</span>
+                                                <span className="text-xs font-black bg-[var(--primary)]/10 text-[var(--primary)] px-2 py-1 rounded">{count}</span>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <p className="text-xs text-center opacity-40 py-4">No context data yet</p>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Most Active Regions */}
+                            <div className="dashboard-card p-6">
+                                <h3 className="text-sm font-semibold text-[var(--foreground)] opacity-60 mb-4 flex items-center gap-2">
+                                    <span>📍</span> Top Regions
+                                </h3>
+                                <div className="flex flex-wrap gap-2">
+                                    {onboardingData?.region && Object.keys(onboardingData.region).length > 0 ? (
+                                        Object.entries(onboardingData.region).map(([reg, count]: [string, any]) => (
+                                            <div key={reg} className="px-3 py-2 rounded-full border border-[var(--border)] bg-[var(--foreground)]/5 flex items-center gap-2">
+                                                <span className="text-xs font-bold">{reg}</span>
+                                                <span className="text-[10px] font-black opacity-40">{count}</span>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <p className="text-xs text-center opacity-40 py-4">No regional data yet</p>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             )}
