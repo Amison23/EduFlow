@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import '../../core/errors/failures.dart';
 import '../../core/network/connectivity_service.dart';
+import '../../core/errors/exceptions.dart';
 import '../local/database.dart';
 import '../local/daos/lesson_dao.dart';
 import '../local/daos/pack_dao.dart';

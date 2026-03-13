@@ -87,7 +87,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       ));
 
       // Sync profile data to backend after successful login
-      add(UpdateProfile(data: {
+      add(UpdateProfile({
         'last_login': DateTime.now().toIso8601String(),
       }));
     } else {
