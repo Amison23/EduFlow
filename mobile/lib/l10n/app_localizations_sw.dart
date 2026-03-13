@@ -238,5 +238,5 @@ class AppLocalizationsSw extends AppLocalizations {
   String get learningProgress => 'Maendeleo ya Masomo';
 
   @override
-  String get codeSent => 'Verification code sent';
+  String get codeSent => 'Namba ya uhakiki imetumwa';
 }

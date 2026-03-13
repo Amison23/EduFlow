@@ -72,5 +72,6 @@
   "smartRecommendations": "Mapendekezo ya Smart",
   "recommendedForYou": "Inapendekezwa kwako kulingana na maendeleo",
   "aiRecommended": "Inapendekezwa na AI",
-  "learningProgress": "Maendeleo ya Masomo"
+  "learningProgress": "Maendeleo ya Masomo",
+  "codeSent": "Namba ya uhakiki imetumwa"
 }

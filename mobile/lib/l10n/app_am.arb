@@ -72,5 +72,6 @@
   "smartRecommendations": "ስማርት ምክሮች",
   "recommendedForYou": "በእድገትዎ ላይ በመመስረት ለእርስዎ ይመከራል",
   "aiRecommended": "በ AI የሚመከር",
-  "learningProgress": "የትምህርት እድገት"
+  "learningProgress": "የትምህርት እድገት",
+  "codeSent": "የማረጋገጫ ኮድ ተልኳል"
 }

@@ -235,5 +235,5 @@ class AppLocalizationsAm extends AppLocalizations {
   String get learningProgress => 'የትምህርት እድገት';
 
   @override
-  String get codeSent => 'Verification code sent';
+  String get codeSent => 'የማረጋገጫ ኮድ ተልኳል';
 }

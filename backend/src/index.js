@@ -89,6 +89,15 @@ app.use('/api/v1/organization', require('./routes/organization.routes'));
 app.use('/api/v1/logs', logRoutes);
 
 
+// API Base v1 details
+app.get('/api/v1', (req, res) => {
+    res.json({
+        message: 'EduFlow API v1',
+        status: 'running',
+        endpoints: ['/auth', '/lessons', '/progress', '/community', '/sms', '/analytics']
+    });
+});
+
 // 404 handler
 app.use((req, res) => {
     res.status(404).json({ error: 'Not found' });
