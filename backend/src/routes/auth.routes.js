@@ -7,6 +7,9 @@ const { validate } = require('../utils/validation');
 // POST /api/v1/auth/register - Request OTP
 router.post('/register', validate('register'), authController.register);
 
+// POST /api/v1/auth/login - Request OTP for existing users
+router.post('/login', validate('register'), authController.login);
+
 // POST /api/v1/auth/verify-otp - Verify OTP and login
 router.post('/verify-otp', validate('verifyOtp'), authController.verifyOtp);
 

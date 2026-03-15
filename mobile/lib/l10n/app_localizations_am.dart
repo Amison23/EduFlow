@@ -236,4 +236,16 @@ class AppLocalizationsAm extends AppLocalizations {
 
   @override
   String get codeSent => 'የማረጋገጫ ኮድ ተልኳል';
+
+  @override
+  String get alreadyHaveAccount => 'አካውንት አለዎት? ይግቡ';
+
+  @override
+  String get dontHaveAccount => 'አካውንት የለዎትም? ይመዝገቡ';
+
+  @override
+  String get login => 'ይግቡ';
+
+  @override
+  String get register => 'ይመዝገቡ';
 }

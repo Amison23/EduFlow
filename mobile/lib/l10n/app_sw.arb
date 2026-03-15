@@ -73,5 +73,23 @@
   "recommendedForYou": "Inapendekezwa kwako kulingana na maendeleo",
   "aiRecommended": "Inapendekezwa na AI",
   "learningProgress": "Maendeleo ya Masomo",
-  "codeSent": "Namba ya uhakiki imetumwa"
+  "codeSent": "Namba ya uhakiki imetumwa",
+  "alreadyHaveAccount": "Tayari una akaunti? Ingia",
+  "dontHaveAccount": "Hauna akaunti? Jisajili",
+  "login": "Ingia",
+  "register": "Jisajili",
+  "@sentCodeTo": {
+    "placeholders": {
+      "phoneNumber": {
+        "type": "String"
+      }
+    }
+  },
+  "@smsLearningDesc": {
+    "placeholders": {
+      "shortcode": {
+        "type": "String"
+      }
+    }
+  }
 }

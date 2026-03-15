@@ -83,5 +83,9 @@
   "recommendedForYou": "Lagula taliyay adiga oo ku salaysan horumarkaaga",
   "aiRecommended": "AI ay ku talisay",
   "learningProgress": "Horumarka Waxbarashada",
-  "codeSent": "Koodhka xaqiijinta ayaa la soo diray"
+  "codeSent": "Koodhka xaqiijinta ayaa la soo diray",
+  "alreadyHaveAccount": "Horey ma u lahayd akoon? Soo gal",
+  "dontHaveAccount": "Ma haysatid akoon? Isdiiwaangeli",
+  "login": "Soo gal",
+  "register": "Isdiiwaangeli"
 }

@@ -38,6 +38,18 @@ class AuthRepository {
     }
   }
 
+  /// Request OTP for login
+  Future<({bool success, String? message})> login(String phoneNumber) async {
+    try {
+      final phoneHash = CryptoUtils.hashPhoneNumber(phoneNumber);
+      await HiveBoxes.savePhoneHash(phoneHash);
+      final response = await _authRemote.login(phoneNumber);
+      return (success: true, message: response['message'] as String?);
+    } catch (e) {
+      return (success: false, message: e.toString());
+    }
+  }
+
   /// Verify OTP and authenticate
   Future<({bool success, Failure? failure, String? token, String? learnerId})> verifyOtp({
     required String phoneNumber,

@@ -36,6 +36,21 @@ class AuthRemote {
     }
   }
 
+  /// Request OTP for login (existing users)
+  Future<Map<String, dynamic>> login(String phoneNumber) async {
+    try {
+      final response = await _apiClient.post(
+        ApiConstants.login,
+        data: {'phone': phoneNumber},
+      );
+      return response.data as Map<String, dynamic>;
+    } on AppException {
+      rethrow;
+    } catch (e) {
+      throw NetworkException('Failed to request Login OTP', originalError: e);
+    }
+  }
+
   /// Verify OTP
   Future<Map<String, dynamic>> verifyOtp({
     required String phoneNumber,

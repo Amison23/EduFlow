@@ -22,8 +22,9 @@ class LessonPacksLoaded extends LessonState {
 class LessonsLoaded extends LessonState {
   final List<Map<String, dynamic>> lessons;
   final String packId;
+  final List<Map<String, dynamic>> packs;
 
-  const LessonsLoaded(this.lessons, this.packId);
+  const LessonsLoaded(this.lessons, this.packId, {this.packs = const []});
 }
 
 /// Single lesson loaded

@@ -16,6 +16,12 @@ class RequestOtp extends AuthEvent {
   const RequestOtp(this.phoneNumber, {this.name});
 }
 
+/// Request OTP for login (existing user)
+class LoginRequested extends AuthEvent {
+  final String phoneNumber;
+  const LoginRequested(this.phoneNumber);
+}
+
 /// Verify OTP
 class VerifyOtp extends AuthEvent {
   final String phoneNumber;

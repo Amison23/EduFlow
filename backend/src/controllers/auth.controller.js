@@ -19,9 +19,6 @@ exports.register = async (req, res, next) => {
 
         const phoneHash = hashPhoneNumber(phone);
 
-        // Generate OTP via service
-        const { otp, expiry } = otpService.generate();
-
         // Check if learner exists
         const { data: existingLearner } = await supabase
             .from('learners')
@@ -30,41 +27,90 @@ exports.register = async (req, res, next) => {
             .single();
 
         if (existingLearner) {
-            // Update OTP and potentially name if provided and not already set
-            const updates = { otp, otp_expiry: expiry.toISOString() };
-            if (name && !existingLearner.name) updates.name = name;
-            if (phone && !existingLearner.phone) updates.phone = phone;
-
-            await supabase
-                .from('learners')
-                .update(updates)
-                .eq('phone_hash', phoneHash);
-        } else {
-            // Create new learner
-            await supabase
-                .from('learners')
-                .insert([{
-                    phone_hash: phoneHash,
-                    phone: phone,
-                    name: name || null,
-                    otp,
-                    otp_expiry: expiry.toISOString(),
-                    language: 'en'
-                }]);
+            return res.status(409).json({ 
+                error: 'Number already registered', 
+                message: 'This phone number is already registered. Please go to Login instead.' 
+            });
         }
+
+        // Generate OTP via service
+        const { otp, expiry } = otpService.generate();
+
+        // Create new learner
+        await supabase
+            .from('learners')
+            .insert([{
+                phone_hash: phoneHash,
+                phone: phone,
+                name: name || null,
+                otp,
+                otp_expiry: expiry.toISOString(),
+                language: 'en'
+            }]);
 
         // Send OTP via SMS service (resilient approach)
         try {
             await smsService.sendSms(phone, `Your EduFlow OTP is: ${otp}. Valid for 10 minutes.`);
         } catch (smsError) {
-            console.error('[AUTH ERROR] Failed to send SMS, but proceeding with registration:', smsError.message);
-            // We continue so the user can see the OTP in logs during development/demo
+            console.error('[AUTH ERROR] Failed to send SMS:', smsError.message);
         }
 
         res.json({
             success: true,
-            message: 'OTP sent successfully',
-            // In development, we can hint at where to find it if SMS fails
+            message: 'Registration OTP sent successfully',
+            _dev_hint: config.nodeEnv === 'development' ? 'Check server logs for OTP' : undefined
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * Login an existing learner (request OTP)
+ */
+exports.login = async (req, res, next) => {
+    try {
+        const { phone } = req.body;
+
+        if (!phone) {
+            return res.status(400).json({ error: 'Phone number is required' });
+        }
+
+        const phoneHash = hashPhoneNumber(phone);
+
+        // Check if learner exists
+        const { data: learner } = await supabase
+            .from('learners')
+            .select('*')
+            .eq('phone_hash', phoneHash)
+            .single();
+
+        if (!learner) {
+            return res.status(404).json({ 
+                error: 'Learner not found', 
+                message: 'This phone number is not registered. Please register first.' 
+            });
+        }
+
+        // Generate OTP
+        const { otp, expiry } = otpService.generate();
+
+        // Update OTP
+        await supabase
+            .from('learners')
+            .update({ otp, otp_expiry: expiry.toISOString() })
+            .eq('phone_hash', phoneHash);
+
+        // Send OTP
+        try {
+            await smsService.sendSms(phone, `Your EduFlow Login OTP is: ${otp}.`);
+        } catch (smsError) {
+            console.error('[AUTH ERROR] Failed to send login SMS:', smsError.message);
+        }
+
+        res.json({
+            success: true,
+            message: 'Login OTP sent successfully',
             _dev_hint: config.nodeEnv === 'development' ? 'Check server logs for OTP' : undefined
         });
     } catch (error) {

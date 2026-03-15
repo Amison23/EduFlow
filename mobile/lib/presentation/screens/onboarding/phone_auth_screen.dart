@@ -18,6 +18,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
   final _phoneController = TextEditingController();
   final _otpController = TextEditingController();
   bool _isOtpSent = false;
+  bool _isLoginMode = false;
   String? _phoneNumber;
 
   @override
@@ -109,11 +110,24 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
                         onPressed: isLoading ? null : _sendOtp,
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 4),
-                          child: Text(l10n.sendCode),
+                          child: Text(_isLoginMode ? 'Login' : l10n.sendCode),
                         ),
                       ),
                     );
                   },
+                ),
+                const SizedBox(height: 16),
+                Center(
+                  child: TextButton(
+                    onPressed: () {
+                      setState(() {
+                        _isLoginMode = !_isLoginMode;
+                      });
+                    },
+                    child: Text(_isLoginMode 
+                      ? l10n.dontHaveAccount 
+                      : l10n.alreadyHaveAccount),
+                  ),
                 ),
               ] else ...[
                 Text(
@@ -188,7 +202,11 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
       return;
     }
     
-    context.read<AuthBloc>().add(RequestOtp(phone, name: name.isNotEmpty ? name : null));
+    if (_isLoginMode) {
+      context.read<AuthBloc>().add(LoginRequested(phone));
+    } else {
+      context.read<AuthBloc>().add(RequestOtp(phone, name: name.isNotEmpty ? name : null));
+    }
   }
 
   void _verifyOtp() {

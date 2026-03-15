@@ -29,6 +29,16 @@ class PackListScreen extends StatelessWidget {
             }
             return _buildPackList(context, state.packs);
           }
+
+          if (state is LessonsLoaded) {
+             if (state.packs.isEmpty) {
+              // Try to reload if we somehow lost packs
+              final languageCode = Localizations.localeOf(context).languageCode;
+              context.read<LessonBloc>().add(LoadLessonPacks(language: languageCode));
+              return const Center(child: CircularProgressIndicator());
+            }
+            return _buildPackList(context, state.packs);
+          }
           
           if (state is LessonError) {
             return Center(

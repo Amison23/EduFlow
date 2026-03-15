@@ -19,6 +19,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<Logout>(_onLogout);
     on<CompleteOnboarding>(_onCompleteOnboarding);
     on<SetAppLanguage>(_onSetAppLanguage);
+    on<LoginRequested>(_onLoginRequested);
   }
 
   Future<void> _onCheckAuthStatus(
@@ -61,6 +62,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(OtpSent(phoneNumber: event.phoneNumber));
     } else {
       emit(AuthError(result.message ?? 'Failed to send OTP'));
+    }
+  }
+
+  Future<void> _onLoginRequested(
+    LoginRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoading());
+    
+    final result = await _authRepository.login(event.phoneNumber);
+    
+    if (result.success) {
+      emit(OtpSent(phoneNumber: event.phoneNumber));
+    } else {
+      emit(AuthError(result.message ?? 'Failed to send Login OTP'));
     }
   }
 

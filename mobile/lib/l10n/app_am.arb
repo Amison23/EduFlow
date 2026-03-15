@@ -73,5 +73,23 @@
   "recommendedForYou": "በእድገትዎ ላይ በመመስረት ለእርስዎ ይመከራል",
   "aiRecommended": "በ AI የሚመከር",
   "learningProgress": "የትምህርት እድገት",
-  "codeSent": "የማረጋገጫ ኮድ ተልኳል"
+  "codeSent": "የማረጋገጫ ኮድ ተልኳል",
+  "alreadyHaveAccount": "አካውንት አለዎት? ይግቡ",
+  "dontHaveAccount": "አካውንት የለዎትም? ይመዝገቡ",
+  "login": "ይግቡ",
+  "register": "ይመዝገቡ",
+  "@sentCodeTo": {
+    "placeholders": {
+      "phoneNumber": {
+        "type": "String"
+      }
+    }
+  },
+  "@smsLearningDesc": {
+    "placeholders": {
+      "shortcode": {
+        "type": "String"
+      }
+    }
+  }
 }

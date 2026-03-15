@@ -239,4 +239,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get codeSent => 'Verification code sent';
+
+  @override
+  String get alreadyHaveAccount => 'Already have an account? Login';
+
+  @override
+  String get dontHaveAccount => 'Don\'t have an account? Register';
+
+  @override
+  String get login => 'Login';
+
+  @override
+  String get register => 'Register';
 }

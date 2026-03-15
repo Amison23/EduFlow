@@ -242,4 +242,16 @@ class AppLocalizationsSo extends AppLocalizations {
 
   @override
   String get codeSent => 'Koodhka xaqiijinta ayaa la soo diray';
+
+  @override
+  String get alreadyHaveAccount => 'Horey ma u lahayd akoon? Soo gal';
+
+  @override
+  String get dontHaveAccount => 'Ma haysatid akoon? Isdiiwaangeli';
+
+  @override
+  String get login => 'Soo gal';
+
+  @override
+  String get register => 'Isdiiwaangeli';
 }

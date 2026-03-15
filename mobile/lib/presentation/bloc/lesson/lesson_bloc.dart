@@ -9,12 +9,14 @@ part 'lesson_state.dart';
 class LessonBloc extends Bloc<LessonEvent, LessonState> {
   final LessonRepository _lessonRepository;
   final ProgressRepository _progressRepository;
+  List<Map<String, dynamic>> _cachedPacks = [];
 
   LessonBloc({
     required LessonRepository lessonRepository,
     required ProgressRepository progressRepository,
   })  : _lessonRepository = lessonRepository,
         _progressRepository = progressRepository,
+        _cachedPacks = [],
         super(LessonInitial()) {
     on<LoadLessonPacks>(_onLoadLessonPacks);
     on<LoadLessonsForPack>(_onLoadLessonsForPack);
@@ -92,6 +94,7 @@ class LessonBloc extends Bloc<LessonEvent, LessonState> {
       }
     }
 
+    _cachedPacks = updatedPacks;
     emit(LessonPacksLoaded(updatedPacks));
   }
 
@@ -106,7 +109,7 @@ class LessonBloc extends Bloc<LessonEvent, LessonState> {
     if (result.failure != null) {
       emit(LessonError(result.failure!.message));
     } else {
-      emit(LessonsLoaded(result.lessons, event.packId));
+      emit(LessonsLoaded(result.lessons, event.packId, packs: _cachedPacks));
     }
   }
 

@@ -7,13 +7,17 @@ const communityService = require('../services/community.service');
 exports.getStudyGroups = async (req, res, next) => {
     try {
         const { subject } = req.query;
-        let query = supabase.from('study_groups').select('*, group_members(count)');
+        // Using a simpler select to avoid join count issues if persistent
+        let query = supabase.from('study_groups').select('*');
 
         if (subject) query = query.eq('subject', subject);
 
         const { data, error } = await query;
 
         if (error) throw error;
+        
+        // Enrich with member count separately if join fails (fallback approach)
+        // For now, let's try the direct select and see if it works without the complex join
         res.json(data);
     } catch (error) {
         next(error);

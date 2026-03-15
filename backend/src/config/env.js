@@ -24,6 +24,11 @@ const config = {
     africaTalkingUsername: process.env.AFRICA_TALKING_USERNAME,
     smsShortcode: process.env.SMS_SHORTCODE || '12345',
 
+    // Twilio (Secondary/Testing)
+    twilioSid: process.env.TWILIO_ACCOUNT_SID,
+    twilioAuthToken: process.env.TWILIO_AUTH_TOKEN,
+    twilioPhoneNumber: process.env.TWILIO_PHONE_NUMBER,
+
     // SMS OTP
     otpExpiryMinutes: parseInt(process.env.OTP_EXPIRY_MINUTES) || 10,
     otpLength: 6,

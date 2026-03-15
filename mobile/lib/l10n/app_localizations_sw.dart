@@ -239,4 +239,16 @@ class AppLocalizationsSw extends AppLocalizations {
 
   @override
   String get codeSent => 'Namba ya uhakiki imetumwa';
+
+  @override
+  String get alreadyHaveAccount => 'Tayari una akaunti? Ingia';
+
+  @override
+  String get dontHaveAccount => 'Hauna akaunti? Jisajili';
+
+  @override
+  String get login => 'Ingia';
+
+  @override
+  String get register => 'Jisajili';
 }

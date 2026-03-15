@@ -83,5 +83,9 @@
   "recommendedForYou": "Recommended for you based on progress",
   "aiRecommended": "AI Recommended",
   "learningProgress": "Learning Progress",
-  "codeSent": "Verification code sent"
+  "codeSent": "Verification code sent",
+  "alreadyHaveAccount": "Already have an account? Login",
+  "dontHaveAccount": "Don't have an account? Register",
+  "login": "Login",
+  "register": "Register"
 }

@@ -41,7 +41,7 @@ jobs:
         with:
           flutter-version: '3.x'
       - name: Create environment configuration
-        run: cd mobile && cp .env.example .env
+        run: cd mobile && cp .env.example assets/.env
       - name: Install dependencies
         run: cd mobile && flutter pub get
       - name: Run analyze
