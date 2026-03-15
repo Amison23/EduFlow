@@ -70,7 +70,7 @@ class AppLocalizationsSo extends AppLocalizations {
   String get smsLearning => 'Barashada SMS';
 
   @override
-  String smsLearningDesc(Object shortcode) {
+  String smsLearningDesc(String shortcode) {
     return 'Internet ma haysid? Isticmaal adeeggayaga SMS adoo u diraya ereyo muhiim ah $shortcode.';
   }
 

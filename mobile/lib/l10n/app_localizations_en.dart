@@ -69,7 +69,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get smsLearning => 'SMS Learning';
 
   @override
-  String smsLearningDesc(Object shortcode) {
+  String smsLearningDesc(String shortcode) {
     return 'No internet? Use our SMS service by sending keywords to $shortcode.';
   }
 

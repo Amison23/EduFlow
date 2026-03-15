@@ -67,7 +67,7 @@ class AppLocalizationsAm extends AppLocalizations {
   String get smsLearning => 'የኤስኤምኤስ ትምህርት';
 
   @override
-  String smsLearningDesc(Object shortcode) {
+  String smsLearningDesc(String shortcode) {
     return 'ኢንተርኔት የለም? ቁልፍ ቃላትን ወደ $shortcode በመላክ የእኛን የኤስኤምኤስ አገልግሎት ይጠቀሙ።';
   }
 

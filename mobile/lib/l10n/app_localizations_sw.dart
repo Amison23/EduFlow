@@ -69,7 +69,7 @@ class AppLocalizationsSw extends AppLocalizations {
   String get smsLearning => 'Mafunzo ya SMS';
 
   @override
-  String smsLearningDesc(Object shortcode) {
+  String smsLearningDesc(String shortcode) {
     return 'Mnaweza kutumia huduma yetu ya SMS kwa kutuma maneno muhimu kwenda $shortcode.';
   }
 

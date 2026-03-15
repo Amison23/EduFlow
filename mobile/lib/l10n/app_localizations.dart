@@ -220,7 +220,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'No internet? Use our SMS service by sending keywords to {shortcode}.'**
-  String smsLearningDesc(Object shortcode);
+  String smsLearningDesc(String shortcode);
 
   /// No description provided for @studyGroups.
   ///
