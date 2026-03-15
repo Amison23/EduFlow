@@ -87,5 +87,12 @@
   "alreadyHaveAccount": "Horey ma u lahayd akoon? Soo gal",
   "dontHaveAccount": "Ma haysatid akoon? Isdiiwaangeli",
   "login": "Soo gal",
-  "register": "Isdiiwaangeli"
+  "register": "Isdiiwaangeli",
+  "@smsLearningDesc": {
+    "placeholders": {
+      "shortcode": {
+        "type": "String"
+      }
+    }
+  }
 }
